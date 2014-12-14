@@ -22,7 +22,7 @@ class AdminModel extends Model {
 		return array(
 			"page_size" => $page_size,
 			"page_count" => $page_count,
-			"total" => $total,
+			"total" => intval($total),
 			"page" => $page,
 			"list" => $list,
 		);

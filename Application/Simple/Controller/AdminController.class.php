@@ -151,17 +151,17 @@ class AdminController extends BaseController {
 		$pwd2 = $_REQUEST["pwd2"];
 		if(!$old_pwd)
 			$this->resFail(1, "旧密码不能为空");
-		if($pwd)
+		if(!$pwd)
 			$this->resFail(1, "新密码不能为空");
 		if($pwd != $pwd2)
 			$this->resFail(1, "确认密码不正确");
 		
 		$m = M("Admin");
-		$admin = $m->where("name = '" . $curr_admin["name"] . "' and = pwd = '" . $old_pwd . "'")->find();
+		$admin = $m->where("name = '" . $curr_admin["name"] . "' and pwd = '" . $old_pwd . "'")->find();
 		if($admin) {
 			$admin["pwd"] = $pwd;
 			$m->save($admin);
-			$this->resFail("修改密码成功");
+			$this->resSuccess("修改密码成功");
 		}
 		else
 			$this->resFail(1, "旧密码不正确");
