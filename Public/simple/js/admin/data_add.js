@@ -15,11 +15,11 @@ $(function() {
 						$("#title").html("修改数据");
 						
 						$("#name").val(data.data.name);
-						$("#dataclass").val(data.data.dataclass.id);
+						$("#dataclass").val(data.data.dataclass_id);
 						$("#sort").val(data.data.sort);
 						
-						$('#content').ckeditor();
 						$("#content").val(data.data.content);
+						$('#content').ckeditor();
 						
 						$("#btn_submit").val("更新");
 					}

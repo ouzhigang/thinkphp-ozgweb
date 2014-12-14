@@ -248,12 +248,15 @@ class AdminController extends BaseController {
 		$dataclass["parent_id"] = $parent_id;
 		$dataclass["sort"] = intval($_REQUEST["sort"]);
 		$dataclass["type"] = intval($_REQUEST["type"]);
-		$m->save($dataclass);
-		if($id != 0)
-			$this->resSuccess("更新成功");
-		else
-			$this->resSuccess("添加成功");
 		
+		if($id != 0) {
+			$m->save($dataclass);
+			$this->resSuccess("更新成功");
+		}
+		else {
+			$m->add($dataclass);
+			$this->resSuccess("添加成功");
+		}
 	}
 	
 	function ajax_dataclass_del() {
@@ -328,19 +331,23 @@ class AdminController extends BaseController {
 			$data = $m->where("id = " . $id)->find();
 		else
 			$data = array();
-		$data["name"] = name;
-		$data["content"] = content;
+		$data["name"] = $name;
+		$data["content"] = $content;
 		$data["add_time"] = intval(time());
 		$data["dataclass_id"] = intval($_REQUEST["dataclass_id"]);
 		$data["sort"] = intval($_REQUEST["sort"]);
 		$data["type"] = intval($_REQUEST["type"]);
 		$data["hits"] = 0;
 		$data["picture"] = "";
-		$m.save($data);
-		if($id != 0)
+		
+		if($id != 0) {
+			$m->save($data);
 			$this->resSuccess("更新成功");
-		else
+		}
+		else {
+			$m->add($data);
 			$this->resSuccess("添加成功");
+		}
 	}
 	
 	function ajax_data_del() {

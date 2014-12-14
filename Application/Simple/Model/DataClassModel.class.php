@@ -11,7 +11,7 @@ class DataClassModel extends Model {
 			$child_count = $m->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
 			$child_count = $child_count["total"];
 			if($child_count > 0)
-				deleteById($v["id"]);
+				self::deleteById($v["id"]);
 			
 			//删除该分类下面的对应数据
 			$m2 = M("Data");
@@ -25,7 +25,7 @@ class DataClassModel extends Model {
 		$m = M("DataClass");
 		$dataclass = $m->where("id = " . $id)->find();
 		if($dataclass["parent_id"] != 0)
-			$dataclass["parent"] = getById($dataclass["parent_id"]);
+			$dataclass["parent"] = self::getById($dataclass["parent_id"]);
 		return $dataclass;
 	}
 	
@@ -37,7 +37,7 @@ class DataClassModel extends Model {
 			$child_count = $m->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
 			$child_count = $child_count["total"];
 			if($child_count > 0)
-				$v["children"] = listById($v["id"]);
+				$v["children"] = self::listById($v["id"]);
 			
 		}
 		return $dc_list;
