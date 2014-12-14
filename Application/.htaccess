@@ -1,0 +1,3 @@
+<IfModule mod_rewrite.c>
+  deny from all
+</IfModule>
