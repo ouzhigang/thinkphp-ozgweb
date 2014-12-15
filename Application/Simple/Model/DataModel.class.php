@@ -11,7 +11,7 @@ class DataModel extends Model {
 		
 		$page_count = page_count($total, $page_size);
 		$offset = ($page - 1) * $page_size;
-		$limit = $offset + $page_size;
+		$limit = $page_size;
 		
 		$list = $m
 			->field("dc.name as dc_name, " . C("DB_PREFIX") . "data.*")

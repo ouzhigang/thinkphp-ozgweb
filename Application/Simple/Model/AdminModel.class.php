@@ -13,7 +13,7 @@ class AdminModel extends Model {
 		$page_count = page_count($total, $page_size);
 		
 		$offset = ($page - 1) * $page_size;
-		$limit = $offset + $page_size;
+		$limit = $page_size;
 
 		$list = $m->order("id desc")->limit($offset . ", " . $limit)->select();
 		foreach($list as &$v)
