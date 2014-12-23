@@ -329,15 +329,17 @@ class AdminController extends BaseController {
 		$data = NULL;
 		if($id != 0)
 			$data = $m->where("id = " . $id)->find();
-		else
-			$data = array();
+		else {
+			$data = array(
+				"add_time" => time(),
+				"hits" => 0
+			);
+		}
 		$data["name"] = $name;
-		$data["content"] = $content;
-		$data["add_time"] = intval(time());
+		$data["content"] = $content;		
 		$data["dataclass_id"] = intval($_REQUEST["dataclass_id"]);
 		$data["sort"] = intval($_REQUEST["sort"]);
-		$data["type"] = intval($_REQUEST["type"]);
-		$data["hits"] = 0;
+		$data["type"] = intval($_REQUEST["type"]);		
 		$data["picture"] = "";
 		
 		if($id != 0) {
