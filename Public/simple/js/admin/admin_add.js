@@ -21,6 +21,10 @@ $(function() {
 			$.getJSON(
 				"ajax_admin_add?name=" + encodeURIComponent(name) + "&pwd=" + pwd + "&pwd2=" + pwd2 + "&random=" + Math.random(),
 				function(data) {
+					if(data.code == 1) {
+						alert(data.desc);
+						return;
+					}
 					$("#center-column").load("../../Public/simple/admin_templates/admin_list.html?random=" + Math.random());
 				}
 			);
