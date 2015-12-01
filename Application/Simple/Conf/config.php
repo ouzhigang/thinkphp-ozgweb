@@ -61,7 +61,7 @@ return array(
 		)
 	],
 	
-	'DB_TYPE' => 'pdo',
+	'DB_TYPE' => 'sqlite',
     'DB_DSN' => 'sqlite:simple.sqlite3',
     'DB_PREFIX' => 'simple_', // 数据库表前缀
     'DB_CHARSET' => 'utf8', // 数据库编码默认采用utf8
