@@ -64,6 +64,7 @@ function show_data(page) {
 								if(res.code == 0) {
 									
 									show_data(curr_page);
+									conform_dialog.dialog("close");
 								}
 								else {
 									conform_dialog.dialog("close");
