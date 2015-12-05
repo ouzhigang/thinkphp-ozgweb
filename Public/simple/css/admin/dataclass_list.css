@@ -1,0 +1,10 @@
+
+.list-unstyled li {
+	height: 30px;
+	
+}
+
+.list-unstyled li div {
+	float: right; 
+	margin-top: -5px
+}

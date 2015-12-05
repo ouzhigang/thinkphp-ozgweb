@@ -1,81 +1,108 @@
-﻿
-$(function() {
+
+require(
+	[ "config" ], 
+	function () {
+		require([ "admin.data_add" ]);
+	}), 
+	define("admin.data_add", [ "jquery", "jquery_ui", "jquery_validate", "jquery_LinkageList", "bootstrap", "metisMenu", "sb_admin_2", "ckeditor", "ckeditor_jquery", "utility", "common" ], function ($) {
+		page_init();
+		
+		//dialog
+		var alert_dialog = ready_alert_dialog();
+		
+		$('#content').ckeditor({ 
+			height: '350px' 
+		});
+				
+		//无限级下拉框
+		var data = {
+			type: getUrlParam("type")		
 			
-	//获取分类数据
-	$.getJSON(
-		"ajax_dataclass_list?type=" + get_menu_param("type") + "&random=" + Math.random(),
-		function(data) {
-			show_data(data.data);
-			
-			if(get_menu_param("id")) {
-				//编辑状态
-				$.getJSON(
-					"ajax_data_get?id=" + get_menu_param("id") + "&random=" + Math.random(),
-					function(data) {
-						$("#title").html("修改数据");
-						
-						$("#name").val(data.data.name);
-						$("#dataclass").val(data.data.dataclass_id);
-						$("#sort").val(data.data.sort);
-						
-						$("#content").val(data.data.content);
-						$('#content').ckeditor();
-						
-						$("#btn_submit").val("更新");
-					}
-				);
+		};
+		$.ajax({
+			url: "dataclass_gettree",
+			type: "get",
+			dataType: "json",
+			data: data,
+			beforeSend: function() {
+				
+			},
+			success: function(res, status) {
+		
+				$("#dataclass").LinkageList(res.data, {
+					objId: "dataclass",
+					inputObjId: "dataclass_id",
+					css: "form-control",
+					style: "width: 20%; margin-right: 10px;",
+					selectedValue: $("#dataclass_selected").val() == "0" ? null : $("#dataclass_selected").val()
+				});
+				
+			},
+			complete: function() {
+				
 			}
-			else
-				$('#content').ckeditor();
-		}
-	);
-	
-	$("#btn_submit").click(function() {
+		});
 		
-		var name = $("#name").val();
-		var sort = $("#sort").val();
-		var dataclass = $("#dataclass").val();
-		var content = $("#content").val();
-		
-		var msg = "";
-		if(name == "")
-			msg += "名称不能为空\n";
-		if(dataclass == "0")
-			msg += "没有选择分类\n";
-		if(msg != "")
-			alert(msg);
-		else {
-			
-			var type = get_menu_param("type");
-			
-			var obj = null;
-			if(get_menu_param("id")) {
-				var id = get_menu_param("id");
-				obj = { id: id, name: name, sort: sort, dataclass_id: dataclass, content: content, type: type, random: Math.random() };
-			}
-			else
-				obj = { name: name, sort: sort, dataclass_id: dataclass, content: content, type: type, random: Math.random() };
-		
-			$.post(
-				"ajax_data_add",
-				obj,
-				function(data) {
-					
-					if(!get_menu_param("id"))
-						$("#menu_param").val("type:" + get_menu_param("type"));
-					else {
-						var page = 1;
-						if(get_menu_param("page"))
-							page = get_menu_param("page");
-						$("#menu_param").val("type:" + get_menu_param("type") + ",page:" + page);
-					}
-					
-					$("#center-column").load("../../Public/simple/admin_templates/data_list.html?random=" + Math.random());
+		$("#main_form").validate({
+			rules: {
+				name: {
+					required: true
 				},
-				"json"
-			);
-		}
+				sort: {
+					required: true,
+					digits: true
+				}
+			},
+			messages: {
+				name: {
+					required: "没有填写名称"
+				},
+				sort: {
+					required: "没有填写排序",
+					number: "请输入整数"
+				}				
+			},
+			submitHandler: function(form) {
+				
+				if($("#dataclass_id").val() == "0" || $("#dataclass_id").val() == "") {
+					$("#dialog_message").html("没有选择分类");
+					alert_dialog.dialog("open");
+					return false;
+				}
+				
+				var data = {
+					id: $("#id").val(),
+					name: $("#name").val(),
+					sort: $("#sort").val(),
+					dataclass_id: $("#dataclass_id").val(),
+					content: $("#content").val(),
+					type: $("#type").val()
+				};
+				$.ajax({
+					url: "data_add",
+					type: "post",
+					dataType: "json",
+					data: data,
+					beforeSend: function() {
+						$("#btn_submit").attr("disabled", true);
+					},
+					success: function(res, status) {
+						if(res.code == 0) {
+							
+							location.href = "data_list?type=" + $("#type").val();
+						}
+						else {
+							$("#dialog_message").html(res.desc);
+							alert_dialog.dialog("open");
+						}
+					},
+					complete: function() {
+						$("#btn_submit").attr("disabled", false);
+					}
+				});
+				
+			}
+		});
 		
-	});
-	
-});
+	}
+);

@@ -1,0 +1,21 @@
+
+#main_form table {
+	width: 95%;
+}
+
+#main_form table .title_column {
+	width: 15%;
+	height: 45px;
+	text-align: right;
+	padding-right: 40px;
+}
+
+#main_form table .form-control {
+	width: 60%;
+	display: inline;
+}
+
+.btn_submit_div {
+	padding-top: 20px;
+	text-align: center;
+}

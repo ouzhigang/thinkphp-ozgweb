@@ -8,29 +8,47 @@ use Simple\Model\DataModel;
 
 class AdminController extends BaseController {
 	
-    function index() {
-		if(session("?sess_admin"))
-			redirect("admin");
+    public function login() {
+		
+		if(cookie("curr_user_name")) {
+			//一周内自动登录		
+			$name = str_filter(cookie("curr_user_name"));			
+			$name = \Common\Encrypt::decode($name);
+			
+			$where = array(
+				"name" => $name,
+				"is_admin" => 1
+			);
+			$user =  D("User")->where($where)->find();					
+			unset($user["pwd"]);
+			session("user", $user);
+			$user["err_login"] = 0;
+		
+			D("User")->where(array(
+				"id" => $user["id"]
+			))->save($user);
+		
+			header("location:main");
+			exit();
+		}
+		
+		if(IS_POST) {
+			$name = I("post.name", NULL, "str_filter");
+			$pwd = I("post.pwd", NULL, "str_filter");		
+			
+			//提交登录
+			$remember = I("post.remember", 0, "intval");
+			$vcode = I("post.vcode", "", "str_filter");			
+			$this->ajaxReturn(D("User")->adminLogin($name, $pwd, $remember, $vcode), "JSON");
+		}
 		
         $this->display();
     }
 	
-	function admin() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			redirect("index");
-		
-		$this->assign("sys", PHP_OS);
-		$this->assign("php_ver", PHP_VERSION);		
-		$this->assign("thinkphp_ver", THINK_VERSION);
-		
-		$this->display();
-    }
-	
-	function get_code() {
+	public function getvcode() {
 		$verify = new \Think\Verify();
 		$verify->fontSize = 14;
-		$verify->length   = 4;
+		$verify->length = 4;
 		$verify->useNoise = false;
 		$verify->codeSet = '0123456789';
 		$verify->imageW = 120;
@@ -39,327 +57,360 @@ class AdminController extends BaseController {
 		$verify->entry(1);		
 	}
 	
-	function ajax_login() {
+	public function main() {
 		
-		$imgcode = $_REQUEST["code"];
-		if(!$imgcode)
-			$this->resFail(1, "验证码不能为空");
+		$this->assign('server_name', $_SERVER["SERVER_NAME"]);
+		$this->assign('os', PHP_OS);
+		$this->assign('server_software', $_SERVER["SERVER_SOFTWARE"]);
+		$this->assign('php_version', PHP_VERSION);
+		$this->assign('upload_file_status', get_cfg_var("file_uploads") ? get_cfg_var("upload_max_filesize") : "<span class=\"f2\">不允许上传文件</span>");
+		$this->assign('max_execution_time', get_cfg_var("max_execution_time"));
+		$this->assign('document_root', $_SERVER["DOCUMENT_ROOT"]);
+		$this->assign('now', date("Y-m-d H:i:s"));
+		$this->assign("thinkphp_ver", THINK_VERSION);
 		
-		$verify = new \Think\Verify();
-		if($verify->check($imgcode, 1)) {
-			$name = htmlspecialchars($_REQUEST["name"]);
-			$pwd = htmlspecialchars($_REQUEST["pwd"]);
-			
-			$m = M("Admin");
-			$admin = $m->where("name = '" . $name . "' and pwd = '" . $pwd . "'")->find();
-			if($admin) {
-				
-				session("sess_admin", $admin);
-				unset($admin["pwd"]);
-				$this->resSuccess("登录成功");
-			}
-			else
-				$this->resFail(1, "用户或密码不正确");
-		}
-		else
-			$this->resFail(1, "验证码不正确");
+		$this->display();
+    }
+	
+	public function logout() {		
+		D("User")->logout();
+		
+		header(strtolower("location: " . __ROOT__ . "/" . MODULE_NAME . "/admin/login"));
 	}
 	
-	function ajax_logout() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		session("sess_admin", NULL);
-		$this->resSuccess("退出登录");
-	}
-	
-	function ajax_menu_list() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$this->resSuccess("请求成功", C("admin_menu_list"));
-	}
-	
-	function ajax_admin_list() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
+	public function admin_list() {
 		
 		//分页索引和每页显示数
-		$page = 1;
-		if(isset($_REQUEST["page"]))
-			$page = intval($_REQUEST["page"]);
-		$page_size = C("page_size");
-		if(isset($_REQUEST["page_size"]))
-			$page_size = intval($_REQUEST["page_size"]);
-		
-		$this->resSuccess("请求成功", AdminModel::getList($page, $page_size));
+		$get_data = I("request.get_data", NULL);
+		if($get_data) {			
+			$page = I("request.page", 1, "intval");
+			$page_size = I("request.page_size", C("WEB_PAGE_SIZE"), "intval");
+			$this->resSuccess("请求成功", D("User")->getList($page, $page_size));
+		}
+				
+		$this->display();
 	}
 	
-	function ajax_admin_add() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
+	public function admin_add() {
 		
-		$name = htmlspecialchars($_REQUEST["name"]);
-		$pwd = htmlspecialchars($_REQUEST["pwd"]);
-		$pwd2 = $_REQUEST["pwd2"];
-		if(!$name)
-			$this->resFail(1, "用户名不能为空");
-		if(!$pwd)
-			$this->resFail(1, "密码不能为空");
-		if($pwd != $pwd2)
-			$this->resFail(1, "确认密码不正确");
-		
-		$m = M("Admin");
-		$total = $m->field("count(id) as total")->where("name = '" . $name . "'")->find();
-		$total = $total["total"];
-		if($total > 0)
-			$this->resFail(1, "该管理员已存在");
+		if(IS_POST) {
+			$name = I("post.name", "", "str_filter");
+			$pwd = I("post.pwd", "", "str_filter");
+			$pwd2 = I("post.pwd2", "", "str_filter");
+			if(!$name)
+				$this->resFail(1, "用户名不能为空");
+			if(!$pwd)
+				$this->resFail(1, "密码不能为空");
+			if($pwd != $pwd2)
+				$this->resFail(1, "确认密码不正确");
 			
-		$admin = array(
-			"name" => $name,
-			"pwd" => $pwd,
-			"add_time" => time()
-		);
-		$m->add($admin);
-		$this->resSuccess("添加成功");
-		
-	}
-	
-	function ajax_admin_del() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$id = intval($_REQUEST["id"]);
-		$m = M("Admin");
-		$result = $m->where("id = " . $id)->delete();
-		$this->resSuccess("删除成功");
-	}
-	
-	function ajax_admin_updatepwd() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$curr_admin = session("sess_admin");
-		$old_pwd = htmlspecialchars($_REQUEST["old_pwd"]);
-		$pwd = htmlspecialchars($_REQUEST["pwd"]);
-		$pwd2 = $_REQUEST["pwd2"];
-		if(!$old_pwd)
-			$this->resFail(1, "旧密码不能为空");
-		if(!$pwd)
-			$this->resFail(1, "新密码不能为空");
-		if($pwd != $pwd2)
-			$this->resFail(1, "确认密码不正确");
-		
-		$m = M("Admin");
-		$admin = $m->where("name = '" . $curr_admin["name"] . "' and pwd = '" . $old_pwd . "'")->find();
-		if($admin) {
-			$admin["pwd"] = $pwd;
-			$m->save($admin);
-			$this->resSuccess("修改密码成功");
-		}
-		else
-			$this->resFail(1, "旧密码不正确");
-	}
-	
-	function ajax_art_single_get() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$id = intval($_REQUEST["id"]);
-		$m = M("ArtSingle");
-		$art = $m->where("id = " . $id)->find();
-		$this->resSuccess("请求成功", $art);
-	}
-	
-	function ajax_art_single_update() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$id = intval($_REQUEST["id"]);
-		$content = $_REQUEST["content"];
-		$m = M("ArtSingle");
-		$art = $m->where("id = " . $id)->find();
-		$art["content"] = $content;
-		$m->save($art);
-		
-		$this->resSuccess("更新成功");
-	}
-	
-	function ajax_dataclass_list() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$type = intval($_REQUEST["type"]);
-		$m = M("DataClass");
-		$dataclass_list = $m->where("type = " . $type . " and parent_id = 0")->order("sort desc, id desc")->select();
-		foreach($dataclass_list as &$v) {
-			$child_count = $m->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
-			$child_count = $child_count["total"];
-			if($child_count > 0)
-				$v["children"] = DataClassModel::listById($v["id"]);
-			
-		}
-		$this->resSuccess("请求成功", $dataclass_list);
-	}
-	
-	function ajax_dataclass_get() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$id = intval($_REQUEST["id"]);
-		$m = M("DataClass");
-		$dataclass = $m->where("id = " . $id)->find();
-		if($dataclass["parent_id"] != 0)
-			$dataclass["parent"] = DataClassModel::getById($dataclass["parent_id"]);
-		$this->resSuccess("请求成功", $dataclass);
-	}
-	
-	function ajax_dataclass_add() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		$id = 0;
-		if(isset($_REQUEST["id"]))
-			$id = intval($_REQUEST["id"]);
-		$name = htmlspecialchars($_REQUEST["name"]);
-		$parent_id = htmlspecialchars($_REQUEST["parent_id"]);
-		
-		$m = M("DataClass");
-		$dataclass = NULL;
-		if($id != 0) {
-			if($id == $parent_id)
-				$this->resFail(1, "父级分类不能为当前选中分类");
-			$dataclass = $m->where("id = " . $id)->find();			
-		}
-		else
-			$dataclass = array();
-		
-		$dataclass["name"] = $name;
-		$dataclass["parent_id"] = $parent_id;
-		$dataclass["sort"] = intval($_REQUEST["sort"]);
-		$dataclass["type"] = intval($_REQUEST["type"]);
-		
-		if($id != 0) {
-			$m->save($dataclass);
-			$this->resSuccess("更新成功");
-		}
-		else {
-			$m->add($dataclass);
+			$total = D("User")->field("count(id) as total")->where("name = '" . $name . "'")->find();
+			$total = $total["total"];
+			if($total > 0)
+				$this->resFail(1, "该用户已存在");
+				
+			$user = array(
+				"name" => $name,
+				"pwd" => $pwd,
+				"add_time" => time(),
+				"is_admin" => 1
+			);
+			D("User")->add($user);
 			$this->resSuccess("添加成功");
 		}
+		
+		$this->display();		
 	}
 	
-	function ajax_dataclass_del() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
+	public function admin_del() {
+		$id = I("request.id", 0, "intval");
+		$r = D("User")->del($id);
+		$this->ajaxReturn($r, "JSON");
+	}
+	
+	public function admin_updatepwd() {
 		
-		$id = intval($_REQUEST["id"]);
-		$m = M("DataClass");
-		$dataclass = $m->where("id = " . $id)->find();
-		$child_count = $m->field("count(id) as total")->where("parent_id = " . $dataclass["id"])->find();
+		if(IS_POST) {
+			$curr_user = session("user");
+			$old_pwd = I("post.old_pwd", "", "str_filter");
+			$pwd = I("post.pwd", "", "str_filter");
+			$pwd2 = I("post.pwd2", "", "str_filter");
+			
+			if(!$old_pwd)
+				$this->resFail(1, "旧密码不能为空");
+			if(!$pwd)
+				$this->resFail(1, "新密码不能为空");
+			if($pwd != $pwd2)
+				$this->resFail(1, "确认密码不正确");
+			
+			$user = D("User")->where("name = '" . $curr_user["name"] . "' and pwd = '" . $old_pwd . "'")->find();
+			if($user) {
+				$user["pwd"] = $pwd;
+				D("User")->save($user);
+				$this->resSuccess("修改密码成功");
+			}
+			else
+				$this->resFail(1, "旧密码不正确");
+		}
+		
+		$this->display();
+	}
+	
+	public function art_single_get() {
+		$id = I("request.id", 0, "intval");
+		
+		$data = D("ArtSingle")->where("id = " . $id)->find();
+		
+		if(IS_POST) {
+			$content = I("post.content", "", "str_filter");
+			
+			$data["content"] = $content;
+			D("ArtSingle")->save($data);
+			$this->resSuccess("更新成功");
+		}
+		
+		$data["content"] = html_entity_decode($data["content"]);
+		$this->assign("data", $data);
+		$this->display();
+	}
+	
+	public function dataclass_list() {
+		$type = I("request.type", 0, "intval");
+		
+		if(I("request.get_data", 0, "intval")) {			
+			$list = D("DataClass")->where("type = " . $type . " and parent_id = 0")->order("sort desc, id desc")->select();
+			foreach($list as &$v) {
+				$child_count = D("DataClass")->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
+				$child_count = $child_count["total"];
+				if($child_count > 0)
+					$v["children"] = D("DataClass")->listById($v["id"]);
+				
+			}
+			$this->resSuccess("请求成功", $list);
+		}
+				
+		$this->display();
+	}
+	
+	public function dataclass_add() {
+		$id = I("request.id", 0, "intval");
+				
+		$row = NULL;
+		if($id) {
+			$row = D("DataClass")->where("id = " . $id)->find();			
+		}
+		else {
+			$row = array(
+				"id" => 0,
+				"name" => "",
+				"sort" => 0,
+				"parent_id" => 0,
+				"type" => I("request.type", 0, "intval")
+			);
+			
+		}
+		
+		if(IS_POST) {
+			
+			$row["name"] = I("post.name", "", "str_filter");
+			$row["parent_id"] = I("post.parent_id", 0, "intval");
+			$row["sort"] = I("post.sort", 0, "intval");
+			$row["type"] = I("post.type", 0, "intval");
+			
+			if($id != 0) {
+				
+				if($id == $row["parent_id"])
+					$this->resFail(1, "父级分类不能为当前选中分类");
+				
+				D("DataClass")->save($row);
+				$this->resSuccess("更新成功");
+			}
+			else {
+				unset($row["id"]);
+				D("DataClass")->add($row);
+				$this->resSuccess("添加成功");
+			}
+		}
+		
+		$this->assign("row", $row);
+		$this->display();
+	}
+	
+	public function dataclass_gettree() {
+		$type = I("get.type", 0, "intval");
+		$data = D("DataClass")->getTreeSelector($type);
+		
+		$this->resSuccess("请求成功", $data);
+	}
+	
+	public function dataclass_del() {
+		
+		$id = I("request.id", 0, "intval");
+		
+		$dataclass = D("DataClass")->where("id = " . $id)->find();
+		$child_count = D("DataClass")->field("count(id) as total")->where("parent_id = " . $dataclass["id"])->find();
 		$child_count = $child_count["total"];
 		
 		if($child_count > 0)
-			DataClassModel::deleteById($dataclass["id"]);
+			D("DataClass")->deleteById($dataclass["id"]);
 		
 		//删除该分类下面的对应数据
-		$m2 = M("Data");
-		$m2->where("dataclass_id = " . $dataclass["id"])->delete();
-		$m->where("id = " . $dataclass["id"])->delete();
+		D("Data")->where("dataclass_id = " . $dataclass["id"])->delete();
+		D("DataClass")->where("id = " . $dataclass["id"])->delete();
 		$this->resSuccess("删除成功");
 	}
 	
-	function ajax_data_list() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
+	public function data_list() {
+		
+		$get_data = I("request.get_data", NULL);
+		if($get_data) {
+			$page = I("request.page", 1, "intval");
+			$page_size = I("request.page_size", C("WEB_PAGE_SIZE"), "intval");
+			$type = I("request.type", 1, "intval");
+			$res_data = D("Data")->getList($page, $page_size, $type);
 			
-		//分页索引和每页显示数
-		$page = 1;
-		if(isset($_REQUEST["page"]))
-			$page = intval($_REQUEST["page"]);
-		$page_size = C("page_size");
-		if(isset($_REQUEST["page_size"]))
-			$page_size = intval($_REQUEST["page_size"]);
-		$type = intval($_REQUEST["type"]);
-		
-		$res_data = DataModel::getList($page, $page_size, $type);
-		$this->resSuccess("请求成功", $res_data);
-	}
-	
-	function ajax_data_get() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$id = intval($_REQUEST["id"]);
-		$m = M("Data");
-		$data = $m->where("id = " . $id)->find();
-		$this->resSuccess("请求成功", $data);		
-	}
-	
-	function ajax_data_add() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
-		
-		$id = 0;
-		if(isset($_REQUEST["id"]))
-			$id = intval($_REQUEST["id"]);
-		$name = htmlspecialchars($_REQUEST["name"]);
-		$content = $_REQUEST["content"];
-		
-		if(!$name)
-			$this->resFail(1, "名称不能为空");
-		elseif(!$content)
-			$this->resFail(1, "内容不能为空");
-		
-		$m = M("Data");
-		$data = NULL;
-		if($id != 0)
-			$data = $m->where("id = " . $id)->find();
-		else {
-			$data = array(
-				"add_time" => time(),
-				"hits" => 0
-			);
+			$this->resSuccess("请求成功", $res_data);
 		}
-		$data["name"] = $name;
-		$data["content"] = $content;		
-		$data["dataclass_id"] = intval($_REQUEST["dataclass_id"]);
-		$data["sort"] = intval($_REQUEST["sort"]);
-		$data["type"] = intval($_REQUEST["type"]);		
-		$data["picture"] = "";
 		
-		if($id != 0) {
-			$m->save($data);
-			$this->resSuccess("更新成功");
+		$this->display();
+	}
+	
+	public function data_add() {
+				
+		$id = I("request.id", 0, "intval");
+				
+		$row = NULL;
+		if($id) {
+			$row = D("Data")->where("id = " . $id)->find();			
 		}
 		else {
-			$m->add($data);
-			$this->resSuccess("添加成功");
+			$row = array(
+				"id" => 0,
+				"name" => "",
+				"content" => "",
+				"dataclass_id" => 0,
+				"sort" => 0,
+				"type" => I("request.type", 0, "intval"),
+				"picture" => ""
+			);			
 		}
+		
+		if(IS_POST) {
+			
+			$row["name"] = I("post.name", "", "str_filter");
+			$row["content"] = I("post.content", "", "str_filter");	
+			$row["dataclass_id"] = I("post.dataclass_id", 0, "intval");
+			$row["sort"] = I("post.sort", 0, "intval");
+			$row["type"] = I("post.type", 0, "intval");		
+			$row["picture"] = "";
+			
+			if(!$row["name"])
+				$this->resFail(1, "名称不能为空");
+			elseif(!$row["content"])
+				$this->resFail(1, "内容不能为空");
+			
+			if($id != 0) {
+				
+				D("Data")->save($row);
+				$this->resSuccess("更新成功");
+			}
+			else {
+				unset($row["id"]);
+				$row["add_time"] = time();
+				D("Data")->add($row);
+				$this->resSuccess("添加成功");
+			}
+		}
+		
+		$this->assign("row", $row);		
+		$this->display();
 	}
 	
-	function ajax_data_del() {
-		//需要登录才可以访问
-		if(!session("?sess_admin"))
-			$this->resFail(1, "需要登录才可以访问");
+	public function data_del() {
+		$id = I("request.id", 0, "intval");
+		D("Data")->where("id = " . $id)->delete();
+		$this->resSuccess("删除成功");	
+	}
+	
+	public function feedback_list() {
+		$get_data = I("request.get_data", NULL);
+		if($get_data) {
+			$page = I("request.page", 1, "intval");
+			$page_size = I("request.page_size", C("WEB_PAGE_SIZE"), "intval");
+			$res_data = D("Feedback")->getList($page, $page_size);
 			
-		$id = intval($_REQUEST["id"]);
-		$m = M("Data");
-		$m->where("id = " . $id)->delete();
+			$this->resSuccess("请求成功", $res_data);
+		}
+		$this->display();
+	}
+	
+	public function feedback_del() {
+		$id = I("request.id", 0, "intval");
+		D("Feedback")->where("id = " . $id)->delete();
+		$this->resSuccess("删除成功");	
+	}
+	
+	public function friendlink() {
+		//这个方法没有命名friendlink_list是因为左边的菜单列表需要跟friendlink_add的url匹配
+		
+		$page = I("request.page", 1, "intval");
+		$page_size = I("request.page_size", C("WEB_PAGE_SIZE"), "intval");
+		$res_data = D("Friendlink")->getList($page, $page_size);
+		$this->assign("data", $res_data);
+			
+		$this->display();
+	}
+	
+	public function friendlink_add() {
+		$id = I("request.id", 0, "intval");
+				
+		$row = NULL;
+		if($id) {
+			$row = D("Friendlink")->where("id = " . $id)->find();			
+		}
+		else {
+			$row = array(
+				"id" => 0,
+				"name" => "",
+				"url" => "",
+				"picture" => "",
+				"sort" => 0,
+				"is_picture" => 0
+			);			
+		}
+		
+		if(IS_POST) {
+			
+			$row["name"] = I("post.name", "", "str_filter");
+			$row["url"] = I("post.url", "", "str_filter");	
+			$row["picture"] = I("post.picture", "", "str_filter");
+			$row["sort"] = I("post.sort", 0, "intval");
+			$row["is_picture"] = I("post.is_picture", 0, "intval");
+			
+			if(!$row["name"])
+				$this->resFail(1, "名称不能为空");
+			elseif(!$row["url"])
+				$this->resFail(1, "URL不能为空");
+			
+			if($id != 0) {
+				
+				D("Friendlink")->save($row);
+				$this->resSuccess("更新成功");
+			}
+			else {
+				unset($row["id"]);
+				D("Friendlink")->add($row);
+				$this->resSuccess("添加成功");
+			}
+		}
+		
+		$this->assign("row", $row);
+		$this->display();
+	}
+	
+	public function friendlink_del() {
+		$id = I("request.id", 0, "intval");
+		D("Friendlink")->where("id = " . $id)->delete();
 		$this->resSuccess("删除成功");	
 	}
 	

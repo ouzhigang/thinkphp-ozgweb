@@ -1,35 +1,75 @@
-﻿
-$(function() {
-	
-	$("#btn_submit").click(function() {
+
+var alert_dialog = null;
+
+require(
+	[ "config" ], 
+	function () {
+		require([ "admin.admin_add" ]);
+	}), 
+	define("admin.admin_add", [ "jquery", "jquery_ui", "jquery_validate", "bootstrap", "metisMenu", "sb_admin_2", "md5", "common" ], function ($) {
+		page_init();
 		
-		var name = $("#name").val();
-		var pwd = $("#pwd").val();
-		var pwd2 = $("#pwd2").val();
+		//dialog
+		alert_dialog = ready_alert_dialog();
 		
-		var msg = "";
-		if(name == "")
-			msg += "用户名不能为空\n";
-		if(pwd == "")
-			msg += "密码不能为空\n";
-		else if(pwd != pwd2)
-			msg += "确认密码不正确\n";
-		
-		if(msg != "")
-			alert(msg);
-		else {
-			$.getJSON(
-				"ajax_admin_add?name=" + encodeURIComponent(name) + "&pwd=" + pwd + "&pwd2=" + pwd2 + "&random=" + Math.random(),
-				function(data) {
-					if(data.code == 1) {
-						alert(data.desc);
-						return;
-					}
-					$("#center-column").load("../../Public/simple/admin_templates/admin_list.html?random=" + Math.random());
+		$("#main_form").validate({
+			rules: {
+				name: {
+					required: true,
+					minlength: 5
+				},
+				pwd: {
+					required: true,
+					minlength: 5,
+					equalTo: "#pwd2"
 				}
-			);
-		}
+			},
+			messages: {
+				name: {
+					required: "没有填写用户名",
+					minlength: $.validator.format("用户名不能小于{0}个字符")
+				},
+				pwd: {
+					required: "没有填写密码",
+					minlength: "密码不能小于{0}个字符",
+					equalTo: "两次输入密码不一致"
+				}
+			},
+			submitHandler: function(form) {
+				
+				$("#pwd").val(hex_md5($("#pwd").val()));
+				$("#pwd2").val(hex_md5($("#pwd2").val()));
+				
+				var data = {
+					name: $("#name").val(),
+					pwd: hex_md5($("#pwd").val()),
+					pwd2: hex_md5($("#pwd2").val())
+				};
+				
+				$.ajax({
+					url: "admin_add",
+					type: "post",
+					dataType: "json",
+					data: data,
+					beforeSend: function() {
+						$("#btn_submit").attr("disabled", true);
+					},
+					success: function(res, status) {
+						if(res.code == 0) {
+							
+							location.href = "admin_list";
+						}
+						else {
+							$("#dialog_message").html(res.desc);
+							alert_dialog.dialog("open");
+						}
+					},
+					complete: function() {
+						$("#btn_submit").attr("disabled", false);
+					}
+				});
+			}
+		});
 		
-	});
-	
-});
+	}
+);

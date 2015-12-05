@@ -1,62 +1,97 @@
-﻿
-$(function() {
-	
-	//获取分类数据
-	$.getJSON(
-		"ajax_dataclass_list?type=" + get_menu_param("type") + "&random=" + Math.random(),
-		function(data) {
-			show_data(data.data);
-			
-			if(get_menu_param("id")) {
-				//编辑状态
-				$.getJSON(
-					"ajax_dataclass_get?id=" + get_menu_param("id") + "&random=" + Math.random(),
-					function(data) {
-						$("#title").html("修改分类");
-						
-						$("#name").val(data.data.name);
-						$("#dataclass").val(data.data.parent_id);
-						$("#sort").val(data.data.sort);
-						
-						$("#btn_submit").val("更新");
+
+require(
+	[ "config" ], 
+	function () {
+		require([ "admin.dataclass_add" ]);
+	}), 
+	define("admin.dataclass_add", [ "jquery", "jquery_ui", "jquery_validate", "jquery_LinkageList", "bootstrap", "metisMenu", "sb_admin_2", "md5", "utility", "common" ], function ($) {
+		page_init();
+		
+		//dialog
+		var alert_dialog = ready_alert_dialog();
+		
+		$("#main_form").validate({
+			rules: {
+				name: {
+					required: true
+				},
+				sort: {
+					required: true,
+					digits: true
+				}				
+			},
+			messages: {
+				name: {
+					required: "没有填写名称"
+				},
+				sort: {
+					required: "没有填写排序",
+					number: "请输入整数"
+				}				
+			},
+			submitHandler: function(form) {
+				
+				var data = {
+					id: $("#id").val(),
+					name: $("#name").val(),
+					sort: $("#sort").val(),
+					parent_id: $("#parent_id").val(),
+					type: $("#type").val()
+				};
+				
+				$.ajax({
+					url: "dataclass_add",
+					type: "post",
+					dataType: "json",
+					data: data,
+					beforeSend: function() {
+						$("#btn_submit").attr("disabled", true);
+					},
+					success: function(res, status) {
+						if(res.code == 0) {
+							
+							location.href = "dataclass_list?type=" + $("#type").val();
+						}
+						else {
+							$("#dialog_message").html(res.desc);
+							alert_dialog.dialog("open");
+						}
+					},
+					complete: function() {
+						$("#btn_submit").attr("disabled", false);
 					}
-				);
+				});
+				
 			}
-		}
-	);
-	
-	//提交按钮
-	$("#btn_submit").click(function() {
+		});
 		
-		var msg = "";
-		if($("#name").val() == "")
-			msg += "名称不能为空\n";
-		
-		if(msg != "")
-			alert(msg);
-		else {
-			var url = null;
-			if(get_menu_param("id"))
-				url = "ajax_dataclass_add?id=" + get_menu_param("id") + "&name=" + encodeURIComponent($("#name").val()) + "&parent_id=" + $("#dataclass").val() + "&sort=" + $("#sort").val() + "&type=" + get_menu_param("type") + "&random=" + Math.random();
-			else
-				url = "ajax_dataclass_add?name=" + encodeURIComponent($("#name").val()) + "&parent_id=" + $("#dataclass").val() + "&sort=" + $("#sort").val() + "&type=" + get_menu_param("type") + "&random=" + Math.random();
+		//无限级下拉框
+		var data = {
+			type: getUrlParam("type")		
 			
-			$.getJSON(
-				url,
-				function(data) {
-					
-					if(data.code == 1)
-						alert(data.desc);
-					else {
-						//重置参数
-						$("#menu_param").val("type:" + get_menu_param("type"));
-						$("#center-column").load("../../Public/simple/admin_templates/dataclass_list.html?random=" + Math.random());
-					}
-						
-				}
-			);
-		}	
+		};
+		$.ajax({
+			url: "dataclass_gettree",
+			type: "get",
+			dataType: "json",
+			data: data,
+			beforeSend: function() {
+				
+			},
+			success: function(res, status) {				
+				$("#parent").LinkageList(res.data, {
+					objId: "parent",
+					inputObjId: "parent_id",
+					css: "form-control",
+					style: "width: 20%; margin-right: 10px;",
+					selectedValue: $("#parent_selected").val() == "0" ? null : $("#parent_selected").val()
+				});
+				
+			},
+			complete: function() {
+				
+			}
+		});
 		
-		return false;
-	});	
-});
+	}
+);

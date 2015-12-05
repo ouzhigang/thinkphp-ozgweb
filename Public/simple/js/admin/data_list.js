@@ -1,128 +1,125 @@
-﻿
-var curr_page = 1; //当前页
-var request_data = true; //这个变量是为了防止请求完数据后，更新分页导航数据时反复请求数据
 
-function show_data(list) {
-	$(".listing > tbody").empty();
-	
-	//title部分
-	var item_str = '<tr>';
-	item_str += '<th class="first" width="30%">名称</th>';
-	item_str += '<th width="20%">类别</th>';
-	item_str += '<th width="25%">时间</th>';
-	item_str += '<th width="10%">点击</th>';
-	item_str += '<th class="last" width="15%">操作</th>';
-	item_str += '</tr>';
-	$(".listing > tbody").append(item_str);
-	
-	for(var i in list) {
-		var item = list[i];
-		
-		item_str = '<tr class="bg">';
-		item_str += '<td class="first style1">' + item.name + '</td>';
-		item_str += '<td>' + item.dc_name + '</td>';
-		item_str += '<td>' + item.add_time + '</td>';
-		item_str += '<td>' + item.hits + '</td>';
-		item_str += '<td class="last"><a href="#" class="btn_edit" id="btn_edit_' + item.id + '">编辑</a> <a href="#" class="btn_del" id="btn_del_' + item.id + '">删除</a></td>';
-		item_str += '</tr>';
-		$(".listing > tbody").append(item_str);
-	}
-	
-	//编辑按钮
-	$(".btn_edit").click(function() {
-		
-		var id = $(this).attr("id").split("_")[2];
-		var page = curr_page;
-		$("#menu_param").val("type:" + get_menu_param("type") + ",id:" + id + ",page:" + page);
-		
-		$("#center-column").load("../../Public/simple/admin_templates/data_add.html?random=" + Math.random());
-		
-		return false;
-	});
-	
-	//删除按钮
-	$(".btn_del").click(function() {
-		if(confirm("确认删除吗？")) {
-			var id = $(this).attr("id").split("_")[2];
-			$.getJSON(
-				"ajax_data_del?id=" + id + "&random=" + Math.random(),
-				function(data) {
-					do_page();
-				}
-			);
-		}
-		return false;
-	});
-	
-}
+var curr_page = 1;
+var page_count = 1;
+var alert_dialog;
 
-function update_page_nav(data) {
-				
-	if(get_menu_param("page")) {
-		//获取了当前页后，需要把已保存的当前页删除
-		curr_page = get_menu_param("page");
-		$("#menu_param").val("type:" + get_menu_param("type"));
-	}
+function show_data(page) {
 	
-	var opt = {
-		callback: function(page_index, jq) {
-			curr_page = page_index + 1;
-			if(request_data) {
-				request_data = false;
-				do_page();
-			}
-			else
-				request_data = true;
-			return false;
+	var data = {
+		get_data: 1,
+		type: getUrlParam("type"),
+		page: page
+	};	
+	$.ajax({
+		url: "data_list",
+		type: "get",
+		dataType: "json",
+		data: data,
+		beforeSend: function() {
+			
 		},
-		items_per_page: data.page_size,
-		current_page: curr_page - 1,
-		num_edge_entries: 1
-	};
-	
-	$("#Pagination").pagination(data.total, opt);
-}
-
-function do_page() {
-	$.getJSON(
-		"ajax_data_list?type=" + get_menu_param("type") + "&page=" + curr_page + "&random=" + Math.random(),
-		function(data) {
-			show_data(data.data.list);
-			update_page_nav(data.data);
-		}
-	);
-}
-
-$(function() {
-	
-	var url = null;
-	if(get_menu_param("page")) {
-		curr_page = get_menu_param("page");
-		url = "ajax_data_list?type=" + get_menu_param("type") + "&page=" + get_menu_param("page") + "&random=" + Math.random();
-	}
-	else
-		url = "ajax_data_list?type=" + get_menu_param("type") + "&random=" + Math.random();
-
-	$.getJSON(
-		url,
-		function(data) {
-			if(data.data.page_count == 1) {
-				$(".pagetable").hide(); //只有一页的话就不显示分页导航
+		success: function(res, status) {
+			if(res.code == 0) {
 				
-				show_data(data.data.list);
+				$("#datalist > tbody").empty();
+				for(var i = 0; i < res.data.list.length; i++) {				
+					var row = "<tr>";
+					row += "<td>" + res.data.list[i].id + "</td>"
+					row += "<td>" + res.data.list[i].name + "</td>";
+					row += "<td>" + res.data.list[i].dc_name + "</td>";
+					row += "<td>" + res.data.list[i].hits + "</td>";
+					row += "<td>" + res.data.list[i].add_time + "</td>";
+					row += "<td>";
+					row += "<button class=\"btn btn-outline btn-link\" type=\"button\" id=\"btn_edit_" + res.data.list[i].id + "\" req-data=\"type=" + res.data.list[i].type + "&id=" + res.data.list[i].id + "&page=" + page + "\">编辑</button>";
+					row += "<button class=\"btn btn-outline btn-link\" type=\"button\" id=\"btn_del_" + res.data.list[i].id + "\" req-data=\"id=" + res.data.list[i].id + "\">删除</button>";
+					row += "</td>";
+					row += "</tr>";
+					
+					$("#datalist > tbody").append(row);
+				}
+				
+				page = res.data.page;
+				page_count = res.data.page_count;
+				$("#page").html(page);
+				$("#page_count").html(page_count);
+				
+				$("button[id ^= 'btn_edit_']").click(function() {
+					location.href = "data_add?" + $(this).attr("req-data");
+				});
+				
+				//点击删除
+				$("button[id ^= 'btn_del_']").click(function() {
+					var btndel = $(this);
+					var conform_dialog = ready_confirm_dialog(function() {
+						$.ajax({
+							url: "data_del",
+							type: "get",
+							dataType: "json",
+							data: btndel.attr("req-data"),
+							beforeSend: function() {
+								btndel.attr("disabled", true);
+							},
+							success: function(res, status) {
+								if(res.code == 0) {
+									
+									show_data(curr_page);
+								}
+								else {							
+									$("#dialog_message").html(res.desc);
+									alert_dialog.dialog("open");
+								}
+							},
+							complete: function() {
+								conform_dialog.dialog("close");
+							}
+						});
+					});
+					$("#dialog_message").html("确定删除吗？");
+					conform_dialog.dialog("open");
+					conform_dialog.parent().prev().css('z-index', 9998);
+					conform_dialog.parent().css('z-index', 9999);
+					
+				});
 			}
-			else {
-				show_data(data.data.list);
-				update_page_nav(data.data);
-			}
+		},
+		complete: function() {
+			
 		}
-	);
-	
-	//添加按钮
-	$("#add_btn").click(function() {
-		$("#menu_param").val("type:" + get_menu_param("type"));
-		$("#center-column").load("../../Public/simple/admin_templates/data_add.html?random=" + Math.random());
-		return false;
 	});
 	
-});
+}
+
+require(
+	[ "config" ], 
+	function () {
+		require([ "admin.data_list" ]);
+	}), 
+	define("admin.data_list", [ "jquery", "jquery_ui", "bootstrap", "metisMenu", "sb_admin_2", "md5", "common", "utility" ], function ($) {
+		page_init();
+		
+		//dialog
+		alert_dialog = ready_alert_dialog();
+		
+		show_data(curr_page);		
+		$("#page_first").click(function() {
+			curr_page = 1;		
+			show_data(curr_page);	
+		});
+		$("#page_prev").click(function() {
+			curr_page--;
+			if(curr_page < 1)
+				curr_page = 1;
+			show_data(curr_page);	
+		});
+		$("#page_next").click(function() {
+			curr_page++;
+			if(curr_page > page_count)
+				curr_page = page_count;
+			show_data(curr_page);
+		});
+		$("#page_last").click(function() {
+			curr_page = page_count;		
+			show_data(page_count);	
+		});		
+	}
+);

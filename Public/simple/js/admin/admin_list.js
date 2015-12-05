@@ -1,96 +1,131 @@
-﻿
-var curr_page = 1; //当前页
-var request_data = true; //这个变量是为了防止请求完数据后，更新分页导航数据时反复请求数据
 
-function show_data(list) {
-	$(".listing > tbody").empty();
+var curr_page = 1;
+var page_count = 1;
+var alert_dialog;
 
-	//title部分
-	var item_str = '<tr>';
-	item_str += '<th class="first" width="40%">登录名</th>';
-	item_str += '<th width="30%">加入时间</th>';
-	item_str += '<th class="last" width="30%">操作</th>';
-	item_str += '</tr>';
-	$(".listing > tbody").append(item_str);
+function show_data(page) {
 	
-	for(var i in list) {
-		var item = list[i];
-		
-		item_str = '<tr class="bg">';
-		item_str += '<td class="first style1">' + item.name + '</td>';
-		item_str += '<td>' + item.add_time + '</td>';
-		item_str += '<td class="last"><a href="#" class="btn_del" id="btn_del_' + item.id + '">删除</a></td>';
-		item_str += '</tr>';
-		$(".listing > tbody").append(item_str);
-	}
-	
-	//删除按钮
-	$(".btn_del").click(function() {
-		if(confirm("确认删除吗？")) {
-			var id = $(this).attr("id").split("_")[2];
-			$.getJSON(
-				"ajax_admin_del?id=" + id + "&random=" + Math.random(),
-				function(data) {
-					do_page();
-				}
-			);
-		}
-		return false;
-	});
-}
-
-function update_page_nav(data) {
-	
-	var opt = {
-		callback: function(page_index, jq) {
-			curr_page = page_index + 1;
-			if(request_data) {
-				request_data = false;
-				do_page();
-			}
-			else
-				request_data = true;
-			return false;
-		},
-		items_per_page: data.page_size,
-		current_page: curr_page - 1,
-		num_edge_entries: 1
+	var data = {
+		get_data: 1,
+		page: page
 	};
 	
-	$("#Pagination").pagination(data.total, opt);
-}
-
-function do_page() {
-	$.getJSON(
-		"ajax_admin_list?page=" + curr_page + "&random=" + Math.random(),
-		function(data) {
-			show_data(data.data.list);
-			update_page_nav(data.data);			
-		}
-	);
-}
-
-$(function() {
-
-	$.getJSON(
-		"ajax_admin_list?random=" + Math.random(),
-		function(data) {
-			if(data.data.page_count == 1) {
-				$(".pagetable").hide(); //只有一页的话就不显示分页导航
+	$.ajax({
+		url: "admin_list",
+		type: "get",
+		dataType: "json",
+		data: data,
+		beforeSend: function() {
+			
+		},
+		success: function(res, status) {
+			if(res.code == 0) {
 				
-				show_data(data.data.list);
+				$("#datalist > tbody").empty();
+				for(var i = 0; i < res.data.list.length; i++) {				
+					var row = "<tr>";
+					row += "<td>" + res.data.list[i].id + "</td>"
+					row += "<td>" + res.data.list[i].name + "</td>";
+					row += "<td>" + res.data.list[i].add_time + "</td>";
+					row += "<td>";
+					row += "<button class=\"btn btn-outline btn-link\" type=\"button\" id=\"btn_del_" + res.data.list[i].id + "\">删除</button>";
+					row += "</td>";
+					row += "</tr>";
+					
+					$("#datalist > tbody").append(row);
+				}
+				
+				page = res.data.page;
+				page_count = res.data.page_count;				
+				$("#page").html(page);
+				$("#page_count").html(page_count);
+				
+				//点击删除
+				$("button[id ^= 'btn_del_']").click(function() {
+					
+					var id = $(this).attr("id").split("_");
+					id = id[id.length - 1];
+					
+					var data = {
+						id: id
+					};
+					
+					var btndel = $(this);
+					var conform_dialog = ready_confirm_dialog(function() {
+						$.ajax({
+							url: "admin_del",
+							type: "get",
+							dataType: "json",
+							data: data,
+							beforeSend: function() {
+								btndel.attr("disabled", true);
+							},
+							success: function(res, status) {
+								if(res.code == 0) {
+									
+									show_data(curr_page);
+								}
+								else {
+									conform_dialog.dialog("close");
+									
+									btndel.attr("disabled", false);
+									
+									alert_dialog = ready_alert_dialog();
+									$("#dialog_message").html(res.desc);
+									alert_dialog.dialog("open");
+								}
+							},
+							complete: function() {
+								
+							}
+						});
+					});
+					$("#dialog_message").html("确定删除吗？");
+					conform_dialog.dialog("open");
+					conform_dialog.parent().prev().css('z-index', 9998);
+					conform_dialog.parent().css('z-index', 9999);
+					
+				});
 			}
-			else {
-				show_data(data.data.list);				
-				update_page_nav(data.data);
-			}
+		},
+		complete: function() {
+			
 		}
-	);
-	
-	//添加按钮
-	$("#add_btn").click(function() {
-		$("#center-column").load("../../Public/simple/admin_templates/admin_add.html?random=" + Math.random());
-		return false;
 	});
 	
-});
+}
+
+require(
+	[ "config" ], 
+	function () {
+		require([ "admin.admin_list" ]);
+	}), 
+	define("admin.admin_list", [ "jquery", "jquery_ui", "bootstrap", "metisMenu", "sb_admin_2", "md5", "common" ], function ($) {
+		page_init();
+		
+		//dialog
+		alert_dialog = ready_alert_dialog();
+		
+		show_data(curr_page);		
+		$("#page_first").click(function() {
+			curr_page = 1;		
+			show_data(curr_page);	
+		});
+		$("#page_prev").click(function() {
+			curr_page--;
+			if(curr_page < 1)
+				curr_page = 1;
+			show_data(curr_page);	
+		});
+		$("#page_next").click(function() {
+			curr_page++;
+			if(curr_page > page_count)
+				curr_page = page_count;
+			show_data(curr_page);
+		});
+		$("#page_last").click(function() {
+			curr_page = page_count;		
+			show_data(page_count);	
+		});		
+	}
+);

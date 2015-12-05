@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include file="./Application/Simple/View/Common/header.html" />	
+	
+	<!-- DataTables CSS -->
+    <link href="{$Think.config.WEB_RES_ROOT}simple/startbootstrap-sb-admin-2/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" />
+
+    <!-- DataTables Responsive CSS -->
+    <link href="{$Think.config.WEB_RES_ROOT}simple/startbootstrap-sb-admin-2/bower_components/datatables-responsive/css/responsive.dataTables.scss" rel="stylesheet" />
+	
+</head>
+
+<body>
+    <div id="wrapper">
+		<include file="./Application/Simple/View/Common/dialog.html" />
+		
+        <!-- Navigation -->
+        <include file="./Application/Simple/View/Common/navbar.html" />
+
+        <div id="page-wrapper">
+            <!-- 内容部分 -->
+			
+			<div class="row" id="first_row">
+                <div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">管理员列表</div>
+                        <div class="panel-body">
+							
+							<div class="table-responsive">
+                                <table class="table table-hover" id="datalist">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>用户名</th>
+                                            <th>加入时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>										
+                                    </tbody>
+                                </table>
+                            </div>
+							
+							<div id="page_nav">
+								<span id="page_index">页次 <span id="page">1</span> / <span id="page_count">10</span></span>
+								<button class="btn btn-outline btn-link" type="button" id="page_first">首页</button>
+								<button class="btn btn-outline btn-link" type="button" id="page_prev">上一页</button>
+								<button class="btn btn-outline btn-link" type="button" id="page_next">下一页</button>
+								<button class="btn btn-outline btn-link" type="button" id="page_last">末页</button>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+	<script src="{$Think.config.WEB_RES_ROOT}simple/js/require.min.js" data-main="{$Think.config.WEB_RES_ROOT}simple/js/admin/admin_list"></script>
+	
+</body>
+
+</html>

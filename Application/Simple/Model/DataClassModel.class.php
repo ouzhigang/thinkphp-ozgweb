@@ -1,46 +1,97 @@
 <?php
 namespace Simple\Model;
-use Think\Model;
 
-class DataClassModel extends Model {
+class DataClassModel extends BaseModel {
     
-	static function deleteById($id) {
-		$m = M("DataClass");
-		$dc_list = $m->where("parent_id = " . $id)->select();
+	public function deleteById($id) {
+		$dc_list = $this->where("parent_id = " . $id)->select();
 		foreach($dc_list as $v) {
-			$child_count = $m->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
+			$child_count = $this->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
 			$child_count = $child_count["total"];
 			if($child_count > 0)
-				self::deleteById($v["id"]);
+				$this->deleteById($v["id"]);
 			
 			//删除该分类下面的对应数据
-			$m2 = M("Data");
-			$m2->where("dataclass_id = " . $v["id"])->delete();
-			$m->where("id = " . $v["id"])->delete();
+			D("Data")->where("dataclass_id = " . $v["id"])->delete();
+			$this->where("id = " . $v["id"])->delete();
 		}
 		
 	}
 	
-	static function getById($id) {		
-		$m = M("DataClass");
-		$dataclass = $m->where("id = " . $id)->find();
+	public function getById($id) {
+		$dataclass = $this->where("id = " . $id)->find();
 		if($dataclass["parent_id"] != 0)
-			$dataclass["parent"] = self::getById($dataclass["parent_id"]);
+			$dataclass["parent"] = $this->getById($dataclass["parent_id"]);
 		return $dataclass;
 	}
 	
-	static function listById($id) {
-		$m = M("DataClass");
-		
-		$dc_list = $m->where("parent_id = " . $id)->order("sort desc, id desc")->select();
+	public function listById($id) {		
+		$dc_list = $this->where("parent_id = " . $id)->order("sort desc, id desc")->select();
 		foreach($dc_list as &$v) {
-			$child_count = $m->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
+			$child_count = $this->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
 			$child_count = $child_count["total"];
 			if($child_count > 0)
-				$v["children"] = self::listById($v["id"]);
+				$v["children"] = $this->listById($v["id"]);
 			
 		}
 		return $dc_list;
 	}
 	
+	/*public function getTreeSelector($type) {
+		$data = array();
+		$list = $this->where("parent_id = 0 and type = " . $type)->order("sort desc, id desc")->select();
+		
+		foreach($list as &$v) {
+						
+			$res = $this->where("parent_id = " . $v["id"])->count();
+			if($res > 0) {
+				$this->treeSelector($v);
+			}
+			
+			$data[] = $v;
+		}
+		return $data;
+	}	
+	protected function treeSelector(&$parent_row) {
+		
+		$list = $this->where("parent_id = " . $parent_row["id"])->order("sort desc, id desc")->select();
+				
+		foreach($list as &$v) {
+			$res = $this->where("parent_id = " . $v["id"])->count();
+			if($res > 0) {
+				$this->treeSelector($v);
+			}			
+		}
+		$parent_row["children"] = $list;
+	}*/
+
+	public function getTreeSelector($type) {
+		$data = array();
+		$list = $this->where("parent_id = 0 and type = " . $type)->order("sort desc, id desc")->select();
+		foreach($list as $v) {
+			$data[] = array(
+				"id" => intval($v["id"]),
+				"parent_id" => 0,
+				"name" => $v["name"]
+			);
+			$res = $this->where("parent_id = " . $v["id"])->count();
+			if($res) {
+				$this->treeSelector($data, $v["id"]);
+			}
+		}
+		return $data;
+	}
+	
+	protected function treeSelector(&$data, $parent_id) {
+		$list = $this->where("parent_id = " . $parent_id)->order("sort desc, id desc")->select();
+		foreach($list as $item) {
+			$data[] = array(
+				"id" => intval($item["id"]),
+				"parent_id" => intval($item["parent_id"]),
+				"name" => $item["name"]
+			);
+			$this->treeSelector($data, $item["id"]);
+		}
+	}
+
 }

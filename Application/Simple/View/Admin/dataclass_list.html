@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<include file="./Application/Simple/View/Common/header.html" />	
+	<link href="{$Think.config.WEB_RES_ROOT}simple/css/admin/dataclass_list.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div id="wrapper">
+		<include file="./Application/Simple/View/Common/dialog.html" />
+		
+        <!-- Navigation -->
+        <include file="./Application/Simple/View/Common/navbar.html" />
+
+        <div id="page-wrapper">
+            <!-- 内容部分 -->
+			
+			<div class="row" id="first_row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">分类列表</div>
+                        <div class="panel-body">
+							<input type="hidden" id="type" name="type" value="{$Think.request.type}" />
+							<ul class="list-unstyled" id="datalist"></ul>							
+						</div>
+					</div>
+				</div>
+			</div>
+			
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+	<script src="{$Think.config.WEB_RES_ROOT}simple/js/require.min.js" data-main="{$Think.config.WEB_RES_ROOT}simple/js/admin/dataclass_list"></script>
+	
+</body>
+
+</html>

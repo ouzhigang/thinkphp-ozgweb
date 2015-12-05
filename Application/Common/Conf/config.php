@@ -1,7 +1,7 @@
 <?php
-return array(	
-	"jquery" => "http://libs.useso.com/js/jquery/2.1.1/jquery.min.js",
-	
+return array(
+	"WEB_RES_ROOT" => "http://localhost:8080/thinkphp-ozgweb/Public/",
+	'URL_CASE_INSENSITIVE'  => true,
 	'MODULE_ALLOW_LIST' => array (
 		'Simple',
 	),
