@@ -45,7 +45,10 @@ class BaseController extends Controller {
 		}
 		
 		//公用部分
-		$this->assign("admin_path", dirname(__APP__) . "/" . strtolower(MODULE_NAME) . "/" . strtolower(CONTROLLER_NAME));
+		if(strpos($_SERVER["HTTP_REFERER"], "index.php") === false)
+			$this->assign("admin_path", dirname(__APP__) . strtolower(MODULE_NAME) . "/" . strtolower(CONTROLLER_NAME));
+		else
+			$this->assign("admin_path", dirname(__APP__) . "/index.php/" . strtolower(MODULE_NAME) . "/" . strtolower(CONTROLLER_NAME));
 	}
 	
 	protected function res($res_code, $desc, $data = NULL) {
