@@ -5,7 +5,7 @@
 ckeditor需要自行下载，对应目录thinkphp-ozgweb/Public/simple/ckeditor
 
 
-sb-admin2需要自行下载，https://github.com/IronSummitMedia/startbootstrap-sb-admin-2-gh-pages ，对应目录thinkphp-ozgweb/Public/simple/startbootstrap-sb-admin-2-gh-pages
+sb-admin2需要自行下载，https://github.com/BlackrockDigital/startbootstrap-sb-admin-2 ，对应目录thinkphp-ozgweb/Public/simple/startbootstrap-sb-admin-2-gh-pages
 
 
 thinkphp需要自行下载，然后把ThinkPHP复制到本网站的根目录，对应目录thinkphp-ozgweb/ThinkPHP
