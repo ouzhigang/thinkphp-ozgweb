@@ -104,7 +104,7 @@ class UserModel extends BaseModel {
 			);
 		}
 		
-		$result = D("User")->where("id = " . $id)->delete();
+		$result = $this->where("id = " . $id)->delete();
 		if($result) {
 			return array(
 				"code" => 0,
