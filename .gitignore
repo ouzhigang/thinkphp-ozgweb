@@ -1,3 +1,5 @@
-
-ThinkPHP/
-Application/Runtime/
+.idea
+composer.lock
+*.log
+thinkphp/
+runtime/
