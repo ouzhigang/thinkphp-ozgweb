@@ -17,13 +17,13 @@ class User extends Base {
 		foreach($list as &$v)
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
 		
-		$r = array(
+		$r = [
 			"page_size" => $page_size,
 			"page_count" => $page_count,
 			"total" => intval($total),
 			"page" => $page,
 			"list" => $list,
-		);		
+		];		
 		return $r;
 	}
 	
@@ -36,17 +36,17 @@ class User extends Base {
 			if($user["err_login"] >= 3) {
 				
 				if($vcode == "") {
-					return array(
+					return [
 						"code" => 2
-					);
+					];
 				}
 				else {
 					$verify = new \Think\Verify();
 					if(!$verify->check($vcode, 1)) {
-						return array(
+						return [
 							"code" => 1, 
 							"desc" => "验证码错误"
-						);
+						];
 					}
 				}
 			}
@@ -62,14 +62,14 @@ class User extends Base {
 				if($remember == 1) {
 					$curr_user_name = \Common\Encrypt::encode($user["name"]);
 					
-					cookie('curr_user_name', $curr_user_name, array('expire' => 86400 * 7)); //保存7天
+					cookie('curr_user_name', $curr_user_name, ['expire' => 86400 * 7]); //保存7天
 					//echo $curr_user_name;exit();
 				}
 				
-				$arr = array(
+				$arr = [
 					"code" => 0, 
 					"desc" => "登录成功"
-				);
+				];
 			}
 			else {				
 				$user["err_login"] += 1;
@@ -77,19 +77,19 @@ class User extends Base {
 				unset($user["id"]);
 				$this->where("id = " . $id)->save($user);
 				
-				$arr = array(
+				$arr = [
 					"code" => 1, 
 					"desc" => "密码错误"
-				);
+				];
 			}		
 			
 			return $arr;
 		}
 		else {
-			$arr = array(
+			$arr = [
 				"code" => 1, 
 				"desc" => "没有此用户"
-			);
+			];
 			return $arr;
 		}
 	}
@@ -98,24 +98,24 @@ class User extends Base {
 		
 		$user = session("user");
 		if($user["id"] == $id) {
-			return array(
+			return [
 				"code" => 1,
 				"desc" => "不能删除自己"
-			);
+			];
 		}
 		
 		$result = $this->where("id = " . $id)->delete();
 		if($result) {
-			return array(
+			return [
 				"code" => 0,
 				"desc" => "删除成功"
-			);
+			];
 		}
 		
-		return array(
+		return [
 			"code" => 1,
 			"desc" => "删除失败"
-		);
+		];
 	}
 	
 	//退出登录
@@ -126,10 +126,10 @@ class User extends Base {
 		if(isset($_COOKIE["curr_user_name"]))
 			cookie("curr_user_name", null);
 			
-		return array(
+		return [
 			"code" => 0,
 			"desc" => "退出成功"
-		);
+		];
 	}
 	
 }

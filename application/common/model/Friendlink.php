@@ -15,13 +15,13 @@ class Friendlink extends Base {
 
 		$list = $this->order("id desc")->limit($offset . ", " . $limit)->select();
 		
-		$r = array(
+		$r = [
 			"page_size" => $page_size,
 			"page_count" => $page_count,
 			"total" => intval($total),
 			"page" => $page,
 			"list" => $list,
-		);		
+		];		
 		return $r;
 	}
 	

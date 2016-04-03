@@ -38,7 +38,7 @@ class DataClass extends Base {
 	}
 	
 	/*public function getTreeSelector($type) {
-		$data = array();
+		$data = [];
 		$list = $this->where("parent_id = 0 and type = " . $type)->order("sort desc, id desc")->select();
 		
 		foreach($list as &$v) {
@@ -66,14 +66,14 @@ class DataClass extends Base {
 	}*/
 
 	public function getTreeSelector($type) {
-		$data = array();
+		$data = [];
 		$list = $this->where("parent_id = 0 and type = " . $type)->order("sort desc, id desc")->select();
 		foreach($list as $v) {
-			$data[] = array(
+			$data[] = [
 				"id" => intval($v["id"]),
 				"parent_id" => 0,
 				"name" => $v["name"]
-			);
+			];
 			$res = $this->where("parent_id = " . $v["id"])->count();
 			if($res) {
 				$this->treeSelector($data, $v["id"]);
@@ -85,11 +85,11 @@ class DataClass extends Base {
 	protected function treeSelector(&$data, $parent_id) {
 		$list = $this->where("parent_id = " . $parent_id)->order("sort desc, id desc")->select();
 		foreach($list as $item) {
-			$data[] = array(
+			$data[] = [
 				"id" => intval($item["id"]),
 				"parent_id" => intval($item["parent_id"]),
 				"name" => $item["name"]
-			);
+			];
 			$this->treeSelector($data, $item["id"]);
 		}
 	}

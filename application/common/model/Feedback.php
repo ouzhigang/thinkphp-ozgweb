@@ -17,13 +17,13 @@ class Feedback extends Base {
 		foreach($list as &$v)
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
 		
-		$r = array(
+		$r = [
 			"page_size" => $page_size,
 			"page_count" => $page_count,
 			"total" => intval($total),
 			"page" => $page,
 			"list" => $list,
-		);		
+		];		
 		return $r;
 	}
 	
