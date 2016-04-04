@@ -4,5 +4,6 @@ return [
     'type' => 'sqlite',
     'dsn' => 'sqlite:simple.sqlite3',
     'charset' => 'utf8',
-	'prefix' => 'simple_',		
+	'prefix' => 'simple_',
+	'debug' => false
 ];
