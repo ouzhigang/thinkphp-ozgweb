@@ -60,7 +60,7 @@ class User extends Base {
 				$this->data($user)->save();
 				
 				if($remember == 1) {
-					$curr_user_name = \Common\Encrypt::encode($user["name"]);
+					$curr_user_name = \utility\Encrypt::encode($user["name"]);
 					
 					cookie('curr_user_name', $curr_user_name, ['expire' => 86400 * 7]); //保存7天
 					//echo $curr_user_name;exit();
