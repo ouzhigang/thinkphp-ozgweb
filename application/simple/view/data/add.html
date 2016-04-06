@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	{include file="common/header" /}
+	{include file="common/header_css" /}
+	<link href="{$Think.config.web_res_root}simple/css/data/add.css" rel="stylesheet" type="text/css" />
+	{include file="common/header_js" /}			
+	<script src="{$Think.config.web_res_root}simple/js/data/add.js"></script>
+</head>
+
+<body>
+    <div id="wrapper">
+		{include file="common/dialog" /}
+		
+        <!-- Navigation -->
+		{include file="common/navbar" /}
+
+        <div id="page-wrapper">
+            <!-- 内容部分 -->
+			
+			<div class="row" id="first_row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">添加/修改 数据</div>
+                        <div class="panel-body">
+                            
+							<form id="main_form" role="form">
+								<div class="form-group">
+									<table>
+										<tr>
+											<td class="title_column">
+												<label>名称：</label>
+											</td>
+											<td>
+												<input class="form-control" placeholder="请输入名称" id="name" name="name" value="{$row.name}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="title_column">
+												<label>类别：</label>
+											</td>
+											<td>
+												<input id="dataclass_selected" type="hidden" value="{$row.dataclass_id}" />
+												<div id="dataclass"></div>
+											</td>
+										</tr>
+										<tr>
+											<td class="title_column">
+												<label>排序：</label>
+											</td>
+											<td>
+												<input class="form-control" id="sort" name="sort" type="number" value="{$row.sort}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="title_column">
+												<label>内容：</label>
+											</td>
+											<td>
+												<textarea id="content" name="content">{$row.content}</textarea>							
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2">
+												<div class="btn_submit_div">
+													<input type="hidden" id="id" name="id" value="{$row.id}" />
+													<input type="hidden" id="type" name="type" value="{$row.type}" />
+													{if condition="$row.id eq 0"}
+													<input type="submit" id="btn_submit" class="btn btn-outline btn-primary" value="添加" />
+													{else}
+													<input type="submit" id="btn_submit" class="btn btn-outline btn-primary" value="更新" />
+													{/if}
+												</div>
+											</td>
+										</tr>
+									</table>									
+								</div>
+							</form>
+							
+                        </div>
+                    </div>
+                </div>
+            </div>
+			
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+	
+</body>
+
+</html>
