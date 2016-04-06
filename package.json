@@ -1,0 +1,13 @@
+{
+    "name": "thinkphp-ozgweb",
+    "version": "1.0.0",
+    "description": "thinkphp-ozgweb",
+    "main": "Gruntfile.js",
+    "author": "ozg",
+    "license": "GPL",
+    "devDependencies": {
+        "grunt": ">0.4.1",
+        "grunt-contrib-less": "~0.11.0",
+		"grunt-contrib-watch": "~0.6.1"
+    }
+}
