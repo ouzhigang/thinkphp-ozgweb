@@ -1,5 +1,0 @@
-
-$(function() {
-	page_init();
-	
-});
