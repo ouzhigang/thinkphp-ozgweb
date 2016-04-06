@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
-	<include file="./Application/Simple/View/Common/header.html" />		
-	
-	<!-- DataTables CSS -->
-    <link href="{$Think.config.WEB_RES_ROOT}simple/startbootstrap-sb-admin-2-gh-pages/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" />
-
-    <!-- DataTables Responsive CSS -->
-    <link href="{$Think.config.WEB_RES_ROOT}simple/startbootstrap-sb-admin-2-gh-pages/bower_components/datatables-responsive/css/responsive.dataTables.scss" rel="stylesheet" />
-	
-	<link href="{$Think.config.WEB_RES_ROOT}simple/css/admin/friendlink_list.css" rel="stylesheet" type="text/css" />
+	{include file="common/header" /}
+	{include file="common/header_css" /}
+	<link href="{$Think.config.web_res_root}simple/css/friendlink/getlist.css" rel="stylesheet" type="text/css" />
+	{include file="common/header_js" /}			
+	<script src="{$Think.config.web_res_root}simple/js/friendlink/getlist.js"></script>
 </head>
 
 <body>
     <div id="wrapper">
-		<include file="./Application/Simple/View/Common/dialog.html" />
+		{include file="common/dialog" /}
 		
         <!-- Navigation -->
-        <include file="./Application/Simple/View/Common/navbar.html" />
+		{include file="common/navbar" /}
 
         <div id="page-wrapper">
             <!-- 内容部分 -->
@@ -43,7 +39,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-										<foreach name="data.list" item="v">
+										{foreach $data.list as $v} 
                                         <tr>
                                             <td>
 												<h5>{$v.id}</h5>
@@ -55,18 +51,18 @@
 												<h5>{$v.url}</h5>
 											</td>
 											<td>
-												<if condition="$v.is_picture eq 1">
+												{if condition="$v.is_picture eq 1"}
 												<img src="{$v.picture}" width="88px" height="31px" />
-												<else />
+												{else}
 												无
-												</if>											
+												{/if}											
 											</td>
                                             <td>
 												<button type="button" class="btn btn-link" req-data="id={$v.id}" id="btnedit_{$v.id}">编辑</button>
 												<button type="button" class="btn btn-link" req-data="id={$v.id}" id="btndel_{$v.id}">删除</button>
 											</td>
                                         </tr>
-										</foreach>
+										{/foreach}
                                     </tbody>
                                 </table>
                             </div>
@@ -81,7 +77,6 @@
 
     </div>
     <!-- /#wrapper -->
-	<script src="{$Think.config.WEB_RES_ROOT}simple/js/require.min.js" data-main="{$Think.config.WEB_RES_ROOT}simple/js/admin/friendlink_list"></script>
 	
 </body>
 

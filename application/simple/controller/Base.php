@@ -9,49 +9,39 @@ class Base extends \app\common\controller\Base {
 	
 	protected function checkLogin() {
 		
-		$curr_action = strtolower(__ACTION__);
+		$curr_action = strtolower(ACTION_NAME);
+		$user = NULL;
 		
-		//忽略
-		$ignore_arr = array(
-			"/admin/getvcode"
-		);		
-		foreach($ignore_arr as $v) {
-			if(strpos($curr_action, $v) !== false)
-				return;
-		}
-		
-		//检查是否已登录
-		
+		//检查是否已登录		
 		if(!cookie("curr_user_name")) {
 			if(!session('?user')) {
 				if(strpos($curr_action, "/admin/login") === false) {
 					//没有登录
 					
-					header(strtolower("location: " . __ROOT__ . "/" . MODULE_NAME . "/admin/login"));
+					header(strtolower("location: " . C("web_root") . "/simple/index/login"));
+					exit();
 				}
 			}
 			else {
 				//如果是已登录状态，停留在登录页面的话，就跳到后台首页
 				if(strpos($curr_action, "/admin/login") !== false) {
-					header(strtolower("location: " . __ROOT__ . "/" . MODULE_NAME . "/admin/main"));
+					header(strtolower("location: " . C("web_root") . "/simple/index/main"));
+					exit();
 				}
+				
+				$user = session("user");
 			}
 		}
 		else {
-			$curr_user_name = \Common\Encrypt::decode(cookie("curr_user_name"));
+			$curr_user_name = \utility\Encrypt::decode(cookie("curr_user_name"));
 			
-			$where = array(
-				"name" => $curr_user_name
-			);
-			$user =  D("User")->where($where)->find();
+			$user =  D("User")->findByName($curr_user_name);
 			session("user", $user);
 		}
 		
-		//公用部分
-		if(strpos($_SERVER["REQUEST_URI"], "index.php") === false)
-			$this->assign("admin_path", dirname(__APP__) . strtolower(MODULE_NAME) . "/" . strtolower(CONTROLLER_NAME));
-		else
-			$this->assign("admin_path", dirname(__APP__) . "/index.php/" . strtolower(MODULE_NAME) . "/" . strtolower(CONTROLLER_NAME));
+		if(!is_null($user)) {
+			$this->assign("sess_user_name", $user["name"]);
+		}
 		
 	}
 	

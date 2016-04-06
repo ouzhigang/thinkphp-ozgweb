@@ -24,34 +24,34 @@ class Index extends \app\common\controller\Base {
 			$name = str_filter(cookie("curr_user_name"));			
 			$name = \utility\Encrypt::decode($name);
 			
-			$where = array(
-				"name" => $name,
+			$wq = [
 				"is_admin" => 1
-			);
-			//$user =  D("User")->where($where)->find();					
-			//unset($user["pwd"]);
-			//session("user", $user);
-			//$user["err_login"] = 0;
+			];
+			$user =  D("User")->findByName($name, $wq);					
+			unset($user["pwd"]);
+			session("user", $user);
+			$user["err_login"] = 0;
 		
-			//D("User")->where(array(
-				//"id" => $user["id"]
-			//))->save($user);
+			D("User")->saveData($user, $user["id"]);
 		
-			//header("location:main");
-			exit();
+			header("location:main");
+			return NULL;
 		}
 		
 		if(IS_POST) {
-			//$name = I("post.name", NULL, "str_filter");
-			//$pwd = I("post.pwd", NULL, "str_filter");		
+			$name = I("post.name", NULL, "str_filter");
+			$pwd = I("post.pwd", NULL, "str_filter");		
 			
 			//提交登录
-			//$remember = I("post.remember", 0, "intval");
-			//$vcode = I("post.vcode", "", "str_filter");			
-			//$this->ajaxReturn(D("User")->adminLogin($name, $pwd, $remember, $vcode), "JSON");
+			$remember = I("post.remember", 0, "intval");
+			$vcode = I("post.vcode", "", "str_filter");			
+			
+			$r = D("User")->adminLogin($name, $pwd, $remember, $vcode);
+			\think\Response::type("json");
+			return $r;
 		}
 		
 		return $this->fetch("login");
-    }
+    }	
 	
 }

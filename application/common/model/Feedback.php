@@ -27,4 +27,9 @@ class Feedback extends Base {
 		return $r;
 	}
 	
+	public function delById($id = 0) {
+		$this->where("id = " . $id)->delete();
+		return true;
+	}
+	
 }

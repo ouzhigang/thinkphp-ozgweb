@@ -22,6 +22,7 @@ class Other extends Base {
 		D("User")->logout();
 		
 		header(strtolower("location:login"));
+		return NULL;
 	}
 	
 }

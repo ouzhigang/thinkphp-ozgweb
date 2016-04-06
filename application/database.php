@@ -2,8 +2,8 @@
 
 return [
     'type' => 'sqlite',
-    'dsn' => 'sqlite:simple.sqlite3',
+    'dsn' => 'sqlite:' . __DIR__ . '/../simple.sqlite3',
     'charset' => 'utf8',
 	'prefix' => 'simple_',
-	'debug' => false
+	'debug' => true
 ];

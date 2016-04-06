@@ -29,7 +29,7 @@ class User extends Base {
 	
 	//管理员登录
 	public function adminLogin($name, $pwd, $remember = 0, $vcode = "") {
-
+		
 		$user = $this->where("name = '" . $name . "' and is_admin = 1")->find();
 		if($user) {
 			
@@ -94,7 +94,7 @@ class User extends Base {
 		}
 	}
 	
-	public function del($id) {
+	public function delById($id = 0) {
 		
 		$user = session("user");
 		if($user["id"] == $id) {
@@ -130,6 +130,65 @@ class User extends Base {
 			"code" => 0,
 			"desc" => "退出成功"
 		];
+	}
+	
+	public function findByName($name, $other = []) {
+		$where = [
+				"name" => $name
+		];		
+		$where = array_merge($where, $other);
+		$data = $this->where($where)->find();
+		return $data;
+	}
+	
+	public function saveData($data, $id = 0) {
+		
+		if($id) {
+			$this->where([
+				"id" => $id
+			])->save($data);
+		}
+		else {
+			$total = $this->field("count(id) as total")->where("name = '" . $data["name"] . "'")->find();
+			$total = $total["total"];
+			if($total > 0) {
+				return [
+					"code" => 1,
+					"desc" => "该用户已存在"
+				];
+			}
+			
+			$data["add_time"] = time();
+			$data["is_admin"] = 1;
+			
+			$this->add($data);
+			return [
+				"code" => 0,
+				"desc" => "添加成功"
+			];
+		}
+		return true;
+	}
+	
+	public function updatePwd($old_pwd, $pwd, $pwd2) {
+		$curr_user = session("user");
+		
+		$user = $this->where("name = '" . $curr_user["name"] . "' and pwd = '" . $old_pwd . "'")->find();
+		if($user) {
+			$user["pwd"] = $pwd;
+			$this->save($user, $user["id"]);
+			return [
+				"code" => 0,
+				"desc" => "修改密码成功"
+			];
+		}
+		else {
+			return [
+				"code" => 1,
+				"desc" => "旧密码不正确"
+			];
+		}
+		
 	}
 	
 }

@@ -10,7 +10,7 @@ class Friendlink extends Base {
 		$res_data = D("Friendlink")->getList($page, $page_size);
 		$this->assign("data", $res_data);
 			
-		$this->display();
+		return $this->fetch("getlist");
 	}
 	
 	public function add() {
@@ -18,17 +18,17 @@ class Friendlink extends Base {
 				
 		$row = NULL;
 		if($id) {
-			$row = D("Friendlink")->where("id = " . $id)->find();			
+			$row = D("Friendlink")->findById($id);			
 		}
 		else {
-			$row = array(
+			$row = [
 				"id" => 0,
 				"name" => "",
 				"url" => "",
 				"picture" => "",
 				"sort" => 0,
 				"is_picture" => 0
-			);			
+			];			
 		}
 		
 		if(IS_POST) {
@@ -39,31 +39,57 @@ class Friendlink extends Base {
 			$row["sort"] = I("post.sort", 0, "intval");
 			$row["is_picture"] = I("post.is_picture", 0, "intval");
 			
-			if(!$row["name"])
-				$this->resFail(1, "名称不能为空");
-			elseif(!$row["url"])
-				$this->resFail(1, "URL不能为空");
+			if(!$row["name"]) {
+				$r = [
+					"code" => 1,
+					"desc" => "名称不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
+			elseif(!$row["url"]) {
+				$r = [
+					"code" => 1,
+					"desc" => "URL不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
 			
-			if($id != 0) {
-				
-				D("Friendlink")->save($row);
-				$this->resSuccess("更新成功");
+			if($id != 0) {				
+				D("Friendlink")->saveData($row, $id);
+				$r = [
+					"code" => 0,
+					"desc" => "更新成功"
+				];
+				\think\Response::type("json");
+				return $r;
 			}
 			else {
-				unset($row["id"]);
-				D("Friendlink")->add($row);
-				$this->resSuccess("添加成功");
+				D("Friendlink")->saveData($row);
+				
+				$r = [
+					"code" => 0,
+					"desc" => "添加成功"
+				];
+				\think\Response::type("json");
+				return $r;
 			}
 		}
 		
 		$this->assign("row", $row);
-		$this->display();
+		return $this->fetch("add");
 	}
 	
 	public function del() {
 		$id = I("request.id", 0, "intval");
-		D("Friendlink")->where("id = " . $id)->delete();
-		$this->resSuccess("删除成功");	
+		D("Friendlink")->delById($id);
+		$r = [
+			"code" => 0,
+			"desc" => "删除成功"
+		];
+		\think\Response::type("json");
+		return $r;
 	}
 	
 }

@@ -35,7 +35,7 @@ function page_init() {
 	$("#btn_logout").click(function() {
 		var conform_dialog = ready_confirm_dialog(function() {
 			
-			location.href = "logout";
+			location.href = "../other/logout";
 		});
 		$("#dialog_message").html("确定退出吗？");
 		conform_dialog.dialog("open");

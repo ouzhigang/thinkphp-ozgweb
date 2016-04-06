@@ -186,7 +186,7 @@ function get_string($str, $len = 12, $dot = true) {
 	$i = 0;
     $l = 0;
     $c = 0;
-    $a = array();
+    $a = [];
     while ($l < $len) {
 		$t = substr($str, $i, 1);
         
@@ -455,7 +455,7 @@ function rand_color($s = false) {
 
 //生成随机颜色的数组（不重复）
 function rand_colors($length = 10, $s = false) {
-	$arr = array();
+	$arr = [];
 	for($i = 0; $i < $length; $i++) {
 		$tmp = "";
 		do {
@@ -469,7 +469,7 @@ function rand_colors($length = 10, $s = false) {
 
 //获取数组里面最大的值
 //$arr:array<double>
-function arr_max_val($arr = array()) {
+function arr_max_val($arr = []) {
 	$c = count($arr);
 	if($c == 0)
 		return 0;	
@@ -532,7 +532,7 @@ function date_range($d1, $d2) {
 	$y = date('Y', $timestamp1);
 	$m = date('m', $timestamp1);
 	$d = date('d', $timestamp1);
-	$arr = array();
+	$arr = [];
 	for($i = 0; $i < $n + 1; $i++) {
 		$arr[] = date('Y-m-d', mktime(0, 0, 0, $m, $d + $i, $y));
 	}
@@ -594,7 +594,7 @@ function array_remove_value(&$arr, $var) {
 		}
 	}
 	
-	$tmp_arr = array();
+	$tmp_arr = [];
 	foreach($arr as $value)
 		$tmp_arr[] = $value;
 	
@@ -608,7 +608,7 @@ function dir_path($path) {
 	return $path; 
 }
 	
-function dir_list($path, $exts = '', $list = array()) { 
+function dir_list($path, $exts = '', $list = []) { 
 	$path = dir_path($path); 
 	$files = glob($path . '*'); 
 	foreach($files as $v) { 

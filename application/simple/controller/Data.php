@@ -12,10 +12,16 @@ class Data extends Base {
 			$type = I("request.type", 1, "intval");
 			$res_data = D("Data")->getList($page, $page_size, $type);
 			
-			$this->resSuccess("请求成功", $res_data);
+			$r = [
+				"code" => 0,
+				"desc" => "请求成功",
+				"data" => $res_data
+			];
+			\think\Response::type("json");
+			return $r;
 		}
 		
-		$this->display();
+		return $this->fetch("getlist");
 	}
 	
 	public function add() {
@@ -27,7 +33,7 @@ class Data extends Base {
 			$row = D("Data")->where("id = " . $id)->find();			
 		}
 		else {
-			$row = array(
+			$row = [
 				"id" => 0,
 				"name" => "",
 				"content" => "",
@@ -35,7 +41,7 @@ class Data extends Base {
 				"sort" => 0,
 				"type" => I("request.type", 0, "intval"),
 				"picture" => ""
-			);			
+			];			
 		}
 		
 		if(IS_POST) {
@@ -47,32 +53,56 @@ class Data extends Base {
 			$row["type"] = I("post.type", 0, "intval");		
 			$row["picture"] = "";
 			
-			if(!$row["name"])
-				$this->resFail(1, "名称不能为空");
-			elseif(!$row["content"])
-				$this->resFail(1, "内容不能为空");
-			
-			if($id != 0) {
-				
-				D("Data")->save($row);
-				$this->resSuccess("更新成功");
+			if(!$row["name"]) {
+				$r = [
+					"code" => 1,
+					"desc" => "名称不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
 			}
-			else {
-				unset($row["id"]);
-				$row["add_time"] = time();
-				D("Data")->add($row);
-				$this->resSuccess("添加成功");
+			elseif(!$row["content"]) {
+				$r = [
+					"code" => 1,
+					"desc" => "内容不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
+			
+			if($id != 0) {				
+				D("Data")->saveData($row, $id);
+				$r = [
+					"code" => 0,
+					"desc" => "更新成功"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
+			else {				
+				D("Data")->saveData($row);
+				$r = [
+					"code" => 0,
+					"desc" => "添加成功"
+				];
+				\think\Response::type("json");
+				return $r;
 			}
 		}
 		
-		$this->assign("row", $row);		
-		$this->display();
+		$this->assign("row", $row);
+		return $this->fetch("add");
 	}
 	
 	public function del() {
 		$id = I("request.id", 0, "intval");
-		D("Data")->where("id = " . $id)->delete();
-		$this->resSuccess("删除成功");	
+		D("Data")->delById($id);
+		$r = [
+			"code" => 0,
+			"desc" => "删除成功"
+		];
+		\think\Response::type("json");
+		return $r;
 	}
 	
 }

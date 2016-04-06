@@ -10,10 +10,17 @@ class User extends Base {
 		if($get_data) {			
 			$page = I("request.page", 1, "intval");
 			$page_size = I("request.page_size", C("web_page_size"), "intval");
-			$this->resSuccess("请求成功", D("User")->getList($page, $page_size));
+			
+			$r = [
+				"code" => 0,
+				"desc" => "请求成功",
+				"data" => D("User")->getList($page, $page_size)
+			];
+			\think\Response::type("json");
+			return $r;
 		}
-				
-		$this->display();
+		
+		return $this->fetch("getlist");
 	}
 	
 	public function add() {
@@ -22,63 +29,92 @@ class User extends Base {
 			$name = I("post.name", "", "str_filter");
 			$pwd = I("post.pwd", "", "str_filter");
 			$pwd2 = I("post.pwd2", "", "str_filter");
-			if(!$name)
-				$this->resFail(1, "用户名不能为空");
-			if(!$pwd)
-				$this->resFail(1, "密码不能为空");
-			if($pwd != $pwd2)
-				$this->resFail(1, "确认密码不正确");
+			if(!$name) {
+				$r = [
+					"code" => 1,
+					"desc" => "用户名不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
+			if(!$pwd) {
+				$r = [
+					"code" => 1,
+					"desc" => "密码不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
+			if($pwd != $pwd2) {
+				$r = [
+					"code" => 1,
+					"desc" => "确认密码不正确"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
 			
-			$total = D("User")->field("count(id) as total")->where("name = '" . $name . "'")->find();
-			$total = $total["total"];
-			if($total > 0)
-				$this->resFail(1, "该用户已存在");
-				
-			$user = array(
+			$user = [
 				"name" => $name,
 				"pwd" => $pwd,
-				"add_time" => time(),
-				"is_admin" => 1
-			);
-			D("User")->add($user);
-			$this->resSuccess("添加成功");
+			];
+			$r = D("User")->saveData($user);
+			
+			\think\Response::type("json");
+			return $r;
 		}
 		
-		$this->display();		
+		return $this->fetch("add");
 	}
 	
 	public function del() {
 		$id = I("request.id", 0, "intval");
-		$r = D("User")->del($id);
-		$this->ajaxReturn($r, "JSON");
+		$r = D("User")->delById($id);
+		
+		\think\Response::type("json");
+		return $r;
 	}
 	
 	public function updatepwd() {
 		
 		if(IS_POST) {
-			$curr_user = session("user");
+			
 			$old_pwd = I("post.old_pwd", "", "str_filter");
 			$pwd = I("post.pwd", "", "str_filter");
 			$pwd2 = I("post.pwd2", "", "str_filter");
 			
-			if(!$old_pwd)
-				$this->resFail(1, "旧密码不能为空");
-			if(!$pwd)
-				$this->resFail(1, "新密码不能为空");
-			if($pwd != $pwd2)
-				$this->resFail(1, "确认密码不正确");
-			
-			$user = D("User")->where("name = '" . $curr_user["name"] . "' and pwd = '" . $old_pwd . "'")->find();
-			if($user) {
-				$user["pwd"] = $pwd;
-				D("User")->save($user);
-				$this->resSuccess("修改密码成功");
+			if(!$old_pwd) {
+				$r = [
+					"code" => 1,
+					"desc" => "旧密码不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
 			}
-			else
-				$this->resFail(1, "旧密码不正确");
+			if(!$pwd) {
+				$r = [
+					"code" => 1,
+					"desc" => "新密码不能为空"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
+			if($pwd != $pwd2) {
+				$r = [
+					"code" => 1,
+					"desc" => "确认密码不正确"
+				];
+				\think\Response::type("json");
+				return $r;
+			}
+			
+			$r = D("User")->updatePwd($old_pwd, $pwd, $pwd2);
+			
+			\think\Response::type("json");
+			return $r;
 		}
 		
-		$this->display();
+		return $this->fetch("updatepwd");
 	}
 	
 }

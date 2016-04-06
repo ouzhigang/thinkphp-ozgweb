@@ -7,18 +7,17 @@ class DataClass extends Base {
 		$type = I("request.type", 0, "intval");
 		
 		if(I("request.get_data", 0, "intval")) {			
-			$list = D("DataClass")->where("type = " . $type . " and parent_id = 0")->order("sort desc, id desc")->select();
-			foreach($list as &$v) {
-				$child_count = D("DataClass")->field("count(id) as total")->where("parent_id = " . $v["id"])->find();
-				$child_count = $child_count["total"];
-				if($child_count > 0)
-					$v["children"] = D("DataClass")->listById($v["id"]);
-				
-			}
-			$this->resSuccess("请求成功", $list);
+			$data = D("DataClass")->getList($type);
+			$r = [
+				"code" => 0,
+				"desc" => "请求成功",
+				"data" => $data
+			];
+			\think\Response::type("json");
+			return $r;
 		}
-				
-		$this->display();
+		
+		return $this->fetch("getlist");
 	}
 	
 	public function add() {
@@ -26,17 +25,16 @@ class DataClass extends Base {
 				
 		$row = NULL;
 		if($id) {
-			$row = D("DataClass")->where("id = " . $id)->find();			
+			$row = D("DataClass")->findById($id);			
 		}
 		else {
-			$row = array(
+			$row = [
 				"id" => 0,
 				"name" => "",
 				"sort" => 0,
 				"parent_id" => 0,
 				"type" => I("request.type", 0, "intval")
-			);
-			
+			];			
 		}
 		
 		if(IS_POST) {
@@ -48,45 +46,61 @@ class DataClass extends Base {
 			
 			if($id != 0) {
 				
-				if($id == $row["parent_id"])
-					$this->resFail(1, "父级分类不能为当前选中分类");
+				if($id == $row["parent_id"]) {
+					$r = [
+						"code" => 1,
+						"desc" => "父级分类不能为当前选中分类"
+					];
+					\think\Response::type("json");
+					return $r;
+				}
 				
-				D("DataClass")->save($row);
-				$this->resSuccess("更新成功");
+				D("DataClass")->saveData($row, $id);
+				$r = [
+					"code" => 0,
+					"desc" => "更新成功"
+				];
+				\think\Response::type("json");
+				return $r;
 			}
-			else {
-				unset($row["id"]);
-				D("DataClass")->add($row);
-				$this->resSuccess("添加成功");
+			else {				
+				D("DataClass")->saveData($row);
+				$r = [
+					"code" => 0,
+					"desc" => "添加成功"
+				];
+				\think\Response::type("json");
+				return $r;
 			}
 		}
 		
 		$this->assign("row", $row);
-		$this->display();
+		return $this->fetch("add");
 	}
 	
 	public function gettree() {
 		$type = I("get.type", 0, "intval");
 		$data = D("DataClass")->getTreeSelector($type);
 		
-		$this->resSuccess("请求成功", $data);
+		$r = [
+			"code" => 0,
+			"desc" => "请求成功",
+			"data" => $data
+		];
+		\think\Response::type("json");
+		return $r;
 	}
 	
 	public function del() {
 		
 		$id = I("request.id", 0, "intval");
-		
-		$dataclass = D("DataClass")->where("id = " . $id)->find();
-		$child_count = D("DataClass")->field("count(id) as total")->where("parent_id = " . $dataclass["id"])->find();
-		$child_count = $child_count["total"];
-		
-		if($child_count > 0)
-			D("DataClass")->deleteById($dataclass["id"]);
-		
-		//删除该分类下面的对应数据
-		D("Data")->where("dataclass_id = " . $dataclass["id"])->delete();
-		D("DataClass")->where("id = " . $dataclass["id"])->delete();
-		$this->resSuccess("删除成功");
+		D("DataClass")->delById($id);
+		$r = [
+			"code" => 0,
+			"desc" => "删除成功"
+		];
+		\think\Response::type("json");
+		return $r;
 	}
 	
 }

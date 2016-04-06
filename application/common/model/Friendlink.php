@@ -25,4 +25,25 @@ class Friendlink extends Base {
 		return $r;
 	}
 	
+	public function saveData($data, $id = 0) {
+		if($id) {
+			$this->where("id = " . $id)->save($data);
+		}
+		else {
+			unset($data["id"]);
+			$this->add($data);
+		}
+		return true;
+	}
+	
+	public function findById($id = 0) {
+		$data = $this->where("id = " . $id)->find();
+		return $data;
+	}
+	
+	public function delById($id = 0) {
+		$this->where("id = " . $id)->delete();
+		return true;
+	}
+	
 }
