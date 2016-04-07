@@ -34,7 +34,7 @@ class Index extends \app\common\controller\Base {
 		
 			D("User")->saveData($user, $user["id"]);
 		
-			header("location:main");
+			header("location: ../other/main");
 			return NULL;
 		}
 		

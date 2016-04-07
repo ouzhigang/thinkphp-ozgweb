@@ -41,7 +41,7 @@ class User extends Base {
 					];
 				}
 				else {
-					$verify = new \Think\Verify();
+					$verify = new \org\Verify();
 					if(!$verify->check($vcode, 1)) {
 						return [
 							"code" => 1, 
