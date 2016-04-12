@@ -646,3 +646,14 @@ function deldir($dir) {
 		return false;
 	}
 }
+
+function is_wechat_browser() {
+	//判断是否使用微信浏览器访问
+	$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	if (strpos($user_agent, 'MicroMessenger') === false) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
