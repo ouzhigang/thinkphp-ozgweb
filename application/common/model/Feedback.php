@@ -3,19 +3,22 @@ namespace app\common\model;
 
 class Feedback extends Base {
     
-	public function getList($page, $page_size) {
+	public static function getList($page, $page_size) {
 		
-		$total = $this->field("count(id) as total")->find();
-		$total = $total["total"];
+		$total = parent::count();
 		
 		$page_count = page_count($total, $page_size);
 		
 		$offset = ($page - 1) * $page_size;
 		$limit = $page_size;
-
-		$list = $this->order("id desc")->limit($offset . ", " . $limit)->select();
-		foreach($list as &$v)
+		
+		$list = parent::all(function($query) use($offset, $limit) {
+			$query->order([ "id" => "desc" ])->limit($offset, $limit);
+		});
+		
+		foreach($list as &$v) {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
+		}
 		
 		$r = [
 			"page_size" => $page_size,
@@ -27,8 +30,8 @@ class Feedback extends Base {
 		return $r;
 	}
 	
-	public function delById($id = 0) {
-		$this->where("id = " . $id)->delete();
+	public static function delById($id = 0) {
+		parent::where("id = " . $id)->delete();
 		return true;
 	}
 	

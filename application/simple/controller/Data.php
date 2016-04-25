@@ -5,12 +5,12 @@ class Data extends Base {
 	
 	public function getlist() {
 		
-		$get_data = I("request.get_data", NULL);
+		$get_data = input("request.get_data", NULL);
 		if($get_data) {
-			$page = I("request.page", 1, "intval");
-			$page_size = I("request.page_size", C("web_page_size"), "intval");
-			$type = I("request.type", 1, "intval");
-			$res_data = D("Data")->getList($page, $page_size, $type);
+			$page = input("request.page", 1, "intval");
+			$page_size = input("request.page_size", config("web_page_size"), "intval");
+			$type = input("request.type", 1, "intval");
+			$res_data = \app\common\model\Data::getList($page, $page_size, $type);
 			
 			$r = [
 				"code" => 0,
@@ -26,31 +26,32 @@ class Data extends Base {
 	
 	public function add() {
 				
-		$id = I("request.id", 0, "intval");
+		$id = input("request.id", 0, "intval");
 				
 		$row = NULL;
 		if($id) {
-			$row = D("Data")->where("id = " . $id)->find();			
+			$row = \app\common\model\Data::findById($id);			
 		}
 		else {
 			$row = [
 				"id" => 0,
 				"name" => "",
 				"content" => "",
-				"dataclass_id" => 0,
+				"data_class_id" => 0,
 				"sort" => 0,
-				"type" => I("request.type", 0, "intval"),
+				"type" => input("request.type", 0, "intval"),
 				"picture" => ""
 			];			
 		}
 		
 		if(IS_POST) {
-			
-			$row["name"] = I("post.name", "", "str_filter");
-			$row["content"] = I("post.content", "", "str_filter");	
-			$row["dataclass_id"] = I("post.dataclass_id", 0, "intval");
-			$row["sort"] = I("post.sort", 0, "intval");
-			$row["type"] = I("post.type", 0, "intval");		
+
+			$row = [];
+			$row["name"] = input("post.name", "", "str_filter");
+			$row["content"] = input("post.content", "", "str_filter");	
+			$row["data_class_id"] = input("post.data_class_id", 0, "intval");
+			$row["sort"] = input("post.sort", 0, "intval");
+			$row["type"] = input("post.type", 0, "intval");		
 			$row["picture"] = "";
 			
 			if(!$row["name"]) {
@@ -71,7 +72,7 @@ class Data extends Base {
 			}
 			
 			if($id != 0) {				
-				D("Data")->saveData($row, $id);
+				\app\common\model\Data::saveData($row, $id);
 				$r = [
 					"code" => 0,
 					"desc" => "更新成功"
@@ -80,7 +81,7 @@ class Data extends Base {
 				return $r;
 			}
 			else {				
-				D("Data")->saveData($row);
+				\app\common\model\Data::saveData($row);
 				$r = [
 					"code" => 0,
 					"desc" => "添加成功"
@@ -95,8 +96,8 @@ class Data extends Base {
 	}
 	
 	public function del() {
-		$id = I("request.id", 0, "intval");
-		D("Data")->delById($id);
+		$id = input("request.id", 0, "intval");
+		\app\common\model\Data::delById($id);
 		$r = [
 			"code" => 0,
 			"desc" => "删除成功"

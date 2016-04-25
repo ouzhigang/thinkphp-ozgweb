@@ -9,8 +9,8 @@ return [
 	
 	//本项目的配置
 	"web_name" => "ozgweb",
-	"web_root" => "http://localhost/abc/thinkphp-ozgweb/public/index.php",
-	"web_res_root" => "http://localhost/abc/thinkphp-ozgweb/public/static/",
+	"web_root" => "http://localhost:8080/thinkphp-ozgweb/public/index.php",
+	"web_res_root" => "http://localhost:8080/thinkphp-ozgweb/public/static/",
 	"web_page_size" => 16,	
 	
 ];

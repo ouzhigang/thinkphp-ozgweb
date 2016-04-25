@@ -3,17 +3,18 @@ namespace app\common\model;
 
 class Friendlink extends Base {
     
-	public function getList($page, $page_size) {
+	public static function getList($page, $page_size) {
 		
-		$total = $this->field("count(id) as total")->find();
-		$total = $total["total"];
+		$total = parent::count();
 		
 		$page_count = page_count($total, $page_size);
 		
 		$offset = ($page - 1) * $page_size;
 		$limit = $page_size;
-
-		$list = $this->order("id desc")->limit($offset . ", " . $limit)->select();
+		
+		$list = parent::all(function($query) use($offset, $limit) {
+			$query->order([ "id" => "desc" ])->limit($offset, $limit);
+		});
 		
 		$r = [
 			"page_size" => $page_size,
@@ -25,24 +26,24 @@ class Friendlink extends Base {
 		return $r;
 	}
 	
-	public function saveData($data, $id = 0) {
+	public static function saveData($data, $id = 0) {
 		if($id) {
-			$this->where("id = " . $id)->save($data);
+			parent::where("id = " . $id)->update($data);
 		}
 		else {
 			unset($data["id"]);
-			$this->add($data);
+			parent::create($data);
 		}
 		return true;
 	}
 	
-	public function findById($id = 0) {
-		$data = $this->where("id = " . $id)->find();
-		return $data;
+	public static function findById($id = 0) {
+		$data = parent::where("id = " . $id)->find();
+		return $data->toArray();
 	}
 	
-	public function delById($id = 0) {
-		$this->where("id = " . $id)->delete();
+	public static function delById($id = 0) {
+		parent::where("id = " . $id)->delete();
 		return true;
 	}
 	

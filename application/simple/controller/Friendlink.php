@@ -5,20 +5,20 @@ class Friendlink extends Base {
 	
 	public function getlist() {
 		
-		$page = I("request.page", 1, "intval");
-		$page_size = I("request.page_size", C("web_page_size"), "intval");
-		$res_data = D("Friendlink")->getList($page, $page_size);
+		$page = input("request.page", 1, "intval");
+		$page_size = input("request.page_size", config("web_page_size"), "intval");
+		$res_data = \app\common\model\Friendlink::getList($page, $page_size);
 		$this->assign("data", $res_data);
 			
 		return $this->fetch("getlist");
 	}
 	
 	public function add() {
-		$id = I("request.id", 0, "intval");
+		$id = input("request.id", 0, "intval");
 				
 		$row = NULL;
 		if($id) {
-			$row = D("Friendlink")->findById($id);			
+			$row = \app\common\model\Friendlink::findById($id);			
 		}
 		else {
 			$row = [
@@ -32,12 +32,12 @@ class Friendlink extends Base {
 		}
 		
 		if(IS_POST) {
-			
-			$row["name"] = I("post.name", "", "str_filter");
-			$row["url"] = I("post.url", "", "str_filter");	
-			$row["picture"] = I("post.picture", "", "str_filter");
-			$row["sort"] = I("post.sort", 0, "intval");
-			$row["is_picture"] = I("post.is_picture", 0, "intval");
+			$row = [];
+			$row["name"] = input("post.name", "", "str_filter");
+			$row["url"] = input("post.url", "", "str_filter");	
+			$row["picture"] = input("post.picture", "", "str_filter");
+			$row["sort"] = input("post.sort", 0, "intval");
+			$row["is_picture"] = input("post.is_picture", 0, "intval");
 			
 			if(!$row["name"]) {
 				$r = [
@@ -57,7 +57,7 @@ class Friendlink extends Base {
 			}
 			
 			if($id != 0) {				
-				D("Friendlink")->saveData($row, $id);
+				\app\common\model\Friendlink::saveData($row, $id);
 				$r = [
 					"code" => 0,
 					"desc" => "更新成功"
@@ -66,7 +66,7 @@ class Friendlink extends Base {
 				return $r;
 			}
 			else {
-				D("Friendlink")->saveData($row);
+				\app\common\model\Friendlink::saveData($row);
 				
 				$r = [
 					"code" => 0,
@@ -82,8 +82,8 @@ class Friendlink extends Base {
 	}
 	
 	public function del() {
-		$id = I("request.id", 0, "intval");
-		D("Friendlink")->delById($id);
+		$id = input("request.id", 0, "intval");
+		\app\common\model\Friendlink::delById($id);
 		$r = [
 			"code" => 0,
 			"desc" => "删除成功"

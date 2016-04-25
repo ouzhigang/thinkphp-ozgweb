@@ -27,7 +27,7 @@ $(function() {
 	
 			$("#dataclass").LinkageList(res.data, {
 				objId: "dataclass",
-				inputObjId: "dataclass_id",
+				inputObjId: "data_class_id",
 				css: "form-control",
 				style: "width: 20%; margin-right: 10px;",
 				selectedValue: $("#dataclass_selected").val() == "0" ? null : $("#dataclass_selected").val()
@@ -60,7 +60,7 @@ $(function() {
 		},
 		submitHandler: function(form) {
 			
-			if($("#dataclass_id").val() == "0" || $("#dataclass_id").val() == "") {
+			if($("#data_class_id").val() == "0" || $("#data_class_id").val() == "") {
 				$("#dialog_message").html("没有选择分类");
 				alert_dialog.dialog("open");
 				return false;
@@ -70,7 +70,7 @@ $(function() {
 				id: $("#id").val(),
 				name: $("#name").val(),
 				sort: $("#sort").val(),
-				dataclass_id: $("#dataclass_id").val(),
+				data_class_id: $("#data_class_id").val(),
 				content: $("#content").val(),
 				type: $("#type").val()
 			};

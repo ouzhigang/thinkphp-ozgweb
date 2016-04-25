@@ -3,20 +3,22 @@ namespace app\common\model;
 
 class User extends Base {
     
-	public function getList($page, $page_size) {
+	public static function getList($page, $page_size) {
 		
-		$total = $this->field("count(id) as total")->where("is_admin = 1")->find();
-		$total = $total["total"];
+		$total = parent::where("is_admin = 1")->count();
 		
 		$page_count = page_count($total, $page_size);
 		
 		$offset = ($page - 1) * $page_size;
 		$limit = $page_size;
-
-		$list = $this->where("is_admin = 1")->order("id desc")->limit($offset . ", " . $limit)->select();
-		foreach($list as &$v)
-			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
 		
+		$list = parent::all(function($query) use($offset, $limit) {
+			$query->where("is_admin = 1")->limit($offset, $limit)->order([ "id" => "desc" ]);
+		});
+		
+		foreach($list as &$v){
+			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
+		}
 		$r = [
 			"page_size" => $page_size,
 			"page_count" => $page_count,
@@ -28,9 +30,9 @@ class User extends Base {
 	}
 	
 	//管理员登录
-	public function adminLogin($name, $pwd, $remember = 0, $vcode = "") {
-		
-		$user = $this->where("name = '" . $name . "' and is_admin = 1")->find();
+	public static function adminLogin($name, $pwd, $remember = 0, $vcode = "") {
+
+		$user = parent::where("name = '" . $name . "' and is_admin = 1")->find();
 		if($user) {
 			
 			if($user["err_login"] >= 3) {
@@ -51,13 +53,15 @@ class User extends Base {
 				}
 			}
 			
+			$user = $user->toArray();
 			if($user["pwd"] == $pwd) {
-				
 				session("user", $user);
 				
 				$user["err_login"] = 0;
 				
-				$this->data($user)->save();
+				$id = $user["id"];
+				unset($user["id"]);
+				parent::where("id = " . $id)->update($user);
 				
 				if($remember == 1) {
 					$curr_user_name = \utility\Encrypt::encode($user["name"]);
@@ -75,7 +79,7 @@ class User extends Base {
 				$user["err_login"] += 1;
 				$id = $user["id"];
 				unset($user["id"]);
-				$this->where("id = " . $id)->save($user);
+				parent::where("id = " . $id)->update($user);
 				
 				$arr = [
 					"code" => 1, 
@@ -94,7 +98,7 @@ class User extends Base {
 		}
 	}
 	
-	public function delById($id = 0) {
+	public static function delById($id = 0) {
 		
 		$user = session("user");
 		if($user["id"] == $id) {
@@ -104,7 +108,7 @@ class User extends Base {
 			];
 		}
 		
-		$result = $this->where("id = " . $id)->delete();
+		$result = parent::where("id = " . $id)->delete();
 		if($result) {
 			return [
 				"code" => 0,
@@ -119,7 +123,7 @@ class User extends Base {
 	}
 	
 	//退出登录
-	public function logout() {
+	public static function logout() {
 	
 		session("user", NULL);
 		
@@ -132,25 +136,22 @@ class User extends Base {
 		];
 	}
 	
-	public function findByName($name, $other = []) {
+	public static function findByName($name, $other = []) {
 		$where = [
-				"name" => $name
+			"name" => $name
 		];		
 		$where = array_merge($where, $other);
-		$data = $this->where($where)->find();
-		return $data;
+		$data = parent::where($where)->find();
+		return $data->toArray();
 	}
 	
-	public function saveData($data, $id = 0) {
+	public static function saveData($data, $id = 0) {
 		
 		if($id) {
-			$this->where([
-				"id" => $id
-			])->save($data);
+			parent::where("id = " . $id)->update($data);
 		}
 		else {
-			$total = $this->field("count(id) as total")->where("name = '" . $data["name"] . "'")->find();
-			$total = $total["total"];
+			$total = parent::where("name = '" . $data["name"] . "'")->count();
 			if($total > 0) {
 				return [
 					"code" => 1,
@@ -161,7 +162,7 @@ class User extends Base {
 			$data["add_time"] = time();
 			$data["is_admin"] = 1;
 			
-			$this->add($data);
+			parent::create($data);
 			return [
 				"code" => 0,
 				"desc" => "添加成功"
@@ -170,13 +171,16 @@ class User extends Base {
 		return true;
 	}
 	
-	public function updatePwd($old_pwd, $pwd, $pwd2) {
+	public static function updatePwd($old_pwd, $pwd, $pwd2) {
 		$curr_user = session("user");
 		
-		$user = $this->where("name = '" . $curr_user["name"] . "' and pwd = '" . $old_pwd . "'")->find();
+		$user = parent::where("name = '" . $curr_user["name"] . "' and pwd = '" . $old_pwd . "'")->find();		
 		if($user) {
+			$user = $user->toArray();
 			$user["pwd"] = $pwd;
-			$this->save($user, $user["id"]);
+			$id = $user["id"];
+			unset($user["id"]);
+			parent::where("id = " . $id)->update($user);
 			return [
 				"code" => 0,
 				"desc" => "修改密码成功"

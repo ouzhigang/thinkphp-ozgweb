@@ -27,26 +27,26 @@ class Index extends \app\common\controller\Base {
 			$wq = [
 				"is_admin" => 1
 			];
-			$user =  D("User")->findByName($name, $wq);					
+			$user = \app\common\model\User::findByName($name, $wq);					
 			unset($user["pwd"]);
 			session("user", $user);
 			$user["err_login"] = 0;
 		
-			D("User")->saveData($user, $user["id"]);
+			\app\common\model\User::saveData($user, $user["id"]);
 		
 			header("location: ../other/main");
 			return NULL;
 		}
 		
 		if(IS_POST) {
-			$name = I("post.name", NULL, "str_filter");
-			$pwd = I("post.pwd", NULL, "str_filter");		
+			$name = input("request.name", NULL, "str_filter");
+			$pwd = input("request.pwd", NULL, "str_filter");
 			
 			//提交登录
-			$remember = I("post.remember", 0, "intval");
-			$vcode = I("post.vcode", "", "str_filter");			
+			$remember = input("request.remember", 0, "intval");
+			$vcode = input("request.vcode", "", "str_filter");			
 			
-			$r = D("User")->adminLogin($name, $pwd, $remember, $vcode);
+			$r = \app\common\model\User::adminLogin($name, $pwd, $remember, $vcode);
 			\think\Response::type("json");
 			return $r;
 		}

@@ -3,16 +3,14 @@ namespace app\common\model;
 
 class ArtSingle extends Base {
     
-	public function findById($id) {
-		$data = $this->where("id = " . $id)->find();
-		return $data;
+	public static function findById($id) {
+		$data = parent::where("id", $id)->find();
+		return $data->toArray();
 	}
 	
-	public function saveData($data, $id = 0) {
+	public static function saveData($data, $id = 0) {
 		
-		$this->where([
-			"id" => $id
-		])->save($data);
+		parent::where("id", $id)->update($data);
 		
 		return true;
 	}

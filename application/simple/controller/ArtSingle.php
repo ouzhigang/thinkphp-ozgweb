@@ -4,14 +4,14 @@ namespace app\simple\controller;
 class ArtSingle extends Base {
 	
 	public function get() {
-		$id = I("request.id", 0, "intval");
+		$id = input("request.id", 0, "intval");
 		
-		$data = D("ArtSingle")->findById($id);
+		$data = \app\common\model\ArtSingle::findById($id);
 		
 		if(IS_POST) {
-			$content = I("post.content", "", "str_filter");			
+			$content = input("post.content", "", "str_filter");			
 			$data["content"] = $content;			
-			D("ArtSingle")->saveData($data, $id);
+			\app\common\model\ArtSingle::saveData($data, $id);
 			
 			$r = [
 				"code" => 0,

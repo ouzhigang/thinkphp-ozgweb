@@ -4,10 +4,10 @@ namespace app\simple\controller;
 class DataClass extends Base {
 	
 	public function getlist() {
-		$type = I("request.type", 0, "intval");
+		$type = input("request.type", 0, "intval");
 		
-		if(I("request.get_data", 0, "intval")) {			
-			$data = D("DataClass")->getList($type);
+		if(input("request.get_data", 0, "intval")) {			
+			$data = \app\common\model\DataClass::getList($type);
 			$r = [
 				"code" => 0,
 				"desc" => "请求成功",
@@ -21,11 +21,11 @@ class DataClass extends Base {
 	}
 	
 	public function add() {
-		$id = I("request.id", 0, "intval");
+		$id = input("request.id", 0, "intval");
 				
 		$row = NULL;
 		if($id) {
-			$row = D("DataClass")->findById($id);			
+			$row = \app\common\model\DataClass::findById($id);			
 		}
 		else {
 			$row = [
@@ -33,16 +33,16 @@ class DataClass extends Base {
 				"name" => "",
 				"sort" => 0,
 				"parent_id" => 0,
-				"type" => I("request.type", 0, "intval")
+				"type" => input("request.type", 0, "intval")
 			];			
 		}
 		
 		if(IS_POST) {
 			
-			$row["name"] = I("post.name", "", "str_filter");
-			$row["parent_id"] = I("post.parent_id", 0, "intval");
-			$row["sort"] = I("post.sort", 0, "intval");
-			$row["type"] = I("post.type", 0, "intval");
+			$row["name"] = input("post.name", "", "str_filter");
+			$row["parent_id"] = input("post.parent_id", 0, "intval");
+			$row["sort"] = input("post.sort", 0, "intval");
+			$row["type"] = input("post.type", 0, "intval");
 			
 			if($id != 0) {
 				
@@ -55,7 +55,7 @@ class DataClass extends Base {
 					return $r;
 				}
 				
-				D("DataClass")->saveData($row, $id);
+				\app\common\model\DataClass::saveData($row, $id);
 				$r = [
 					"code" => 0,
 					"desc" => "更新成功"
@@ -64,7 +64,7 @@ class DataClass extends Base {
 				return $r;
 			}
 			else {				
-				D("DataClass")->saveData($row);
+				\app\common\model\DataClass::saveData($row);
 				$r = [
 					"code" => 0,
 					"desc" => "添加成功"
@@ -79,8 +79,8 @@ class DataClass extends Base {
 	}
 	
 	public function gettree() {
-		$type = I("get.type", 0, "intval");
-		$data = D("DataClass")->getTreeSelector($type);
+		$type = input("get.type", 0, "intval");
+		$data = \app\common\model\DataClass::getTreeSelector($type);
 		
 		$r = [
 			"code" => 0,
@@ -93,8 +93,8 @@ class DataClass extends Base {
 	
 	public function del() {
 		
-		$id = I("request.id", 0, "intval");
-		D("DataClass")->delById($id);
+		$id = input("request.id", 0, "intval");
+		\app\common\model\DataClass::delById($id);
 		$r = [
 			"code" => 0,
 			"desc" => "删除成功"

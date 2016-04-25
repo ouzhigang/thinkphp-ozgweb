@@ -2,25 +2,27 @@
 namespace app\common\model;
 
 class Data extends Base {
-    
-	public function getList($page, $page_size, $type) {
-		$total = $this->field("count(id) as total")->where("type = " . $type)->find();
-		$total = $total["total"];
+	
+	public static function getList($page, $page_size, $type) {
+		$total = parent::where("type = " . $type)->count();
 		
 		$page_count = page_count($total, $page_size);
 		$offset = ($page - 1) * $page_size;
 		$limit = $page_size;
 		
-		$list = $this
-			->field("dc.name as dc_name, " . C("database.prefix") . "data.*")
-			->join(C("database.prefix") . "data_class as dc on dc.id = " . C("database.prefix") . "data.dataclass_id")
-			->where(C("database.prefix") . "data.type = " . $type)
-			->order(C("database.prefix") . "data.sort desc, " . C("database.prefix") . "data.id desc")
+		$prefix = config("database.prefix");
+		$list = \think\Db::table($prefix . "data")
+			->field("d.*, dc.name as dc_name")
+			->alias("d")
+			->join($prefix . "data_class as dc", "d.data_class_id = dc.id", "left")
+			->where("d.type = " . $type)
+			->order("sort desc, id desc")
 			->limit($offset . ", " . $limit)
 			->select();
 		
 		foreach($list as &$v) {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
+			$v["dc_name"] = $v["dc_name"] ? $v["dc_name"] : "[暂无]";
 		}
 		
 		$r = [
@@ -34,26 +36,25 @@ class Data extends Base {
 		return $r;
 	}
 	
-	public function findById($id) {
-		
+	public static function findById($id) {
+		$data = parent::where("id = " . $id)->find();
+		return $data->toArray();
 	}
 	
-	public function saveData($data, $id = 0) {
+	public static function saveData($data, $id = 0) {
 		if($id) {
-			$this->where([
-				"id" => $id
-			])->save($data);
+			parent::where("id = " . $id)->update($data);
 		}
 		else {
 			unset($data["id"]);
 			$data["add_time"] = time();
-			$this->add($data);
+			parent::create($data);
 		}
 		return true;
 	}
 	
-	public function delById($id = 0) {
-		$this->where("id = " . $id)->delete();
+	public static function delById($id = 0) {
+		parent::where("id = " . $id)->delete();
 		return true;
 	}
 	

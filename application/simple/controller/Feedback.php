@@ -4,11 +4,11 @@ namespace app\simple\controller;
 class Feedback extends Base {
 	
 	public function getlist() {
-		$get_data = I("request.get_data", NULL);
+		$get_data = input("request.get_data", NULL);
 		if($get_data) {
-			$page = I("request.page", 1, "intval");
-			$page_size = I("request.page_size", C("web_page_size"), "intval");
-			$res_data = D("Feedback")->getList($page, $page_size);
+			$page = input("request.page", 1, "intval");
+			$page_size = input("request.page_size", config("web_page_size"), "intval");
+			$res_data = \app\common\model\Feedback::getList($page, $page_size);
 			
 			$r = [
 				"code" => 0,
@@ -22,8 +22,8 @@ class Feedback extends Base {
 	}
 	
 	public function del() {
-		$id = I("request.id", 0, "intval");
-		D("Feedback")->delById($id);
+		$id = input("request.id", 0, "intval");
+		\app\common\model\Feedback::delById($id);
 		$r = [
 			"code" => 0,
 			"desc" => "删除成功"

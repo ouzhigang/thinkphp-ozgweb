@@ -8,3 +8,5 @@ extend/com/
 extend/org/
 vendor/
 node_modules/
+library/behavior/
+library/traits/
