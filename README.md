@@ -1,4 +1,4 @@
-﻿###部署步骤
+###部署步骤
 
 	1.需要根据实际情况设置thinkphp-ozgweb/application/config.php的web_res_root部分（资源文件的目录）和web_root部分（网站的根目录）
 
@@ -9,10 +9,10 @@
 	3.thinkphp5需要自行安装
 
 
-	4.thinkphp5扩展类库需要自行下载然后覆盖到对应位置，https://github.com/top-think/thinkphp-extend
+	4.thinkphp5扩展类库需要自行下载然后覆盖到对应位置，https://github.com/ouzhigang/thinkphp-extend/tree/ozg
 
 
-	5.在thinkphp-ozgweb下执行一下grunt的任务
+	5.在thinkphp-ozgweb下执行一下grunt的任务，先npm install，然后grunt
 
 
 ==========
