@@ -18,14 +18,14 @@ class Base extends \app\common\controller\Base {
 				if(strpos($curr_action, "/index/login") === false) {
 					//没有登录
 					
-					header(strtolower("location: " . config("web_root") . "/simple/index/login"));
+					header(strtolower("location: " . config("web_root") . "simple/index/login"));
 					exit();
 				}
 			}
 			else {
 				//如果是已登录状态，停留在登录页面的话，就跳到后台首页
 				if(strpos($curr_action, "/index/login") !== false) {
-					header(strtolower("location: " . config("web_root") . "/simple/other/main"));
+					header(strtolower("location: " . config("web_root") . "simple/other/main"));
 					exit();
 				}
 				

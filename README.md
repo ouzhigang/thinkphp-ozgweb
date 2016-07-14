@@ -14,10 +14,21 @@
 
 	5.在thinkphp-ozgweb下执行一下grunt的任务，先npm install，然后grunt
 
+	6.nginx运行需要在server节加入如下配置	
+	location /thinkphp-ozgweb/public/static/ {
+		access_log off;
+		expires 10d;
+	}
+	location /thinkphp-ozgweb/public/ {
+		if (!-e $request_filename) {
+			rewrite ^/thinkphp-ozgweb/public/(.*)$ /thinkphp-ozgweb/public/index.php?s=$1 last;
+			break;
+		}
+	}
 
 ==========
 
-后台入口：thinkphp-ozgweb/public/index.php/simple/index/login
+后台入口：thinkphp-ozgweb/public/simple/index/login
 
 
 后台用户密码都是admin。暂无前台。

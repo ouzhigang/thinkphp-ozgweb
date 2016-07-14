@@ -1,4 +1,4 @@
-﻿
+
 function ready_alert_dialog() {
 	var dialog = $("#dialog_div").dialog({
 		modal: true,

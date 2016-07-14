@@ -7,7 +7,7 @@ class Encrypt {
     //密锁串，不能出现重复字符，内有A-Z,a-z,0-9,/,=,+,_,-
     static $lockstream = 'st=lDEFABCNOPyzghi_jQRST-UwxkVWXYZabcdef+IJK6/7nopqr89LMmGH012345uv';
 	
-	private static $key = "kobo3_!@##@!!@#$%^&*";
+	private static $key = "esk3_!@##@!!@#$%^&*";
 	
     //加密
     static function encode($txtStream) {
