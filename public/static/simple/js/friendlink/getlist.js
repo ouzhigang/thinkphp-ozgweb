@@ -1,7 +1,5 @@
 
 $(function() {
-	
-	page_init();
 		
 	//dialog
 	var alert_dialog = ready_alert_dialog();

@@ -1,6 +1,8 @@
 <?php
 namespace app\common\model;
 
+use \think\Response;
+
 class Friendlink extends Base {
     
 	public static function getList($page, $page_size) {
@@ -12,9 +14,15 @@ class Friendlink extends Base {
 		$offset = ($page - 1) * $page_size;
 		$limit = $page_size;
 		
-		$list = parent::all(function($query) use($offset, $limit) {
+		$data = parent::all(function($query) use($offset, $limit) {
 			$query->order([ "id" => "desc" ])->limit($offset, $limit);
 		});
+		
+		$list = [];
+		foreach($data as $v) {
+			$item = $v->toArray();
+			$list[] = $item;			
+		}
 		
 		$r = [
 			"page_size" => $page_size,

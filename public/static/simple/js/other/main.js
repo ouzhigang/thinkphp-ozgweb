@@ -1,5 +1,4 @@
 
 $(function() {
-	page_init();
 	
 });

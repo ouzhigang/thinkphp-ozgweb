@@ -97,8 +97,6 @@ function show_data(page) {
 }
 
 $(function() {
-	
-	page_init();
 		
 	//dialog
 	alert_dialog = ready_alert_dialog();

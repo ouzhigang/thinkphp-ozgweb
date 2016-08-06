@@ -9,9 +9,7 @@ function show_picture_row(is_picture_val) {
 	}
 }
 
-$(function() {
-	
-	page_init();
+$(function() {	
 		
 	//dialog
 	var alert_dialog = ready_alert_dialog();

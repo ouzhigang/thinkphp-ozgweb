@@ -106,4 +106,62 @@ class Data extends Base {
 		return $r;
 	}
 	
+	public function upload() {
+		
+		$file = $_FILES["file_upload"];
+		if($file && $file["size"] > 0) {
+			$max_size = 1024 * 1024 * 10;
+			$allow_ext_name = [
+				"jpg",
+				"jpeg",
+				"png",
+				"gif",
+			];			
+			
+			if($file["size"] <= $max_size) {
+				$ext_name = substr(strrchr($file["name"], '.'), 1);
+				
+				if(in_array($ext_name, $allow_ext_name)) {
+					
+					$filepath = md5_file($file["tmp_name"]);
+					$filepath = "upload/" . $filepath . "." . $ext_name;
+					move_uploaded_file($file["tmp_name"], dirname(__FILE__) . "/../../../public/static/" . $filepath);
+					
+					$r = [
+						"code" => 0,
+						"desc" => "上传完成",
+						"filepath" => $filepath
+					];
+					\think\Response::type("json");
+					return $r;
+				}
+				else {
+					$r = [
+						"code" => 1,
+						"desc" => "不允许上传此类文件"
+					];
+					\think\Response::type("json");
+					return $r;
+				}
+			}
+			else {
+				$r = [
+					"code" => 1,
+					"desc" => "不能上传超过10M的文件"
+				];
+				\think\Response::type("json");
+				return $r;
+			}			
+		}
+		else {
+			$r = [
+				"code" => 1,
+				"desc" => "没有选择上传文件"
+			];
+			\think\Response::type("json");
+			return $r;
+		}
+		
+	}
+	
 }

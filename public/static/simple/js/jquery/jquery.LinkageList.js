@@ -47,7 +47,7 @@ $("#parent").LinkageList(data, {
 	var methods = {
 		
 		nextRemove: function(curr_select_obj) {
-			while(curr_select_obj.next().size() > 0)
+			while(curr_select_obj.next().length > 0)
 				curr_select_obj.next().remove();
 		},
 		
@@ -73,7 +73,7 @@ $("#parent").LinkageList(data, {
 			child += "</select>";
 			parent_obj.append(child);
 			
-			if($("#" + settings.objId + " > select:last > option").size() == 1)
+			if($("#" + settings.objId + " > select:last > option").length == 1)
 				$("#" + settings.objId + " > select:last").remove();
 			
 			$("#" + settings.objId + " > select").unbind("change");

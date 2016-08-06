@@ -1,15 +1,36 @@
 
 $(function() {
 	
-	page_init();
-		
 	//dialog
 	var alert_dialog = ready_alert_dialog();
 	
 	$('#content').ckeditor({ 
 		height: '350px' 
 	});
+	
+	//上传
+	$("#btn_upload").click(function() {
+		$("#file_upload").click();
+	});
+	$('#file_upload').fileupload({
+		url: "upload",
+		dataType: 'json',
+		done: function(e, data) {
+			if(data.result.code == 0) {
+				$("#picture").val(data.result.filepath);
+			}
+			else {
+				$("#dialog_message").html(data.result.desc);
+				alert_dialog.dialog("open");
+			}				
+		},
+		progressall: function (e, data) {
+			//var progress = parseInt(data.loaded / data.total * 100, 10);
 			
+		}
+	});
+	//上传 end
+	
 	//无限级下拉框
 	var data = {
 		type: getUrlParam("type")		

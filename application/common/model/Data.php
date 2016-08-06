@@ -1,6 +1,8 @@
 <?php
 namespace app\common\model;
 
+use \think\Response;
+
 class Data extends Base {
 	
 	public static function getList($page, $page_size, $type) {
@@ -11,7 +13,7 @@ class Data extends Base {
 		$limit = $page_size;
 		
 		$prefix = config("database.prefix");
-		$list = \think\Db::table($prefix . "data")
+		$data = \think\Db::table($prefix . "data")
 			->field("d.*, dc.name as dc_name")
 			->alias("d")
 			->join($prefix . "data_class as dc", "d.data_class_id = dc.id", "left")
@@ -20,9 +22,12 @@ class Data extends Base {
 			->limit($offset . ", " . $limit)
 			->select();
 		
-		foreach($list as &$v) {
+		$list = [];
+		foreach($data as $v) {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
 			$v["dc_name"] = $v["dc_name"] ? $v["dc_name"] : "[暂无]";
+			
+			$list[] = $v;
 		}
 		
 		$r = [

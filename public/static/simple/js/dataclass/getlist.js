@@ -108,7 +108,6 @@ function req_data() {
 }
 
 $(function() {
-	page_init();
 		
 	req_data();
 });

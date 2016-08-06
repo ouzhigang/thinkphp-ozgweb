@@ -3,7 +3,7 @@ composer.lock
 *.log
 thinkphp/
 runtime/
-startbootstrap-sb-admin-2-gh-pages/
+startbootstrap-sb-admin-2/
 extend/com/
 extend/org/
 vendor/

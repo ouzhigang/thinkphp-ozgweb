@@ -1,6 +1,8 @@
 <?php
 namespace app\common\model;
 
+use \think\Response;
+
 class DataClass extends Base {
     
 	public static function deleteById($id) {
@@ -26,56 +28,29 @@ class DataClass extends Base {
 	}
 	
 	public static function listById($id) {		
-		$dc_list = parent::all(function($query) use($id) {
+		$data = parent::all(function($query) use($id) {
 			$query->where("parent_id = " . $id)->order([ "sort" => "desc", "id" => "desc" ]);
 		});
 		
-		foreach($dc_list as &$v) {
-			$child_count = parent::where("parent_id = " . $v["id"])->count();
+		$dc_list = [];
+		foreach($data as $v) {
+			$item = $v->toArray();
+			$child_count = parent::where("parent_id = " . $item["id"])->count();
+			$item["children"] = [];
 			if($child_count > 0) {
-				$v["children"] = self::listById($v["id"]);
+				$item["children"] = self::listById($item["id"]);
 			}
+			$dc_list[] = $item;
 		}
 		return $dc_list;
 	}
 	
-	/*public static function getTreeSelector($type) {
-		$data = [];
-		$list = parent::all(function($query) use($type) {
-			$query->where("parent_id = 0 and type = " . $type)->order([ "sort" => "desc", "id" => "desc" ])
-		});
-		
-		foreach($list as &$v) {
-						
-			$res = parent::where("parent_id = " . $v["id"])->count();
-			if($res > 0) {
-				self::treeSelector($v);
-			}
-			
-			$data[] = $v;
-		}
-		return $data;
-	}	
-	protected static function treeSelector(&$parent_row) {
-		$list = parent::all(function($query) use($parent_row) {
-			$query->where("parent_id = " . $parent_row["id"])->order([ "sort" => "desc", "id" => "desc" ])
-		});
-		
-		foreach($list as &$v) {
-			$res = parent::where("parent_id = " . $v["id"])->count();
-			if($res > 0) {
-				self::treeSelector($v);
-			}			
-		}
-		$parent_row["children"] = $list;
-	}*/
-
 	public static function getTreeSelector($type) {
-		$data = [];
 		$list = parent::all(function($query) use($type) {
 			$query->where("parent_id = 0 and type = " . $type)->order(["sort" => "desc", "id" => "desc"]);
 		});
 		
+		$data = [];
 		foreach($list as $v) {
 			$data[] = [
 				"id" => intval($v["id"]),
@@ -142,13 +117,17 @@ class DataClass extends Base {
 			$query->where("type = " . $type . " and parent_id = 0")->order([ "sort" => "desc", "id" => "desc" ]);
 		});
 		
-		foreach($data as &$v) {
-			$child_count = parent::where("parent_id = " . $v["id"])->count();
+		$list = [];
+		foreach($data as $v) {
+			$item = $v->toArray();
+			$child_count = parent::where("parent_id = " . $item["id"])->count();
+			$item["children"] = [];
 			if($child_count > 0)
-				$v["children"] = self::listById($v["id"]);
+				$item["children"] = self::listById($item["id"]);
 			
+			$list[] = $item;
 		}
-		return $data;
+		return $list;
 	}
 	
 }

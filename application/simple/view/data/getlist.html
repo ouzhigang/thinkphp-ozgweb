@@ -2,23 +2,14 @@
 <html lang="zh-cn">
 <head>
 	{include file="common/header" /}
-	{include file="common/header_css" /}
-	
-	{include file="common/header_js" /}			
-	<script src="{$Think.config.web_res_root}simple/js/data/getlist.js"></script>
-			
+	{include file="common/css" /}
 </head>
 
 <body>
     <div id="wrapper">
 		{include file="common/dialog" /}
-		
-        <!-- Navigation -->
 		{include file="common/navbar" /}
-
-        <div id="page-wrapper">
-            <!-- 内容部分 -->
-			
+        <div id="page-wrapper">			
 			<div class="row" id="first_row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
@@ -43,27 +34,22 @@
                                     <tbody>
                                     </tbody>
                                 </table>
-                            </div>
-                            
+                            </div>                            
 							<div id="page_nav">
 								<span id="page_index">页次 <span id="page">1</span> / <span id="page_count">10</span></span>
 								<button class="btn btn-outline btn-link" type="button" id="page_first">首页</button>
 								<button class="btn btn-outline btn-link" type="button" id="page_prev">上一页</button>
 								<button class="btn btn-outline btn-link" type="button" id="page_next">下一页</button>
 								<button class="btn btn-outline btn-link" type="button" id="page_last">末页</button>
-							</div>
-                            
+							</div>                            
                         </div>
                     </div>
                 </div>
-            </div>
-			
+            </div>			
         </div>
-        <!-- /#page-wrapper -->
-
     </div>
-    <!-- /#wrapper -->
-	
+	{include file="common/js" /}			
+	<script src="{$Think.config.web_res_root}simple/js/data/getlist.js"></script>
 </body>
 
 </html>

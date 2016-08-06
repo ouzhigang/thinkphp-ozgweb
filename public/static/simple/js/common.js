@@ -28,7 +28,8 @@ function ready_confirm_dialog(sureCallBack) {
 	return dialog;
 }
 
-function page_init() {
+$(function() {
+	
 	//每个页面都执行一次这里
 	
 	//退出登录
@@ -43,4 +44,4 @@ function page_init() {
 		conform_dialog.parent().css('z-index', 9999);
 	});
 	
-}
+});
