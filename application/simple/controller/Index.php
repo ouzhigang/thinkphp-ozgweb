@@ -44,9 +44,9 @@ class Index extends \app\common\controller\Base {
 			
 			//提交登录
 			$remember = input("request.remember", 0, "intval");
-			$vcode = input("request.vcode", "", "str_filter");			
+			$vcode = input("request.vcode", NULL, "str_filter");			
 			
-			$r = \app\common\model\User::adminLogin($name, $pwd, $remember, $vcode);
+			$r = \app\common\model\User::adminLogin($name, $pwd, $vcode, $remember);
 			\think\Response::type("json");
 			return $r;
 		}

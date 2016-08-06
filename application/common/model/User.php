@@ -35,15 +35,17 @@ class User extends Base {
 	}
 	
 	//管理员登录
-	public static function adminLogin($name, $pwd, $remember = 0, $vcode = "") {
+	public static function adminLogin($name, $pwd, $vcode, $remember = 0) {
 
 		$user = parent::where("name = '" . $name . "' and is_admin = 1")->find();
 		if($user) {
 			$user = $user->toArray();
 			
 			if($user["err_login"] >= 3) {
-				
-				if($vcode == "") {
+				if(is_null($vcode)) {
+					return Response::result(NULL, 2, "输入错误密码次数过多，需要输入验证码", "json");
+				}
+				elseif($vcode == "") {
 					return Response::result(NULL, 1, "验证码不能为空", "json");
 				}
 				else {
