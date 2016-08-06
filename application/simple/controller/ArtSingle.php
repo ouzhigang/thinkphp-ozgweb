@@ -1,6 +1,8 @@
 <?php
 namespace app\simple\controller;
 
+use \think\Response;
+
 class ArtSingle extends Base {
 	
 	public function get() {
@@ -11,14 +13,9 @@ class ArtSingle extends Base {
 		if(IS_POST) {
 			$content = input("post.content", "", "str_filter");			
 			$data["content"] = $content;			
-			\app\common\model\ArtSingle::saveData($data, $id);
-			
-			$r = [
-				"code" => 0,
-				"desc" => "更新成功"
-			];
-			\think\Response::type("json");
-			return $r;
+			\app\common\model\ArtSingle::saveData($data, $id);		
+
+			return Response::result(NULL, 0, "更新成功", "json");
 		}
 		
 		$data["content"] = html_entity_decode($data["content"]);

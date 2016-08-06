@@ -40,40 +40,20 @@ class Friendlink extends Base {
 			$row["is_picture"] = input("post.is_picture", 0, "intval");
 			
 			if(!$row["name"]) {
-				$r = [
-					"code" => 1,
-					"desc" => "名称不能为空"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "名称不能为空", "json");
 			}
 			elseif(!$row["url"]) {
-				$r = [
-					"code" => 1,
-					"desc" => "URL不能为空"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "URL不能为空", "json");
 			}
 			
 			if($id != 0) {				
 				\app\common\model\Friendlink::saveData($row, $id);
-				$r = [
-					"code" => 0,
-					"desc" => "更新成功"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 0, "更新成功", "json");
 			}
 			else {
 				\app\common\model\Friendlink::saveData($row);
 				
-				$r = [
-					"code" => 0,
-					"desc" => "添加成功"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 0, "添加成功", "json");
 			}
 		}
 		
@@ -84,12 +64,7 @@ class Friendlink extends Base {
 	public function del() {
 		$id = input("request.id", 0, "intval");
 		\app\common\model\Friendlink::delById($id);
-		$r = [
-			"code" => 0,
-			"desc" => "删除成功"
-		];
-		\think\Response::type("json");
-		return $r;
+		return Response::result(NULL, 0, "删除成功", "json");
 	}
 	
 }

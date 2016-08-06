@@ -11,13 +11,7 @@ class User extends Base {
 			$page = input("request.page", 1, "intval");
 			$page_size = input("request.page_size", config("web_page_size"), "intval");
 			
-			$r = [
-				"code" => 0,
-				"desc" => "请求成功",
-				"data" => \app\common\model\User::getList($page, $page_size)
-			];
-			\think\Response::type("json");
-			return $r;
+			return Response::result(\app\common\model\User::getList($page, $page_size), 0, "请求成功", "json");
 		}
 		
 		return $this->fetch("getlist");
@@ -30,28 +24,13 @@ class User extends Base {
 			$pwd = input("post.pwd", "", "str_filter");
 			$pwd2 = input("post.pwd2", "", "str_filter");
 			if(!$name) {
-				$r = [
-					"code" => 1,
-					"desc" => "用户名不能为空"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "用户名不能为空", "json");
 			}
 			if(!$pwd) {
-				$r = [
-					"code" => 1,
-					"desc" => "密码不能为空"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "密码不能为空", "json");
 			}
 			if($pwd != $pwd2) {
-				$r = [
-					"code" => 1,
-					"desc" => "确认密码不正确"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "确认密码不正确", "json");
 			}
 			
 			$user = [
@@ -84,28 +63,13 @@ class User extends Base {
 			$pwd2 = input("post.pwd2", "", "str_filter");
 			
 			if(!$old_pwd) {
-				$r = [
-					"code" => 1,
-					"desc" => "旧密码不能为空"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "旧密码不能为空", "json");
 			}
 			if(!$pwd) {
-				$r = [
-					"code" => 1,
-					"desc" => "新密码不能为空"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "新密码不能为空", "json");
 			}
 			if($pwd != $pwd2) {
-				$r = [
-					"code" => 1,
-					"desc" => "确认密码不正确"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 1, "确认密码不正确", "json");
 			}
 			
 			$r = \app\common\model\User::updatePwd($old_pwd, $pwd, $pwd2);

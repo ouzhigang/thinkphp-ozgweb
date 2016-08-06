@@ -1,6 +1,8 @@
 <?php
 namespace app\simple\controller;
 
+use \think\Response;
+
 class DataClass extends Base {
 	
 	public function getlist() {
@@ -8,13 +10,7 @@ class DataClass extends Base {
 		
 		if(input("request.get_data", 0, "intval")) {			
 			$data = \app\common\model\DataClass::getList($type);
-			$r = [
-				"code" => 0,
-				"desc" => "请求成功",
-				"data" => $data
-			];
-			\think\Response::type("json");
-			return $r;
+			return Response::result($data, 0, "请求成功", "json");
 		}
 		
 		return $this->fetch("getlist");
@@ -47,30 +43,15 @@ class DataClass extends Base {
 			if($id != 0) {
 				
 				if($id == $row["parent_id"]) {
-					$r = [
-						"code" => 1,
-						"desc" => "父级分类不能为当前选中分类"
-					];
-					\think\Response::type("json");
-					return $r;
+					return Response::result(NULL, 1, "父级分类不能为当前选中分类", "json");
 				}
 				
 				\app\common\model\DataClass::saveData($row, $id);
-				$r = [
-					"code" => 0,
-					"desc" => "更新成功"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 0, "更新成功", "json");
 			}
 			else {				
 				\app\common\model\DataClass::saveData($row);
-				$r = [
-					"code" => 0,
-					"desc" => "添加成功"
-				];
-				\think\Response::type("json");
-				return $r;
+				return Response::result(NULL, 0, "添加成功", "json");
 			}
 		}
 		
@@ -82,25 +63,14 @@ class DataClass extends Base {
 		$type = input("get.type", 0, "intval");
 		$data = \app\common\model\DataClass::getTreeSelector($type);
 		
-		$r = [
-			"code" => 0,
-			"desc" => "请求成功",
-			"data" => $data
-		];
-		\think\Response::type("json");
-		return $r;
+		return Response::result($data, 0, "请求成功", "json");
 	}
 	
 	public function del() {
 		
 		$id = input("request.id", 0, "intval");
 		\app\common\model\DataClass::delById($id);
-		$r = [
-			"code" => 0,
-			"desc" => "删除成功"
-		];
-		\think\Response::type("json");
-		return $r;
+		return Response::result(NULL, 0, "删除成功", "json");
 	}
 	
 }
