@@ -1,6 +1,8 @@
 <?php
 namespace app\simple\controller;
 
+use \think\Response;
+
 class Base extends \app\common\controller\Base {
     
 	protected $beforeActionList = [

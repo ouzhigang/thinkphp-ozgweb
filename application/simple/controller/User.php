@@ -1,6 +1,8 @@
 <?php
 namespace app\simple\controller;
 
+use \think\Response;
+
 class User extends Base {
 	
 	public function getlist() {

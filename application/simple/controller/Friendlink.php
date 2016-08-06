@@ -1,6 +1,8 @@
 <?php
 namespace app\simple\controller;
 
+use \think\Response;
+
 class Friendlink extends Base {
 	
 	public function getlist() {

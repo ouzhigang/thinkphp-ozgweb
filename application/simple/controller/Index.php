@@ -1,6 +1,8 @@
 <?php
 namespace app\simple\controller;
 
+use \think\Response;
+
 class Index extends \app\common\controller\Base {
 	
 	public function getvcode() {
