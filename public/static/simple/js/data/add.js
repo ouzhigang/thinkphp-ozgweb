@@ -17,7 +17,7 @@ $(function() {
 		dataType: 'json',
 		done: function(e, data) {
 			if(data.result.code == 0) {
-				$("#picture").val(data.result.filepath);
+				$("#picture").val(data.result.data.filepath);
 			}
 			else {
 				$("#dialog_message").html(data.result.msg);
@@ -93,6 +93,7 @@ $(function() {
 				sort: $("#sort").val(),
 				data_class_id: $("#data_class_id").val(),
 				content: $("#content").val(),
+				picture: $("#picture").val(),
 				type: $("#type").val()
 			};
 			$.ajax({
