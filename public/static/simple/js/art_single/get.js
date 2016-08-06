@@ -24,7 +24,7 @@ $(function() {
 			},
 			success: function(res, status) {
 				
-				$("#dialog_message").html(res.desc);
+				$("#dialog_message").html(res.msg);
 				alert_dialog.dialog("open");
 			},
 			complete: function() {

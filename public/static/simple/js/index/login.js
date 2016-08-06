@@ -43,7 +43,7 @@ function submit_login(exist_vcode) {
 					form_dialog.dialog("open");		
 				}
 				else {
-					$("#dialog_message").html(res.desc);
+					$("#dialog_message").html(res.msg);
 					alert_dialog.dialog("open");
 				}
 				do_submit = true;

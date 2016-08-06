@@ -65,7 +65,7 @@ function show_data(page) {
 									show_data(curr_page);
 								}
 								else {							
-									$("#dialog_message").html(res.desc);
+									$("#dialog_message").html(res.msg);
 									alert_dialog.dialog("open");
 								}
 							},

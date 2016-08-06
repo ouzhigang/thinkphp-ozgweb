@@ -20,7 +20,7 @@ $(function() {
 				$("#picture").val(data.result.filepath);
 			}
 			else {
-				$("#dialog_message").html(data.result.desc);
+				$("#dialog_message").html(data.result.msg);
 				alert_dialog.dialog("open");
 			}				
 		},
@@ -109,7 +109,7 @@ $(function() {
 						location.href = "getlist?type=" + $("#type").val();
 					}
 					else {
-						$("#dialog_message").html(res.desc);
+						$("#dialog_message").html(res.msg);
 						alert_dialog.dialog("open");
 					}
 				},

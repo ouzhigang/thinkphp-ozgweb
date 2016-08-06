@@ -72,7 +72,7 @@ function show_data(page) {
 									btndel.attr("disabled", false);
 									
 									alert_dialog = ready_alert_dialog();
-									$("#dialog_message").html(res.desc);
+									$("#dialog_message").html(res.msg);
 									alert_dialog.dialog("open");
 								}
 							},

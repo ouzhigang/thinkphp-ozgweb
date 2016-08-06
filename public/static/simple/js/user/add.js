@@ -54,7 +54,7 @@ $(function() {
 						location.href = "getlist";
 					}
 					else {
-						$("#dialog_message").html(res.desc);
+						$("#dialog_message").html(res.msg);
 						alert_dialog.dialog("open");
 					}
 				},
