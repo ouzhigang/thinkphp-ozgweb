@@ -13,15 +13,14 @@ class Data extends Base {
 		$limit = $page_size;
 		
 		$prefix = config("database.prefix");
-		$data = \think\Db::table($prefix . "data")
+		$data = parent::where("d.type = " . $type)
 			->field("d.*, dc.name as dc_name")
 			->alias("d")
 			->join($prefix . "data_class as dc", "d.data_class_id = dc.id", "left")
-			->where("d.type = " . $type)
 			->order("sort desc, id desc")
 			->limit($offset . ", " . $limit)
 			->select();
-		
+			
 		$list = [];
 		foreach($data as $v) {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
