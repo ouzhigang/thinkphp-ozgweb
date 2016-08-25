@@ -82,13 +82,22 @@ class DataClass extends Base {
 
 	public static function saveData($data, $id = 0) {
 		if($id) {
+			
+			if($id == $data["parent_id"]) {
+				return Response::result(NULL, 1, "父级分类不能为当前选中分类", "json");
+			}
+			
 			parent::where("id = " . $id)->update($data);
+			
+			return Response::result(NULL, 0, "更新成功", "json");
 		}
 		else {
 			unset($data["id"]);
 			parent::create($data);
+			
+			return Response::result(NULL, 0, "添加成功", "json");
 		}
-		return true;
+		
 	}
 	
 	public static function delById($id = 0) {

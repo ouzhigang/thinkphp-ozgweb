@@ -41,21 +41,11 @@ class Friendlink extends Base {
 			$row["sort"] = input("post.sort", 0, "intval");
 			$row["is_picture"] = input("post.is_picture", 0, "intval");
 			
-			if(!$row["name"]) {
-				return Response::result(NULL, 1, "名称不能为空", "json");
-			}
-			elseif(!$row["url"]) {
-				return Response::result(NULL, 1, "URL不能为空", "json");
-			}
-			
 			if($id != 0) {				
-				\app\common\model\Friendlink::saveData($row, $id);
-				return Response::result(NULL, 0, "更新成功", "json");
+				return \app\common\model\Friendlink::saveData($row, $id);
 			}
 			else {
-				\app\common\model\Friendlink::saveData($row);
-				
-				return Response::result(NULL, 0, "添加成功", "json");
+				return \app\common\model\Friendlink::saveData($row);
 			}
 		}
 		

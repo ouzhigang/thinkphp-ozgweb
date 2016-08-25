@@ -40,18 +40,11 @@ class DataClass extends Base {
 			$row["sort"] = input("post.sort", 0, "intval");
 			$row["type"] = input("post.type", 0, "intval");
 			
-			if($id != 0) {
-				
-				if($id == $row["parent_id"]) {
-					return Response::result(NULL, 1, "父级分类不能为当前选中分类", "json");
-				}
-				
-				\app\common\model\DataClass::saveData($row, $id);
-				return Response::result(NULL, 0, "更新成功", "json");
+			if($id != 0) {				
+				return \app\common\model\DataClass::saveData($row, $id);
 			}
 			else {				
-				\app\common\model\DataClass::saveData($row);
-				return Response::result(NULL, 0, "添加成功", "json");
+				return \app\common\model\DataClass::saveData($row);
 			}
 		}
 		

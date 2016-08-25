@@ -46,15 +46,28 @@ class Data extends Base {
 	}
 	
 	public static function saveData($data, $id = 0) {
+		
+		if(!$data["name"]) {
+			return Response::result(NULL, 1, "名称不能为空", "json");
+			
+		}
+		elseif(!$data["content"]) {
+			return Response::result(NULL, 1, "内容不能为空", "json");
+		}
+		
 		if($id) {
 			parent::where("id = " . $id)->update($data);
+			
+			return Response::result(NULL, 0, "更新成功", "json");
 		}
 		else {
 			unset($data["id"]);
 			$data["add_time"] = time();
 			parent::create($data);
+			
+			return Response::result(NULL, 0, "添加成功", "json");
 		}
-		return true;
+		
 	}
 	
 	public static function delById($id = 0) {

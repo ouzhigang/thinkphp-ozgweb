@@ -50,21 +50,11 @@ class Data extends Base {
 			$row["type"] = input("post.type", 0, "intval");		
 			$row["picture"] = input("request.picture", "", "str_filter");
 			
-			if(!$row["name"]) {
-				return Response::result(NULL, 1, "名称不能为空", "json");
-				
-			}
-			elseif(!$row["content"]) {
-				return Response::result(NULL, 1, "内容不能为空", "json");
-			}
-			
 			if($id != 0) {				
-				\app\common\model\Data::saveData($row, $id);
-				return Response::result(NULL, 0, "更新成功", "json");
+				return \app\common\model\Data::saveData($row, $id);
 			}
 			else {				
-				\app\common\model\Data::saveData($row);
-				return Response::result(NULL, 0, "添加成功", "json");
+				return \app\common\model\Data::saveData($row);
 			}
 		}
 		

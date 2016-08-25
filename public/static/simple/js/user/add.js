@@ -31,9 +31,6 @@ $(function() {
 		},
 		submitHandler: function(form) {
 			
-			$("#pwd").val(hex_md5($("#pwd").val()));
-			$("#pwd2").val(hex_md5($("#pwd2").val()));
-			
 			var data = {
 				name: $("#name").val(),
 				pwd: hex_md5($("#pwd").val()),

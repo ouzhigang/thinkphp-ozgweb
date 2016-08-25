@@ -35,14 +35,24 @@ class Friendlink extends Base {
 	}
 	
 	public static function saveData($data, $id = 0) {
+		if(!$data["name"]) {
+			return Response::result(NULL, 1, "名称不能为空", "json");
+		}
+		elseif(!$data["url"]) {
+			return Response::result(NULL, 1, "URL不能为空", "json");
+		}
+		
 		if($id) {
 			parent::where("id = " . $id)->update($data);
+			
+			return Response::result(NULL, 0, "更新成功", "json");
 		}
 		else {
 			unset($data["id"]);
 			parent::create($data);
+			
+			return Response::result(NULL, 0, "添加成功", "json");
 		}
-		return true;
 	}
 	
 	public static function findById($id = 0) {

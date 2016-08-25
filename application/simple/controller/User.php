@@ -25,19 +25,11 @@ class User extends Base {
 			$name = input("post.name", "", "str_filter");
 			$pwd = input("post.pwd", "", "str_filter");
 			$pwd2 = input("post.pwd2", "", "str_filter");
-			if(!$name) {
-				return Response::result(NULL, 1, "用户名不能为空", "json");
-			}
-			if(!$pwd) {
-				return Response::result(NULL, 1, "密码不能为空", "json");
-			}
-			if($pwd != $pwd2) {
-				return Response::result(NULL, 1, "确认密码不正确", "json");
-			}
 			
 			$user = [
 				"name" => $name,
 				"pwd" => $pwd,
+				"pwd2" => $pwd2,
 			];
 			$r = \app\common\model\User::saveData($user);
 			
@@ -64,20 +56,7 @@ class User extends Base {
 			$pwd = input("post.pwd", "", "str_filter");
 			$pwd2 = input("post.pwd2", "", "str_filter");
 			
-			if(!$old_pwd) {
-				return Response::result(NULL, 1, "旧密码不能为空", "json");
-			}
-			if(!$pwd) {
-				return Response::result(NULL, 1, "新密码不能为空", "json");
-			}
-			if($pwd != $pwd2) {
-				return Response::result(NULL, 1, "确认密码不正确", "json");
-			}
-			
-			$r = \app\common\model\User::updatePwd($old_pwd, $pwd, $pwd2);
-			
-			\think\Response::type("json");
-			return $r;
+			return \app\common\model\User::updatePwd($old_pwd, $pwd, $pwd2);
 		}
 		
 		return $this->fetch("updatepwd");

@@ -128,6 +128,18 @@ class User extends Base {
 	
 	public static function saveData($data, $id = 0) {
 		
+		if(!$data["name"]) {
+			return Response::result(NULL, 1, "用户名不能为空", "json");
+		}
+		if(!$data["pwd"]) {
+			return Response::result(NULL, 1, "密码不能为空", "json");
+		}
+		if($data["pwd"] != $data["pwd2"]) {
+			return Response::result(NULL, 1, "确认密码不正确", "json");
+		}			
+		
+		unset($data["pwd2"]);
+		
 		if($id) {
 			parent::where("id = " . $id)->update($data);
 			return Response::result(NULL, 0, "更新成功", "json");
@@ -147,6 +159,17 @@ class User extends Base {
 	}
 	
 	public static function updatePwd($old_pwd, $pwd, $pwd2) {
+		
+		if(!$old_pwd) {
+			return Response::result(NULL, 1, "旧密码不能为空", "json");
+		}
+		if(!$pwd) {
+			return Response::result(NULL, 1, "新密码不能为空", "json");
+		}
+		if($pwd != $pwd2) {
+			return Response::result(NULL, 1, "确认密码不正确", "json");
+		}
+		
 		$curr_user = session("user");
 		
 		$user = parent::where("name = '" . $curr_user["name"] . "' and pwd = '" . $old_pwd . "'")->find();		
