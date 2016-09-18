@@ -2,6 +2,7 @@
 namespace app\simple\controller;
 
 use \think\Response;
+use \think\Request;
 
 class Data extends Base {
 	
@@ -14,7 +15,7 @@ class Data extends Base {
 			$type = input("request.type", 1, "intval");
 			$res_data = \app\common\model\Data::getList($page, $page_size, $type);
 						
-			return Response::result($res_data, 0, "请求成功", "json");
+			return res_result($res_data, 0, "请求成功");
 		}
 		
 		return $this->fetch("getlist");
@@ -40,7 +41,7 @@ class Data extends Base {
 			];			
 		}
 		
-		if(IS_POST) {
+		if(Request::instance()->isPOST()) {
 
 			$row = [];
 			$row["name"] = input("post.name", "", "str_filter");
@@ -65,7 +66,7 @@ class Data extends Base {
 	public function del() {
 		$id = input("request.id", 0, "intval");
 		\app\common\model\Data::delById($id);
-		return Response::result(NULL, 0, "删除成功", "json");
+		return res_result(NULL, 0, "删除成功");
 	}
 	
 	public function upload() {
@@ -89,18 +90,18 @@ class Data extends Base {
 					$filepath = "upload/" . $filepath . "." . $ext_name;
 					move_uploaded_file($file["tmp_name"], dirname(__FILE__) . "/../../../public/static/" . $filepath);
 					
-					return Response::result([ "filepath" => $filepath ], 0, "上传完成", "json");
+					return res_result([ "filepath" => $filepath ], 0, "上传完成");
 				}
 				else {
-					return Response::result(NULL, 1, "不允许上传此类文件", "json");
+					return res_result(NULL, 1, "不允许上传此类文件");
 				}
 			}
 			else {
-				return Response::result(NULL, 1, "不能上传超过10M的文件", "json");
+				return res_result(NULL, 1, "不能上传超过10M的文件");
 			}			
 		}
 		else {
-			return Response::result(NULL, 1, "没有选择上传文件", "json");
+			return res_result(NULL, 1, "没有选择上传文件");
 		}
 		
 	}

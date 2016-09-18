@@ -12,7 +12,7 @@ class Feedback extends Base {
 			$page_size = input("request.page_size", config("web_page_size"), "intval");
 			$res_data = \app\common\model\Feedback::getList($page, $page_size);
 			
-			return Response::result($res_data, 0, "请求成功", "json");
+			return res_result($res_data, 0, "请求成功");
 		}
 		return $this->fetch("getlist");
 	}
@@ -20,7 +20,7 @@ class Feedback extends Base {
 	public function del() {
 		$id = input("request.id", 0, "intval");
 		\app\common\model\Feedback::delById($id);
-		return Response::result(NULL, 0, "删除成功", "json");
+		return res_result(NULL, 0, "删除成功");
 	}
 	
 }

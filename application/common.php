@@ -657,3 +657,16 @@ function is_wechat_browser() {
 		return true;
 	}
 }
+
+//公用格式的返回json函数
+function res_result($data = NULL, $code = 0, $msg = NULL) {
+	
+	$res = [
+		"data" => $data,
+		"code" => $code,
+		"msg" => $msg,
+		"time" => time()
+	];
+	
+	return $res;
+}

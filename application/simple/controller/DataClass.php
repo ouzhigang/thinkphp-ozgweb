@@ -2,6 +2,7 @@
 namespace app\simple\controller;
 
 use \think\Response;
+use \think\Request;
 
 class DataClass extends Base {
 	
@@ -10,7 +11,7 @@ class DataClass extends Base {
 		
 		if(input("request.get_data", 0, "intval")) {			
 			$data = \app\common\model\DataClass::getList($type);
-			return Response::result($data, 0, "请求成功", "json");
+			return res_result($data, 0, "请求成功");
 		}
 		
 		return $this->fetch("getlist");
@@ -33,7 +34,7 @@ class DataClass extends Base {
 			];			
 		}
 		
-		if(IS_POST) {
+		if(Request::instance()->isPOST()) {
 			
 			$row["name"] = input("post.name", "", "str_filter");
 			$row["parent_id"] = input("post.parent_id", 0, "intval");
@@ -56,14 +57,14 @@ class DataClass extends Base {
 		$type = input("get.type", 0, "intval");
 		$data = \app\common\model\DataClass::getTreeSelector($type);
 		
-		return Response::result($data, 0, "请求成功", "json");
+		return res_result($data, 0, "请求成功");
 	}
 	
 	public function del() {
 		
 		$id = input("request.id", 0, "intval");
 		\app\common\model\DataClass::delById($id);
-		return Response::result(NULL, 0, "删除成功", "json");
+		return res_result(NULL, 0, "删除成功");
 	}
 	
 }

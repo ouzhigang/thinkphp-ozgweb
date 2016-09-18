@@ -2,6 +2,7 @@
 namespace app\simple\controller;
 
 use \think\Response;
+use \think\Request;
 
 class Index extends \app\common\controller\Base {
 	
@@ -16,8 +17,7 @@ class Index extends \app\common\controller\Base {
 		$verify->imageH = 30;
 		//$verify->expire = 600;
 		$verify->entry(1);
-		
-		return NULL;
+		exit();
 	}
 	
     public function login() {
@@ -40,7 +40,7 @@ class Index extends \app\common\controller\Base {
 			return NULL;
 		}
 		
-		if(IS_POST) {
+		if(Request::instance()->isPOST()) {
 			$name = input("request.name", NULL, "str_filter");
 			$pwd = input("request.pwd", NULL, "str_filter");
 			
@@ -48,12 +48,13 @@ class Index extends \app\common\controller\Base {
 			$remember = input("request.remember", 0, "intval");
 			$vcode = input("request.vcode", NULL, "str_filter");			
 			
-			$r = \app\common\model\User::adminLogin($name, $pwd, $vcode, $remember);
-			\think\Response::type("json");
-			return $r;
+			$data = \app\common\model\User::adminLogin($name, $pwd, $vcode, $remember);
+			$r = \think\Response::create($data, "json");
+			$r->send();
+			return NULL;
 		}
-		
-		return $this->fetch("login");
+		else
+			return $this->fetch("login");
     }	
 	
 }

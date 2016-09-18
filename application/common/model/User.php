@@ -43,15 +43,15 @@ class User extends Base {
 			
 			if($user["err_login"] >= 3) {
 				if(is_null($vcode)) {
-					return Response::result(NULL, 2, "输入错误密码次数过多，需要输入验证码", "json");
+					return res_result(NULL, 2, "输入错误密码次数过多，需要输入验证码");
 				}
 				elseif($vcode == "") {
-					return Response::result(NULL, 1, "验证码不能为空", "json");
+					return res_result(NULL, 1, "验证码不能为空");
 				}
 				else {
 					$verify = new \org\Verify();
 					if(!$verify->check($vcode, 1)) {
-						return Response::result(NULL, 1, "验证码错误", "json");
+						return res_result(NULL, 1, "验证码错误");
 					}
 				}
 			}
@@ -73,7 +73,7 @@ class User extends Base {
 					//echo $curr_user_name;exit();
 				}
 				
-				$arr = Response::result(NULL, 0, "登录成功", "json");
+				$arr = res_result(NULL, 0, "登录成功");
 			}
 			else {				
 				$user["err_login"] += 1;
@@ -81,12 +81,12 @@ class User extends Base {
 				unset($user["id"]);
 				parent::where("id = " . $id)->update($user);
 				
-				$arr = Response::result(NULL, 1, "密码错误", "json");
+				$arr = res_result(NULL, 1, "密码错误");
 			}			
 			return $arr;
 		}
 		else {
-			$arr = Response::result(NULL, 1, "没有此用户", "json");
+			$arr = res_result(NULL, 1, "没有此用户");
 			return $arr;
 		}
 	}
@@ -95,15 +95,15 @@ class User extends Base {
 		
 		$user = session("user");
 		if($user["id"] == $id) {
-			return Response::result(NULL, 1, "不能删除自己", "json");
+			return res_result(NULL, 1, "不能删除自己");
 		}
 		
 		$result = parent::where("id = " . $id)->delete();
 		if($result) {
-			return Response::result(NULL, 0, "删除成功", "json");
+			return res_result(NULL, 0, "删除成功");
 		}
 		
-		return Response::result(NULL, 1, "删除失败", "json");
+		return res_result(NULL, 1, "删除失败");
 	}
 	
 	//退出登录
@@ -114,7 +114,7 @@ class User extends Base {
 		if(isset($_COOKIE["curr_user_name"]))
 			cookie("curr_user_name", null);
 			
-		return Response::result(NULL, 0, "退出成功", "json");
+		return res_result(NULL, 0, "退出成功");
 	}
 	
 	public static function findByName($name, $other = []) {
@@ -129,45 +129,45 @@ class User extends Base {
 	public static function saveData($data, $id = 0) {
 		
 		if(!$data["name"]) {
-			return Response::result(NULL, 1, "用户名不能为空", "json");
+			return res_result(NULL, 1, "用户名不能为空");
 		}
 		if(!$data["pwd"]) {
-			return Response::result(NULL, 1, "密码不能为空", "json");
+			return res_result(NULL, 1, "密码不能为空");
 		}
 		if($data["pwd"] != $data["pwd2"]) {
-			return Response::result(NULL, 1, "确认密码不正确", "json");
+			return res_result(NULL, 1, "确认密码不正确");
 		}			
 		
 		unset($data["pwd2"]);
 		
 		if($id) {
 			parent::where("id = " . $id)->update($data);
-			return Response::result(NULL, 0, "更新成功", "json");
+			return res_result(NULL, 0, "更新成功");
 		}
 		else {
 			$total = parent::where("name = '" . $data["name"] . "'")->count();
 			if($total > 0) {
-				return Response::result(NULL, 1, "该用户已存在", "json");
+				return res_result(NULL, 1, "该用户已存在");
 			}
 			
 			$data["add_time"] = time();
 			$data["is_admin"] = 1;
 			
 			parent::create($data);
-			return Response::result(NULL, 0, "添加成功", "json");
+			return res_result(NULL, 0, "添加成功");
 		}
 	}
 	
 	public static function updatePwd($old_pwd, $pwd, $pwd2) {
 		
 		if(!$old_pwd) {
-			return Response::result(NULL, 1, "旧密码不能为空", "json");
+			return res_result(NULL, 1, "旧密码不能为空");
 		}
 		if(!$pwd) {
-			return Response::result(NULL, 1, "新密码不能为空", "json");
+			return res_result(NULL, 1, "新密码不能为空");
 		}
 		if($pwd != $pwd2) {
-			return Response::result(NULL, 1, "确认密码不正确", "json");
+			return res_result(NULL, 1, "确认密码不正确");
 		}
 		
 		$curr_user = session("user");
@@ -179,10 +179,10 @@ class User extends Base {
 			$id = $user["id"];
 			unset($user["id"]);
 			parent::where("id = " . $id)->update($user);
-			return Response::result(NULL, 0, "修改密码成功", "json");
+			return res_result(NULL, 0, "修改密码成功");
 		}
 		else {
-			return Response::result(NULL, 1, "旧密码不正确", "json");
+			return res_result(NULL, 1, "旧密码不正确");
 		}
 		
 	}

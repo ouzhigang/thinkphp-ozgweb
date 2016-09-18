@@ -2,6 +2,7 @@
 namespace app\simple\controller;
 
 use \think\Response;
+use \think\Request;
 
 class User extends Base {
 	
@@ -13,7 +14,7 @@ class User extends Base {
 			$page = input("request.page", 1, "intval");
 			$page_size = input("request.page_size", config("web_page_size"), "intval");
 			
-			return Response::result(\app\common\model\User::getList($page, $page_size), 0, "请求成功", "json");
+			return res_result(\app\common\model\User::getList($page, $page_size), 0, "请求成功");
 		}
 		
 		return $this->fetch("getlist");
@@ -21,7 +22,7 @@ class User extends Base {
 	
 	public function add() {
 		
-		if(IS_POST) {
+		if(Request::instance()->isPOST()) {
 			$name = input("post.name", "", "str_filter");
 			$pwd = input("post.pwd", "", "str_filter");
 			$pwd2 = input("post.pwd2", "", "str_filter");
@@ -31,10 +32,11 @@ class User extends Base {
 				"pwd" => $pwd,
 				"pwd2" => $pwd2,
 			];
-			$r = \app\common\model\User::saveData($user);
+			$data = \app\common\model\User::saveData($user);
 			
-			\think\Response::type("json");
-			return $r;
+			$r = \think\Response::create($data, "json");
+			$r->send();
+			return NULL;
 		}
 		
 		return $this->fetch("add");
@@ -42,15 +44,16 @@ class User extends Base {
 	
 	public function del() {
 		$id = input("request.id", 0, "intval");
-		$r = \app\common\model\User::delById($id);
+		$data = \app\common\model\User::delById($id);
 		
-		\think\Response::type("json");
-		return $r;
+		$r = \think\Response::create($data, "json");
+		$r->send();
+		return NULL;
 	}
 	
 	public function updatepwd() {
 		
-		if(IS_POST) {
+		if(Request::instance()->isPOST()) {
 			
 			$old_pwd = input("post.old_pwd", "", "str_filter");
 			$pwd = input("post.pwd", "", "str_filter");

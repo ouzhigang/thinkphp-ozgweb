@@ -2,6 +2,7 @@
 namespace app\simple\controller;
 
 use \think\Response;
+use \think\Request;
 
 class Friendlink extends Base {
 	
@@ -33,7 +34,7 @@ class Friendlink extends Base {
 			];			
 		}
 		
-		if(IS_POST) {
+		if(Request::instance()->isPOST()) {
 			$row = [];
 			$row["name"] = input("post.name", "", "str_filter");
 			$row["url"] = input("post.url", "", "str_filter");	
@@ -56,7 +57,7 @@ class Friendlink extends Base {
 	public function del() {
 		$id = input("request.id", 0, "intval");
 		\app\common\model\Friendlink::delById($id);
-		return Response::result(NULL, 0, "删除成功", "json");
+		return res_result(NULL, 0, "删除成功");
 	}
 	
 }
