@@ -8,8 +8,8 @@ class Friendlink extends Base {
 	
 	public function getlist() {
 		
-		$page = input("request.page", 1, "intval");
-		$page_size = input("request.page_size", config("web_page_size"), "intval");
+		$page = input("param.page", 1, "intval");
+		$page_size = input("param.page_size", config("web_page_size"), "intval");
 		$res_data = \app\common\model\Friendlink::getList($page, $page_size);
 		$this->assign("data", $res_data);
 			
@@ -17,7 +17,7 @@ class Friendlink extends Base {
 	}
 	
 	public function add() {
-		$id = input("request.id", 0, "intval");
+		$id = input("param.id", 0, "intval");
 				
 		$row = NULL;
 		if($id) {
@@ -43,10 +43,10 @@ class Friendlink extends Base {
 			$row["is_picture"] = input("post.is_picture", 0, "intval");
 			
 			if($id != 0) {				
-				return \app\common\model\Friendlink::saveData($row, $id);
+				return json(\app\common\model\Friendlink::saveData($row, $id));
 			}
 			else {
-				return \app\common\model\Friendlink::saveData($row);
+				return json(\app\common\model\Friendlink::saveData($row));
 			}
 		}
 		
@@ -55,9 +55,9 @@ class Friendlink extends Base {
 	}
 	
 	public function del() {
-		$id = input("request.id", 0, "intval");
+		$id = input("param.id", 0, "intval");
 		\app\common\model\Friendlink::delById($id);
-		return res_result(NULL, 0, "删除成功");
+		return json(res_result(NULL, 0, "删除成功"));
 	}
 	
 }

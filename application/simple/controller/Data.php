@@ -8,14 +8,14 @@ class Data extends Base {
 	
 	public function getlist() {
 		
-		$get_data = input("request.get_data", NULL);
+		$get_data = input("param.get_data", NULL);
 		if($get_data) {
-			$page = input("request.page", 1, "intval");
-			$page_size = input("request.page_size", config("web_page_size"), "intval");
-			$type = input("request.type", 1, "intval");
+			$page = input("param.page", 1, "intval");
+			$page_size = input("param.page_size", config("web_page_size"), "intval");
+			$type = input("param.type", 1, "intval");
 			$res_data = \app\common\model\Data::getList($page, $page_size, $type);
 						
-			return res_result($res_data, 0, "请求成功");
+			return json(res_result($res_data, 0, "请求成功"));
 		}
 		
 		return $this->fetch("getlist");
@@ -23,7 +23,7 @@ class Data extends Base {
 	
 	public function add() {
 				
-		$id = input("request.id", 0, "intval");
+		$id = input("param.id", 0, "intval");
 				
 		$row = NULL;
 		if($id) {
@@ -36,8 +36,8 @@ class Data extends Base {
 				"content" => "",
 				"data_class_id" => 0,
 				"sort" => 0,
-				"type" => input("request.type", 0, "intval"),
-				"picture" => input("request.picture", "", "str_filter")
+				"type" => input("param.type", 0, "intval"),
+				"picture" => input("param.picture", "", "str_filter")
 			];			
 		}
 		
@@ -49,13 +49,13 @@ class Data extends Base {
 			$row["data_class_id"] = input("post.data_class_id", 0, "intval");
 			$row["sort"] = input("post.sort", 0, "intval");
 			$row["type"] = input("post.type", 0, "intval");		
-			$row["picture"] = input("request.picture", "", "str_filter");
+			$row["picture"] = input("param.picture", "", "str_filter");
 			
 			if($id != 0) {				
-				return \app\common\model\Data::saveData($row, $id);
+				return json(\app\common\model\Data::saveData($row, $id));
 			}
 			else {				
-				return \app\common\model\Data::saveData($row);
+				return json(\app\common\model\Data::saveData($row));
 			}
 		}
 		
@@ -64,9 +64,9 @@ class Data extends Base {
 	}
 	
 	public function del() {
-		$id = input("request.id", 0, "intval");
+		$id = input("param.id", 0, "intval");
 		\app\common\model\Data::delById($id);
-		return res_result(NULL, 0, "删除成功");
+		return json(res_result(NULL, 0, "删除成功"));
 	}
 	
 	public function upload() {
@@ -90,18 +90,18 @@ class Data extends Base {
 					$filepath = "upload/" . $filepath . "." . $ext_name;
 					move_uploaded_file($file["tmp_name"], dirname(__FILE__) . "/../../../public/static/" . $filepath);
 					
-					return res_result([ "filepath" => $filepath ], 0, "上传完成");
+					return json(res_result([ "filepath" => $filepath ], 0, "上传完成"));
 				}
 				else {
-					return res_result(NULL, 1, "不允许上传此类文件");
+					return json(res_result(NULL, 1, "不允许上传此类文件"));
 				}
 			}
 			else {
-				return res_result(NULL, 1, "不能上传超过10M的文件");
+				return json(res_result(NULL, 1, "不能上传超过10M的文件"));
 			}			
 		}
 		else {
-			return res_result(NULL, 1, "没有选择上传文件");
+			return json(res_result(NULL, 1, "没有选择上传文件"));
 		}
 		
 	}

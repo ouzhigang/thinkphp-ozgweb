@@ -41,12 +41,12 @@ class Index extends \app\common\controller\Base {
 		}
 		
 		if(Request::instance()->isPOST()) {
-			$name = input("request.name", NULL, "str_filter");
-			$pwd = input("request.pwd", NULL, "str_filter");
+			$name = input("param.name", NULL, "str_filter");
+			$pwd = input("param.pwd", NULL, "str_filter");
 			
 			//提交登录
-			$remember = input("request.remember", 0, "intval");
-			$vcode = input("request.vcode", NULL, "str_filter");			
+			$remember = input("param.remember", 0, "intval");
+			$vcode = input("param.vcode", NULL, "str_filter");			
 			
 			$data = \app\common\model\User::adminLogin($name, $pwd, $vcode, $remember);
 			$r = \think\Response::create($data, "json");

@@ -7,7 +7,7 @@ use \think\Request;
 class ArtSingle extends Base {
 	
 	public function get() {
-		$id = input("request.id", 0, "intval");
+		$id = input("param.id", 0, "intval");
 		
 		$data = \app\common\model\ArtSingle::findById($id);
 		
@@ -16,7 +16,7 @@ class ArtSingle extends Base {
 			$data["content"] = $content;			
 			\app\common\model\ArtSingle::saveData($data, $id);		
 
-			return res_result(NULL, 0, "更新成功");
+			return json(res_result(NULL, 0, "更新成功"));
 		}
 		
 		$data["content"] = html_entity_decode($data["content"]);
