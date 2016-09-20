@@ -6,6 +6,6 @@ use traits\model\SoftDelete;
 class Base extends \think\Model {
     
 	use SoftDelete;
-    protected static $deleteTime = 'delete_time';
+	protected static $deleteTime = 'delete_time';
 	
 }
