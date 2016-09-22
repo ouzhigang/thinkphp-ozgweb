@@ -11,7 +11,7 @@ function show_data(page) {
 	};
 	
 	$.ajax({
-		url: "getlist",
+		url: cfg.web_root + "simple/user/getlist",
 		type: "get",
 		dataType: "json",
 		data: data,

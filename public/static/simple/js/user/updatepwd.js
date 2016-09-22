@@ -35,7 +35,7 @@ $(function() {
 			};
 			
 			$.ajax({
-				url: "updatepwd",
+				url: cfg.web_root + "simple/user/updatepwd",
 				type: "post",
 				dataType: "json",
 				data: data,

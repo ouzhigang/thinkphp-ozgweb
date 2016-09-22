@@ -11,7 +11,7 @@ function show_data(page) {
 		page: page
 	};	
 	$.ajax({
-		url: "getlist",
+		url: cfg.web_root + "simple/data/getlist",
 		type: "get",
 		dataType: "json",
 		data: data,
@@ -44,7 +44,7 @@ function show_data(page) {
 				$("#page_count").html(page_count);
 				
 				$("button[id ^= 'btn_edit_']").click(function() {
-					location.href = "add?" + $(this).attr("req-data");
+					location.href = cfg.web_root + "simple/data/add?" + $(this).attr("req-data");
 				});
 				
 				//点击删除
@@ -52,7 +52,7 @@ function show_data(page) {
 					var btndel = $(this);
 					var conform_dialog = ready_confirm_dialog(function() {
 						$.ajax({
-							url: "del",
+							url: cfg.web_root + "simple/data/del",
 							type: "get",
 							dataType: "json",
 							data: btndel.attr("req-data"),

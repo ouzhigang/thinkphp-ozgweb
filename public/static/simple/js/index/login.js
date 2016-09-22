@@ -26,7 +26,7 @@ function submit_login(exist_vcode) {
 		
 		$.ajax({
 			type: "POST",
-			url: "login",
+			url: cfg.web_root + "simple/index/login",
 			data: data,
 			dataType: "json",
 			beforeSend: function() {
@@ -36,7 +36,7 @@ function submit_login(exist_vcode) {
 			success: function(res) {
 				if(res.code == 0) {
 					//登录成功
-					location.href = "../other/main";
+					location.href = cfg.web_root + "simple/other/main";
 				}
 				else if(res.code == 2) {							
 					//验证码
@@ -80,7 +80,7 @@ $(function() {
 		},
 		open: function() {				
 			$("#vcode_img").click(function() {
-				$(this).attr("src", "getvcode?dt=" + Math.random());
+				$(this).attr("src", cfg.web_root + "simple/index/getvcode?dt=" + Math.random());
 			});
 					
 		},

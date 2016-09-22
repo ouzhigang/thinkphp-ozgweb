@@ -10,7 +10,7 @@ function show_data(page) {
 		page: page
 	};	
 	$.ajax({
-		url: "getlist",
+		url: cfg.web_root + "simple/feedback/getlist",
 		type: "get",
 		dataType: "json",
 		data: data,
@@ -44,7 +44,7 @@ function show_data(page) {
 					var btndel = $(this);
 					var conform_dialog = ready_confirm_dialog(function() {
 						$.ajax({
-							url: "del",
+							url: cfg.web_root + "simple/feedback/del",
 							type: "get",
 							dataType: "json",
 							data: btndel.attr("req-data"),

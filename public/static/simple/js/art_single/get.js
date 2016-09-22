@@ -15,7 +15,7 @@ $(function() {
 		};
 		
 		$.ajax({
-			url: "get",
+			url: cfg.web_root + "simple/art_single/get",
 			type: "post",
 			dataType: "json",
 			data: data,

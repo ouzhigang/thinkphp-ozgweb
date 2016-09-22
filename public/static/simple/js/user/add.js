@@ -38,7 +38,7 @@ $(function() {
 			};
 			
 			$.ajax({
-				url: "add",
+				url: cfg.web_root + "simple/user/add",
 				type: "post",
 				dataType: "json",
 				data: data,
@@ -48,7 +48,7 @@ $(function() {
 				success: function(res, status) {
 					if(res.code == 0) {
 						
-						location.href = "getlist";
+						location.href = cfg.web_root + "simple/user/getlist";
 					}
 					else {
 						$("#dialog_message").html(res.msg);

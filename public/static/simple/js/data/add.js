@@ -13,7 +13,7 @@ $(function() {
 		$("#file_upload").click();
 	});
 	$('#file_upload').fileupload({
-		url: "upload",
+		url: cfg.web_root + "simple/data/upload",
 		dataType: 'json',
 		done: function(e, data) {
 			if(data.result.code == 0) {
@@ -37,7 +37,7 @@ $(function() {
 		
 	};
 	$.ajax({
-		url: "../dataclass/gettree",
+		url: cfg.web_root + "simple/dataclass/gettree",
 		type: "get",
 		dataType: "json",
 		data: data,
@@ -97,7 +97,7 @@ $(function() {
 				type: $("#type").val()
 			};
 			$.ajax({
-				url: "add",
+				url: cfg.web_root + "simple/data/add",
 				type: "post",
 				dataType: "json",
 				data: data,
@@ -107,7 +107,7 @@ $(function() {
 				success: function(res, status) {
 					if(res.code == 0) {
 						
-						location.href = "getlist?type=" + $("#type").val();
+						location.href = cfg.web_root + "simple/data/getlist?type=" + $("#type").val();
 					}
 					else {
 						$("#dialog_message").html(res.msg);

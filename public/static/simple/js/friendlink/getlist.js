@@ -5,16 +5,16 @@ $(function() {
 	var alert_dialog = ready_alert_dialog();
 	
 	$("#btnadd").click(function() {
-		location.href = "add";
+		location.href = cfg.web_root + "simple/friendlink/add";
 	});
 	$("button[id ^= 'btnedit_']").click(function() {
-		location.href = "add?" + $(this).attr("req-data");
+		location.href = cfg.web_root + "simple/friendlink/add?" + $(this).attr("req-data");
 	});
 	$("button[id ^= 'btndel_']").click(function() {
 		var btndel = $(this);
 		var conform_dialog = ready_confirm_dialog(function() {
 			$.ajax({
-				url: "del",
+				url: cfg.web_root + "simple/friendlink/del",
 				type: "get",
 				dataType: "json",
 				data: btndel.attr("req-data"),
