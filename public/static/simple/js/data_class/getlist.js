@@ -9,8 +9,8 @@ function show_data(data) {
 			var item = "<li style=\"padding-left: " + (depth * 15) + "px\">";
 			item += "<span class=\"fa fa-angle-right\"></span> " + data[i].name;
 			item += "<div>";
-			item += "<button type=\"button\" id=\"btn_edit_" + data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/dataclass/add?type=" + data[i].type + "&id=" + data[i].id + "\">编辑</button>";
-			item += "<button type=\"button\" id=\"btn_del_" + data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/dataclass/del?id=" + data[i].id + "\">删除</button>";
+			item += "<button type=\"button\" id=\"btn_edit_" + data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/data_class/add?type=" + data[i].type + "&id=" + data[i].id + "\">编辑</button>";
+			item += "<button type=\"button\" id=\"btn_del_" + data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/data_class/del?id=" + data[i].id + "\">删除</button>";
 			item += "</div>";
 			item += "</li>";
 			
@@ -30,7 +30,7 @@ function req_data() {
 	};
 	
 	$.ajax({
-		url: cfg.web_root + "simple/dataclass/getlist",
+		url: cfg.web_root + "simple/data_class/getlist",
 		type: "get",
 		dataType: "json",
 		data: data,
@@ -46,8 +46,8 @@ function req_data() {
 					var item = "<li>";
 					item += "<span class=\"fa fa-angle-right\"></span> " + res.data[i].name;
 					item += "<div>";
-					item += "<button type=\"button\" id=\"btn_edit_" + res.data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/dataclass/add?type=" + res.data[i].type + "&id=" + res.data[i].id + "\">编辑</button>";
-					item += "<button type=\"button\" id=\"btn_del_" + res.data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/dataclass/del?id=" + res.data[i].id + "\">删除</button>";
+					item += "<button type=\"button\" id=\"btn_edit_" + res.data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/data_class/add?type=" + res.data[i].type + "&id=" + res.data[i].id + "\">编辑</button>";
+					item += "<button type=\"button\" id=\"btn_del_" + res.data[i].id + "\" class=\"btn btn-link\" req-data=\"" + cfg.web_root + "simple/data_class/del?id=" + res.data[i].id + "\">删除</button>";
 					item += "</div>";
 					item += "</li>";
 					

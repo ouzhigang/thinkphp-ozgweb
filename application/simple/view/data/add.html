@@ -49,9 +49,16 @@
 												<label>图片：</label>
 											</td>
 											<td>
-												<input class="form-control" placeholder="图片路径" id="picture" name="picture" value="{$row.picture}" />
-												<input type="button" id="btn_upload" class="btn btn-outline btn-primary" value="上传" />
-												<input id="file_upload" type="file" name="file_upload" />
+												{foreach name="$row.picture" item="v" key="k"}
+												<div class="picture_div">
+													<input class="form-control" placeholder="图片路径" id="picture_{$k}" name="picture_{$k}" value="{$v}" />
+													<input type="button" id="btn_upload_{$k}" class="btn btn-outline btn-primary" value="上传" />
+													<input id="file_upload_{$k}" name="file_upload_{$k}" type="file" />
+													<button type="button" class="btn btn-default add">+</button>
+													<button type="button" class="btn btn-default dec">-</button>
+													<input type="hidden" value="{$k}" />
+												</div>
+												{/foreach}
 											</td>
 										</tr>
 										<tr>

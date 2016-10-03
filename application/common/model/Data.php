@@ -26,6 +26,8 @@ class Data extends Base {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
 			$v["dc_name"] = $v["dc_name"] ? $v["dc_name"] : "[暂无]";
 			
+			$v["picture"] = explode(",", $v["picture"]);
+			
 			$list[] = $v;
 		}
 		
@@ -42,6 +44,7 @@ class Data extends Base {
 	
 	public static function findById($id) {
 		$data = parent::where("id = " . $id)->find();
+		$data["picture"] = explode(",", $data["picture"]);	
 		return $data->toArray();
 	}
 	

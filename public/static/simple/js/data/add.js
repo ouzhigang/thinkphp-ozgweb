@@ -9,15 +9,22 @@ $(function() {
 	});
 	
 	//上传
-	$("#btn_upload").click(function() {
-		$("#file_upload").click();
+	var btn_upload = null;
+	$("input[id ^= 'btn_upload_']").click(function() {
+		btn_upload = $(this);
+		var id = $(this).attr("id").split("_");
+		id = id[id.length - 1];
+		$("#file_upload_" + id).click();
 	});
-	$('#file_upload').fileupload({
+	$("input[id ^= 'file_upload_']").fileupload({
 		url: cfg.web_root + "simple/data/upload",
 		dataType: 'json',
 		done: function(e, data) {
+			var id = btn_upload.attr("id").split("_");
+			id = id[id.length - 1];
+			
 			if(data.result.code == 0) {
-				$("#picture").val(data.result.data.filepath);
+				$("#picture_" + id).val(data.result.data.filepath);
 			}
 			else {
 				$("#dialog_message").html(data.result.msg);
@@ -29,6 +36,68 @@ $(function() {
 			
 		}
 	});
+	
+	$("input[id ^= 'file_upload_']").hide();	
+	$("button.add").hide();
+	$("button.add:last").show();
+	if($("button.dec").length == 1)
+		$("button.dec").hide();
+	
+	$("button.add").click(function() {
+		var id = "0";
+		do {
+			id = parseInt(Math.random() * 1000000);
+		}
+		while($("#picture_" + id).length > 0);
+		
+		$(this).parent().after($(this).parent().clone(true));
+		$(".picture_div").last().find("input[type = 'hidden']").val(id);
+		$(".picture_div").last().find("input[id ^= 'picture_']").val("");
+		$(".picture_div").last().find(".dec").show();
+		
+		$(".picture_div").last().find("input[id ^= 'picture_']").each(function() {
+			var ids = $(this).attr("id").split("_");
+			var tmp = "";
+			for(var i = 0; i < ids.length - 1; i++) {
+				tmp += ids[i] + "_";
+			}
+			tmp += id;
+			$(this).attr("id", tmp);
+			$(this).attr("name", tmp);
+		});
+		$(".picture_div").last().find("input[id ^= 'btn_upload_']").each(function() {
+			var ids = $(this).attr("id").split("_");
+			var tmp = "";
+			for(var i = 0; i < ids.length - 1; i++) {
+				tmp += ids[i] + "_";
+			}
+			tmp += id;
+			$(this).attr("id", tmp);
+		});
+		$(".picture_div").last().find("input[id ^= 'file_upload_']").each(function() {
+			var ids = $(this).attr("id").split("_");
+			var tmp = "";
+			for(var i = 0; i < ids.length - 1; i++) {
+				tmp += ids[i] + "_";
+			}
+			tmp += id;
+			$(this).attr("id", tmp);
+			$(this).attr("name", tmp);
+		});
+		
+		$("button.add").hide();
+		$("button.add:last").show();
+		$("button.dec").show();
+	});
+	$("button.dec").click(function() {
+		$(this).parent().remove();
+		
+		$("button.add").hide();
+		$("button.add:last").show();
+		
+		if($("button.dec").length == 1)
+			$("button.dec").hide();
+	});
 	//上传 end
 	
 	//无限级下拉框
@@ -37,7 +106,7 @@ $(function() {
 		
 	};
 	$.ajax({
-		url: cfg.web_root + "simple/dataclass/gettree",
+		url: cfg.web_root + "simple/data_class/gettree",
 		type: "get",
 		dataType: "json",
 		data: data,
@@ -93,9 +162,16 @@ $(function() {
 				sort: $("#sort").val(),
 				data_class_id: $("#data_class_id").val(),
 				content: $("#content").val(),
-				picture: $("#picture").val(),
+				picture: [],
 				type: $("#type").val()
 			};
+			
+			$("input[id ^= 'picture_']").each(function() {
+				if($(this).val() != "") {
+					data.picture.push($(this).val());
+				}
+			});
+			
 			$.ajax({
 				url: cfg.web_root + "simple/data/add",
 				type: "post",
@@ -120,6 +196,6 @@ $(function() {
 			});
 			
 		}
-	});
+	});	
 	
 });

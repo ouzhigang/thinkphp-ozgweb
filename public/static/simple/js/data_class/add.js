@@ -34,7 +34,7 @@ $(function() {
 			};
 			
 			$.ajax({
-				url: cfg.web_root + "simple/dataclass/add",
+				url: cfg.web_root + "simple/data_class/add",
 				type: "post",
 				dataType: "json",
 				data: data,
@@ -44,7 +44,7 @@ $(function() {
 				success: function(res, status) {
 					if(res.code == 0) {
 						
-						location.href = cfg.web_root + "simple/dataclass/getlist?type=" + $("#type").val();
+						location.href = cfg.web_root + "simple/data_class/getlist?type=" + $("#type").val();
 					}
 					else {
 						$("#dialog_message").html(res.msg);
@@ -65,7 +65,7 @@ $(function() {
 		
 	};
 	$.ajax({
-		url: cfg.web_root + "simple/dataclass/gettree",
+		url: cfg.web_root + "simple/data_class/gettree",
 		type: "get",
 		dataType: "json",
 		data: data,

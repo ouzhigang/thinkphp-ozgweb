@@ -14,6 +14,7 @@
 
 	5.在thinkphp-ozgweb下执行一下grunt的任务，先npm install，然后grunt
 
+	
 	6.nginx运行需要在server节加入如下配置	
 	location /thinkphp-ozgweb/public/static/ {
 		access_log off;
@@ -25,6 +26,10 @@
 			break;
 		}
 	}
+
+	
+	7.按实际环境修改配置文件，thinkphp-ozgweb/application/config.php，thinkphp-ozgweb/public/static/simple/js/cfg.js
+	
 
 ==========
 

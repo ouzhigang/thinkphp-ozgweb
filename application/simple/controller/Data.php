@@ -37,7 +37,7 @@ class Data extends Base {
 				"data_class_id" => 0,
 				"sort" => 0,
 				"type" => input("param.type", 0, "intval"),
-				"picture" => input("param.picture", "", "str_filter")
+				"picture" => [ "" ],
 			];			
 		}
 		
@@ -49,7 +49,7 @@ class Data extends Base {
 			$row["data_class_id"] = input("post.data_class_id", 0, "intval");
 			$row["sort"] = input("post.sort", 0, "intval");
 			$row["type"] = input("post.type", 0, "intval");		
-			$row["picture"] = input("param.picture", "", "str_filter");
+			$row["picture"] = implode(",", $_REQUEST["picture"]);
 			
 			if($id != 0) {				
 				return json(\app\common\model\Data::saveData($row, $id));
@@ -71,7 +71,12 @@ class Data extends Base {
 	
 	public function upload() {
 		
-		$file = $_FILES["file_upload"];
+		$file = NULL;
+		foreach($_FILES as $k => $v) {
+			$file = $v;
+			break;
+		}
+		
 		if($file && $file["size"] > 0) {
 			$max_size = 1024 * 1024 * 10;
 			$allow_ext_name = [
