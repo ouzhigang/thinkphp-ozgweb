@@ -49,7 +49,7 @@ class Data extends Base {
 			$row["data_class_id"] = input("post.data_class_id", 0, "intval");
 			$row["sort"] = input("post.sort", 0, "intval");
 			$row["type"] = input("post.type", 0, "intval");		
-			$row["picture"] = implode(",", $_REQUEST["picture"]);
+			$row["picture"] = implode(",", input("post.picture/a"));
 			
 			if($id != 0) {				
 				return json(\app\common\model\Data::saveData($row, $id));
@@ -72,12 +72,12 @@ class Data extends Base {
 	public function upload() {
 		
 		$file = NULL;
-		foreach($_FILES as $k => $v) {
-			$file = $v;
+		foreach(request()->file() as $f) {
+			$file = $f;
 			break;
 		}
 		
-		if($file && $file["size"] > 0) {
+		if($file && $file->getSize() > 0) {
 			$max_size = 1024 * 1024 * 10;
 			$allow_ext_name = [
 				"jpg",
@@ -86,16 +86,16 @@ class Data extends Base {
 				"gif",
 			];			
 			
-			if($file["size"] <= $max_size) {
-				$ext_name = substr(strrchr($file["name"], '.'), 1);
+			if($file->getSize() <= $max_size) {
+				$ext_name = substr(strrchr($file->getInfo()["name"], '.'), 1);
 				
 				if(in_array($ext_name, $allow_ext_name)) {
 					
-					$filepath = md5_file($file["tmp_name"]);
-					$filepath = "upload/" . $filepath . "." . $ext_name;
-					move_uploaded_file($file["tmp_name"], dirname(__FILE__) . "/../../../public/static/" . $filepath);
-					
-					return json(res_result([ "filepath" => $filepath ], 0, "上传完成"));
+					$info = $file->move(ROOT_PATH . "public/static/upload");
+					if($info) {
+						return json(res_result([ "filepath" => str_replace("\\", "/", $info->getSaveName()) ], 0, "上传完成"));
+					}
+					return json(res_result(NULL, 1, $file->getError()));
 				}
 				else {
 					return json(res_result(NULL, 1, "不允许上传此类文件"));
