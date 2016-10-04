@@ -2,7 +2,6 @@
 namespace app\simple\controller;
 
 use \think\Response;
-use \think\Request;
 
 class Data extends Base {
 	
@@ -41,7 +40,7 @@ class Data extends Base {
 			];			
 		}
 		
-		if(Request::instance()->isPOST()) {
+		if(request()->isPOST()) {
 
 			$row = [];
 			$row["name"] = input("post.name", "", "str_filter");

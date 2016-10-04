@@ -2,7 +2,6 @@
 namespace app\simple\controller;
 
 use \think\Response;
-use \think\Request;
 
 class Index extends \app\common\controller\Base {
 	
@@ -40,7 +39,7 @@ class Index extends \app\common\controller\Base {
 			return NULL;
 		}
 		
-		if(Request::instance()->isPOST()) {
+		if(request()->isPOST()) {
 			$name = input("param.name", NULL, "str_filter");
 			$pwd = input("param.pwd", NULL, "str_filter");
 			

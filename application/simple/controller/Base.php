@@ -2,7 +2,6 @@
 namespace app\simple\controller;
 
 use \think\Response;
-use \think\Request;
 
 class Base extends \app\common\controller\Base {
     
@@ -11,8 +10,7 @@ class Base extends \app\common\controller\Base {
     ];
 	
 	protected function checkLogin() {
-		$request = Request::instance();
-		$curr_action = strtolower($request->action());
+		$curr_action = strtolower(request()->action());
 		$user = NULL;
 		
 		//检查是否已登录		

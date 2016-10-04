@@ -2,7 +2,6 @@
 namespace app\simple\controller;
 
 use \think\Response;
-use \think\Request;
 
 class User extends Base {
 	
@@ -22,7 +21,7 @@ class User extends Base {
 	
 	public function add() {
 		
-		if(Request::instance()->isPOST()) {
+		if(request()->isPOST()) {
 			$name = input("post.name", "", "str_filter");
 			$pwd = input("post.pwd", "", "str_filter");
 			$pwd2 = input("post.pwd2", "", "str_filter");
@@ -53,7 +52,7 @@ class User extends Base {
 	
 	public function updatepwd() {
 		
-		if(Request::instance()->isPOST()) {
+		if(request()->isPOST()) {
 			
 			$old_pwd = input("post.old_pwd", "", "str_filter");
 			$pwd = input("post.pwd", "", "str_filter");

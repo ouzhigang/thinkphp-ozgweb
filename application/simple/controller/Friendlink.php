@@ -2,7 +2,6 @@
 namespace app\simple\controller;
 
 use \think\Response;
-use \think\Request;
 
 class Friendlink extends Base {
 	
@@ -34,7 +33,7 @@ class Friendlink extends Base {
 			];			
 		}
 		
-		if(Request::instance()->isPOST()) {
+		if(request()->isPOST()) {
 			$row = [];
 			$row["name"] = input("post.name", "", "str_filter");
 			$row["url"] = input("post.url", "", "str_filter");	

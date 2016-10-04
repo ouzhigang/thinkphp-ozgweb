@@ -2,7 +2,6 @@
 namespace app\simple\controller;
 
 use \think\Response;
-use \think\Request;
 
 class DataClass extends Base {
 	
@@ -34,7 +33,7 @@ class DataClass extends Base {
 			];			
 		}
 		
-		if(Request::instance()->isPOST()) {
+		if(request()->isPOST()) {
 			
 			$row["name"] = input("post.name", "", "str_filter");
 			$row["parent_id"] = input("post.parent_id", 0, "intval");

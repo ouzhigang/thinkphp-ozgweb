@@ -2,7 +2,6 @@
 namespace app\simple\controller;
 
 use \think\Response;
-use \think\Request;
 
 class ArtSingle extends Base {
 	
@@ -11,7 +10,7 @@ class ArtSingle extends Base {
 		
 		$data = \app\common\model\ArtSingle::findById($id);
 		
-		if(Request::instance()->isPOST()) {
+		if(request()->isPOST()) {
 			$content = input("post.content", "", "str_filter");			
 			$data["content"] = $content;			
 			\app\common\model\ArtSingle::saveData($data, $id);		
