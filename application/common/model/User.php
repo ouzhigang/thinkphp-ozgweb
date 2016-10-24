@@ -1,7 +1,8 @@
 <?php
 namespace app\common\model;
 
-use \think\Response;
+use \think\Config;
+use \think\captcha\Captcha;
 
 class User extends Base {
     
@@ -49,10 +50,11 @@ class User extends Base {
 					return res_result(NULL, 1, "验证码不能为空");
 				}
 				else {
-					$verify = new \org\Verify();
-					if(!$verify->check($vcode, 1)) {
+					$captcha = new Captcha((array)Config::get('captcha'));
+					if(!$captcha->check($vcode)) {
+						//验证失败
 						return res_result(NULL, 1, "验证码错误");
-					}
+					};
 				}
 			}
 			

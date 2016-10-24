@@ -1,22 +1,15 @@
 <?php
 namespace app\simple\controller;
 
-use \think\Response;
+use \think\Config;
+use \think\captcha\Captcha;
 
 class Index extends \app\common\controller\Base {
 	
-	public function getvcode() {
+	public function getvcode($id = "") {
 				
-		$verify = new \org\Verify();
-		$verify->fontSize = 14;
-		$verify->length = 4;
-		$verify->useNoise = false;
-		$verify->codeSet = '0123456789';
-		$verify->imageW = 120;
-		$verify->imageH = 30;
-		//$verify->expire = 600;
-		$verify->entry(1);
-		exit();
+		$captcha = new Captcha((array)Config::get('captcha'));
+        return $captcha->entry($id);
 	}
 	
     public function login() {
