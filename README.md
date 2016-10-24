@@ -12,7 +12,7 @@
 	4.thinkphp5需要自行安装
 	
 	
-	5.验证码部分的配置https://github.com/top-think/think-captcha
+	5.验证码部分的配置，https://github.com/top-think/think-captcha
 
 
 	6.在thinkphp-ozgweb下执行一下grunt的任务，先npm install，然后grunt
