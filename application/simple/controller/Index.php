@@ -40,10 +40,8 @@ class Index extends \app\common\controller\Base {
 			$remember = input("param.remember", 0, "intval");
 			$vcode = input("param.vcode", NULL, "str_filter");			
 			
-			$data = \app\common\model\User::adminLogin($name, $pwd, $vcode, $remember);
-			$r = \think\Response::create($data, "json");
-			$r->send();
-			return NULL;
+			$res = \app\common\model\User::adminLogin($name, $pwd, $vcode, $remember);
+			return json($res);
 		}
 		else
 			return $this->fetch("login");
