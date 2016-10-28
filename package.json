@@ -1,13 +1,18 @@
 {
-    "name": "thinkphp-ozgweb",
-    "version": "1.0.0",
-    "description": "thinkphp-ozgweb",
-    "main": "Gruntfile.js",
-    "author": "ozg",
-    "license": "GPL",
-    "devDependencies": {
-        "grunt": ">0.4.1",
-        "grunt-contrib-less": "~0.11.0",
-		"grunt-contrib-watch": "~0.6.1"
-    }
+	"name": "thinkphp-ozgweb",
+	"version": "1.0.0",
+	"description": "thinkphp-ozgweb用",
+	"main": "index.js",	
+	"author": "ozg",
+	"license": "GPL-3.0",
+	"devDependencies": {
+		"css-loader": "^0.25.0",
+		"style-loader": "^0.12.3",
+		"less-loader": "^2.2.3",
+		"less": "^2.7.1",
+		"webpack": "^1.10.0",
+		"json5": "^0.5.0",
+		"loader-utils": "^loader-utils",
+		"object-assign": "^4.1.0"
+	}
 }

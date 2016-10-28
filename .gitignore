@@ -4,6 +4,7 @@ composer.lock
 thinkphp/
 runtime/
 startbootstrap-sb-admin-2/
+ckeditor/
 extend/com/
 extend/org/
 vendor/

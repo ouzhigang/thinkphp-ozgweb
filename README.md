@@ -15,7 +15,7 @@
 	5.验证码部分的配置，https://github.com/top-think/think-captcha
 
 
-	6.在thinkphp-ozgweb下执行一下grunt的任务，先npm install，然后grunt
+	6.在thinkphp-ozgweb目录下执行一次npm install，然后执行一次webpack
 
 	
 	7.nginx运行需要在server节加入如下配置	
