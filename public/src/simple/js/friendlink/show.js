@@ -64,14 +64,6 @@ function show_data(page) {
 					};
 					$.get(cfg.web_root + "simple/friendlink/get", data, function(res) {
 						if(res.code == 0) {
-							$("#name").val(res.data.name);
-							$("#asset_number").val(res.data.asset_number);
-							$("#model").val(res.data.model);
-							$("#asset_brand_id").val(res.data.asset_brand_id);
-							$("#asset_cat_id").val(res.data.asset_cat_id);
-							$("#asset_cat_name").val(res.data.ac_name);
-							$("#desc").val(res.data.desc);
-							$("#id").val(res.data.id);
 							
 							$("#name").val(res.data.name);
 							$("#sort").val(res.data.sort);
@@ -82,31 +74,8 @@ function show_data(page) {
 								$("#is_picture_1").attr("checked", "checked");
 							$("#picture").val(res.data.picture);
 							$("#id").val(res.data.id);
-		
-							//资产属性
-							$("#attr_list tbody").empty();
-							if(res.data.asset_attr != null) {
-								for(var i in res.data.asset_attr) {
-									var html = '<tr id="attr_item_' + res.data.asset_attr[i].asset_attr_id + '" class="attr-item">';
-									html += '<td class="attr_name"><span>' + res.data.asset_attr[i].asset_attr_name + '</span>：</td>';
-									html += '<td>';
-									html += '<input type="hidden" id="asset_attr_id_' + res.data.asset_attr[i].asset_attr_id + '" value="' + res.data.asset_attr[i].asset_attr_id + '" />';
-									html += '<input class="form-control asset-attr-value" id="asset_attr_value_' + res.data.asset_attr[i].asset_attr_id + '" value="' + res.data.asset_attr[i].asset_attr_value + '" />';
-									html += '</td>';
-									html += '<td><button type="button" class="btn btn-primary btn-sm" id="btn_attr_del_' + res.data.asset_attr[i].asset_attr_id + '">删除</button></td>';
-									html += '</tr>';
-									
-									$("#attr_list tbody").append(html);
-								}
-								
-								$("button[id ^= 'btn_attr_del_']").unbind().click(function() {
-									$(this).parent().parent().remove();
-								});
-							}
-							$("#asset_attr_cat_id").val("0");
-							$("#asset_attr_id").empty();
-							$("#asset_attr_id").append('<option value="0">请选择资产属性...</option>');
-							$("#btn_attr_add").hide();
+							
+							show_picture_row($("input[name = 'is_picture']:checked").val());
 							
 							$("#btn_submit").val("更新");
 							
