@@ -5,7 +5,7 @@ use \think\Response;
 
 class Feedback extends Base {
 	
-	public function getlist() {
+	public function show() {
 		$get_data = input("param.get_data", NULL);
 		if($get_data) {
 			$page = input("param.page", 1, "intval");
@@ -14,7 +14,7 @@ class Feedback extends Base {
 			
 			return json(res_result($res_data, 0, "请求成功"));
 		}
-		return $this->fetch("getlist");
+		return $this->fetch("show");
 	}
 	
 	public function del() {

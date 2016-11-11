@@ -44,7 +44,7 @@ class Data extends Base {
 	
 	public static function findById($id) {
 		$data = parent::where("id = " . $id)->find();
-		$data["picture"] = explode(",", $data["picture"]);	
+		$data["picture"] = json_decode($data["picture"], true);
 		return $data->toArray();
 	}
 	

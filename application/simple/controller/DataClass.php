@@ -5,7 +5,7 @@ use \think\Response;
 
 class DataClass extends Base {
 	
-	public function getlist() {
+	public function show() {
 		$type = input("param.type", 0, "intval");
 		
 		if(input("param.get_data", 0, "intval")) {			
@@ -13,43 +13,31 @@ class DataClass extends Base {
 			return json(res_result($data, 0, "请求成功"));
 		}
 		
-		return $this->fetch("getlist");
+		return $this->fetch("show");
+	}
+	
+	public function get() {
+		$id = input("param.id", 0, "intval");
+		$data = \app\common\model\DataClass::findById($id);		
+		return json(res_result($data, 0, "请求成功"));
 	}
 	
 	public function add() {
 		$id = input("param.id", 0, "intval");
-				
-		$row = NULL;
-		if($id) {
-			$row = \app\common\model\DataClass::findById($id);			
+		
+		$row = [];
+		$row["name"] = input("post.name", "", "str_filter");
+		$row["parent_id"] = input("post.parent_id", 0, "intval");
+		$row["sort"] = input("post.sort", 0, "intval");
+		$row["type"] = input("post.type", 0, "intval");
+		
+		if($id != 0) {				
+			return json(\app\common\model\DataClass::saveData($row, $id));
 		}
-		else {
-			$row = [
-				"id" => 0,
-				"name" => "",
-				"sort" => 0,
-				"parent_id" => 0,
-				"type" => input("param.type", 0, "intval")
-			];			
+		else {				
+			return json(\app\common\model\DataClass::saveData($row));
 		}
 		
-		if(request()->isPOST()) {
-			
-			$row["name"] = input("post.name", "", "str_filter");
-			$row["parent_id"] = input("post.parent_id", 0, "intval");
-			$row["sort"] = input("post.sort", 0, "intval");
-			$row["type"] = input("post.type", 0, "intval");
-			
-			if($id != 0) {				
-				return json(\app\common\model\DataClass::saveData($row, $id));
-			}
-			else {				
-				return json(\app\common\model\DataClass::saveData($row));
-			}
-		}
-		
-		$this->assign("row", $row);
-		return $this->fetch("add");
 	}
 	
 	public function gettree() {

@@ -5,7 +5,7 @@ use \think\Response;
 
 class Data extends Base {
 	
-	public function getlist() {
+	public function show() {
 		
 		$get_data = input("param.get_data", NULL);
 		if($get_data) {
@@ -17,49 +17,38 @@ class Data extends Base {
 			return json(res_result($res_data, 0, "请求成功"));
 		}
 		
-		return $this->fetch("getlist");
+		return $this->fetch("show");
+	}
+	
+	public function get() {
+		$id = input("param.id", 0, "intval");
+		$data = \app\common\model\Data::findById($id);
+		$data["content"] = html_entity_decode($data["content"]);
+		return json(res_result($data, 0, "请求成功"));
 	}
 	
 	public function add() {
 				
 		$id = input("param.id", 0, "intval");
-				
-		$row = NULL;
-		if($id) {
-			$row = \app\common\model\Data::findById($id);			
-		}
-		else {
-			$row = [
-				"id" => 0,
-				"name" => "",
-				"content" => "",
-				"data_class_id" => 0,
-				"sort" => 0,
-				"type" => input("param.type", 0, "intval"),
-				"picture" => [ "" ],
-			];			
-		}
 		
-		if(request()->isPOST()) {
-
-			$row = [];
-			$row["name"] = input("post.name", "", "str_filter");
-			$row["content"] = input("post.content", "", "str_filter");	
-			$row["data_class_id"] = input("post.data_class_id", 0, "intval");
-			$row["sort"] = input("post.sort", 0, "intval");
-			$row["type"] = input("post.type", 0, "intval");		
-			$row["picture"] = implode(",", input("post.picture/a"));
-			
-			if($id != 0) {				
-				return json(\app\common\model\Data::saveData($row, $id));
-			}
-			else {				
-				return json(\app\common\model\Data::saveData($row));
-			}
-		}
+		$row = [];
+		$row["name"] = input("post.name", "", "str_filter");
+		$row["content"] = input("post.content", "", "str_filter");	
+		$row["data_class_id"] = input("post.data_class_id", 0, "intval");
+		$row["sort"] = input("post.sort", 0, "intval");
+		$row["type"] = input("post.type", 0, "intval");		
+		$row["picture"] = input("post.picture/a");
+		if(count($row["picture"]) > 0)
+			$row["picture"] = json_encode($row["picture"]);
+		else 
+			$row["picture"] = "";
 		
-		$this->assign("row", $row);
-		return $this->fetch("add");
+		if($id != 0) {				
+			return json(\app\common\model\Data::saveData($row, $id));
+		}
+		else {				
+			return json(\app\common\model\Data::saveData($row));
+		}
 	}
 	
 	public function del() {

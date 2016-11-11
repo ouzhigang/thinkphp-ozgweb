@@ -6,14 +6,19 @@ $(function() {
 	
 	//退出登录
 	$("#btn_logout").click(function() {
-		var conform_dialog = utility.ready_confirm_dialog(function() {
+		$("#dialog_confirm").find(".modal-body").html("确定退出吗？");
+		$("#dialog_confirm").modal('show');
+		$("#dialog_confirm_btn").unbind().click(function() {
 			
 			location.href = "../other/logout";
 		});
-		$("#dialog_message").html("确定退出吗？");
-		conform_dialog.dialog("open");
-		conform_dialog.parent().prev().css('z-index', 9998);
-		conform_dialog.parent().css('z-index', 9999);
+		
 	});
+	
+	jQuery.validator.addMethod("isMobile", function(value, element) {
+		var length = value.length;
+		var mobile = /^0?1[3|4|5|6|7|8][0-9]\d{8}$/;
+		return this.optional(element) || (length == 11 && mobile.test(value));
+	}, "请正确填写您的手机号码");
 	
 });

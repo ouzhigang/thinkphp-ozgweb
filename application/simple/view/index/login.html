@@ -6,15 +6,31 @@
 	</head>
 	<body>
 		{include file="common/dialog" /}
-		<div id="dialog_form" title="请输入验证码" style="display: none"> 
-			<form>
-				<fieldset>
-					<label for="name">验证码</label>
-					<input type="text" name="vcode" id="vcode" maxlength="5" class="text ui-widget-content ui-corner-all" />
-					<img src="{$Think.config.web_root}simple/index/getvcode" id="vcode_img" />
-					<input type="submit" tabindex="-1" style="position:absolute; top:-1000px" />
-				</fieldset>
-			</form>
+		<div class="modal fade" id="dialog_form" tabindex="-1" role="dialog" aria-labelledby="dialog_form_title" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							&times;
+						</button>
+						<h4 class="modal-title" id="dialog_form_title">{$Think.config.web_name}</h4>
+					</div>
+					<div class="modal-body">
+						<form>
+							<fieldset>
+								<label for="name">验证码</label>
+								<input type="text" name="vcode" id="vcode" maxlength="6" class="text ui-widget-content ui-corner-all" />
+								<img src="{$Think.config.web_root}simple/index/getvcode" id="vcode_img" />
+								<input type="submit" tabindex="-1" style="position:absolute; top:-1000px" />
+							</fieldset>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary" id="dialog_form_btn">登录</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		
 		<div class="container">

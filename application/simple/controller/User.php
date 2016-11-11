@@ -5,7 +5,7 @@ use \think\Response;
 
 class User extends Base {
 	
-	public function getlist() {
+	public function show() {
 		
 		//分页索引和每页显示数
 		$get_data = input("param.get_data", NULL);
@@ -16,7 +16,7 @@ class User extends Base {
 			return json(res_result(\app\common\model\User::getList($page, $page_size), 0, "请求成功"));
 		}
 		
-		return $this->fetch("getlist");
+		return $this->fetch("show");
 	}
 	
 	public function add() {

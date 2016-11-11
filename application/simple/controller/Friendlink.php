@@ -5,52 +5,42 @@ use \think\Response;
 
 class Friendlink extends Base {
 	
-	public function getlist() {
+	public function show() {
 		
-		$page = input("param.page", 1, "intval");
-		$page_size = input("param.page_size", config("web_page_size"), "intval");
-		$res_data = \app\common\model\Friendlink::getList($page, $page_size);
-		$this->assign("data", $res_data);
+		//分页索引和每页显示数
+		$get_data = input("param.get_data", NULL);
+		if($get_data) {
+			$page = input("param.page", 1, "intval");
+			$page_size = input("param.page_size", config("web_page_size"), "intval");
 			
-		return $this->fetch("getlist");
+			return json(res_result(\app\common\model\Friendlink::getList($page, $page_size), 0, "请求成功"));
+		}
+		
+		return $this->fetch("show");
+	}
+	
+	public function get() {
+		$id = input("param.id", 0, "intval");
+		$data = \app\common\model\Friendlink::findById($id);
+		return json(res_result($data, 0, "请求成功"));
 	}
 	
 	public function add() {
 		$id = input("param.id", 0, "intval");
-				
-		$row = NULL;
-		if($id) {
-			$row = \app\common\model\Friendlink::findById($id);			
+		
+		$row = [];
+		$row["name"] = input("post.name", "", "str_filter");
+		$row["url"] = input("post.url", "", "str_filter");	
+		$row["picture"] = input("post.picture", "", "str_filter");
+		$row["sort"] = input("post.sort", 0, "intval");
+		$row["is_picture"] = input("post.is_picture", 0, "intval");
+		
+		if($id != 0) {				
+			return json(\app\common\model\Friendlink::saveData($row, $id));
 		}
 		else {
-			$row = [
-				"id" => 0,
-				"name" => "",
-				"url" => "",
-				"picture" => "",
-				"sort" => 0,
-				"is_picture" => 0
-			];			
+			return json(\app\common\model\Friendlink::saveData($row));
 		}
-		
-		if(request()->isPOST()) {
-			$row = [];
-			$row["name"] = input("post.name", "", "str_filter");
-			$row["url"] = input("post.url", "", "str_filter");	
-			$row["picture"] = input("post.picture", "", "str_filter");
-			$row["sort"] = input("post.sort", 0, "intval");
-			$row["is_picture"] = input("post.is_picture", 0, "intval");
-			
-			if($id != 0) {				
-				return json(\app\common\model\Friendlink::saveData($row, $id));
-			}
-			else {
-				return json(\app\common\model\Friendlink::saveData($row));
-			}
-		}
-		
-		$this->assign("row", $row);
-		return $this->fetch("add");
 	}
 	
 	public function del() {

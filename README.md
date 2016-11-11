@@ -9,16 +9,19 @@
 	3.sb-admin2需要自行下载，https://github.com/BlackrockDigital/startbootstrap-sb-admin-2 ，对应目录thinkphp-ozgweb/public/static/startbootstrap-sb-admin-2
 
 
-	4.thinkphp5需要自行安装
-	
-	
-	5.验证码部分的配置，https://github.com/top-think/think-captcha
+	4.ckeditor需要自行下载，对应目录thinkphp-ozgweb/public/static/ckeditor
 
 
-	6.在thinkphp-ozgweb目录下执行一次npm install，然后执行一次webpack
+	5.thinkphp5需要自行安装
+	
+	
+	6.验证码部分的配置，https://github.com/top-think/think-captcha
+
+
+	7.在thinkphp-ozgweb目录下执行一次npm install，然后执行一次webpack
 
 	
-	7.nginx运行需要在server节加入如下配置	
+	8.nginx运行需要在server节加入如下配置	
 	location /thinkphp-ozgweb/public/static/ {
 		access_log off;
 		expires 10d;

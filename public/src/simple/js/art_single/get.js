@@ -2,10 +2,7 @@ require("../../less/art_single/get.less")
 var utility = require("../utility.js");
 
 $(function() {
-		
-	//dialog
-	var alert_dialog = utility.ready_alert_dialog();
-			
+	
 	$('#content').ckeditor({ 
 		height: '450px' 
 	});
@@ -26,8 +23,8 @@ $(function() {
 			},
 			success: function(res, status) {
 				
-				$("#dialog_message").html(res.msg);
-				alert_dialog.dialog("open");
+				$("#dialog_alert").find(".modal-body").html(res.msg);
+				$("#dialog_alert").modal("show");
 			},
 			complete: function() {
 				$("#btn_submit").attr("disabled", false);

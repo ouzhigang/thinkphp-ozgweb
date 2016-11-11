@@ -1,8 +1,6 @@
 require("../../less/index/login.less")
 var utility = require("../utility.js");
 
-var alert_dialog = null;
-var form_dialog = null;
 function submit_login(exist_vcode) {
 	
 	var message = "";
@@ -40,13 +38,14 @@ function submit_login(exist_vcode) {
 					//登录成功
 					location.href = cfg.web_root + "simple/other/main";
 				}
-				else if(res.code == 2) {							
+				else if(res.code == 2) {
 					//验证码
-					form_dialog.dialog("open");		
+					$("#dialog_form").modal('show');
 				}
 				else {
-					$("#dialog_message").html(res.msg);
-					alert_dialog.dialog("open");
+					$("#dialog_form").modal('hide');
+					$("#dialog_alert").find(".modal-body").html(res.msg);
+					$("#dialog_alert").modal('show');
 				}
 				do_submit = true;
 			},
@@ -57,38 +56,19 @@ function submit_login(exist_vcode) {
 		});
 	}
 	else {
-		
-		$("#dialog_message").html(message);
-		alert_dialog.dialog("open");
+		$("#dialog_alert").find(".modal-body").html(message);
+		$("#dialog_alert").modal('show');
 	}
 }
 
 $(function() {
-	//dialog
-	alert_dialog = utility.ready_alert_dialog();
-	form_dialog = $( "#dialog_form" ).dialog({
-		autoOpen: false,
-		width: 400,
-		height: 200,			
-		modal: true,
-		buttons: {
-			"登录": function() {
-				//需要验证码登录
-				submit_login(true);
-			},
-			"关闭": function() {
-				$(this).dialog("close");
-			}
-		},
-		open: function() {				
-			$("#vcode_img").click(function() {
-				$(this).attr("src", cfg.web_root + "simple/index/getvcode?dt=" + Math.random());
-			});
-					
-		},
-		close: function() {
-			
-		}
+	
+	$("#dialog_form_btn").click(function() {
+		//需要验证码登录
+		submit_login(true);
+	});
+	$("#vcode_img").click(function() {
+		$(this).attr("src", cfg.web_root + "simple/index/getvcode?dt=" + Math.random());
 	});
 	
 	var do_submit = true;
