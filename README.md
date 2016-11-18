@@ -36,7 +36,9 @@
 
 ==========
 
-后台入口：thinkphp-ozgweb/public/simple/index/login
+前台入口：thinkphp-ozgweb/
+
+后台入口：thinkphp-ozgweb/public/mgr
 
 
-后台用户密码都是admin。暂无前台。
+后台用户密码都是admin。

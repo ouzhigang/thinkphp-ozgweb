@@ -1,9 +1,19 @@
 <?php
+// +----------------------------------------------------------------------
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2006~2016 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: liu21st <liu21st@gmail.com>
+// +----------------------------------------------------------------------
+// $Id$
 
 return [
     'type' => 'sqlite',
-    'dsn' => 'sqlite:' . __DIR__ . '/../simple.sqlite3',
+    'dsn' => 'sqlite:' . __DIR__ . '/../db.php',
     'charset' => 'utf8',
-	'prefix' => 'simple_',
+	'prefix' => 't_',
 	'debug' => true
 ];

@@ -12,18 +12,12 @@ class User extends Base {
 		
 		$page_count = page_count($total, $page_size);
 		
-		$offset = ($page - 1) * $page_size;
-		$limit = $page_size;
-		
-		$data = parent::all(function($query) use($offset, $limit) {
-			$query->where("is_admin = 1")->limit($offset, $limit)->order([ "id" => "desc" ]);
+		$list = parent::all(function($query) use($page, $page_size) {
+			$query->where("is_admin = 1")->page($page, $page_size)->order([ "id" => "desc" ]);
 		});
 		
-		$list = [];
-		foreach($data as $v) {
-			$item = $v->toArray();
-			$item["add_time"] = date("Y-m-d H:i:s", $item["add_time"]);
-			$list[] = $item;
+		foreach($list as &$v){
+			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
 		}
 		$r = [
 			"page_size" => $page_size,
@@ -37,7 +31,6 @@ class User extends Base {
 	
 	//管理员登录
 	public static function adminLogin($name, $pwd, $vcode, $remember = 0) {
-
 		$user = parent::where("name = '" . $name . "' and is_admin = 1")->find();
 		if($user) {
 			$user = $user->toArray();
@@ -59,7 +52,7 @@ class User extends Base {
 			}
 			
 			$arr = NULL;
-			if($user["pwd"] == $pwd) {
+			if($user["pwd"] == self::buildPassword($pwd)) {
 				$user["err_login"] = 0;
 				
 				session("user", $user);
@@ -129,7 +122,7 @@ class User extends Base {
 	}
 	
 	public static function saveData($data, $id = 0) {
-		
+	
 		if(!$data["name"]) {
 			return res_result(NULL, 1, "用户名不能为空");
 		}
@@ -138,13 +131,14 @@ class User extends Base {
 		}
 		if($data["pwd"] != $data["pwd2"]) {
 			return res_result(NULL, 1, "确认密码不正确");
-		}			
+		}
 		
+		$data["pwd"] = self::buildPassword($data["pwd"]);
 		unset($data["pwd2"]);
-		
+
 		if($id) {
 			parent::where("id = " . $id)->update($data);
-			return res_result(NULL, 0, "更新成功");
+			return res_result(NULL, 0, "修改成功");
 		}
 		else {
 			$total = parent::where("name = '" . $data["name"] . "'")->count();
@@ -161,7 +155,6 @@ class User extends Base {
 	}
 	
 	public static function updatePwd($old_pwd, $pwd, $pwd2) {
-		
 		if(!$old_pwd) {
 			return res_result(NULL, 1, "旧密码不能为空");
 		}
@@ -171,13 +164,13 @@ class User extends Base {
 		if($pwd != $pwd2) {
 			return res_result(NULL, 1, "确认密码不正确");
 		}
-		
+	
 		$curr_user = session("user");
 		
-		$user = parent::where("name = '" . $curr_user["name"] . "' and pwd = '" . $old_pwd . "'")->find();		
+		$user = parent::where("name = '" . $curr_user["name"] . "' and pwd = '" . self::buildPassword($old_pwd) . "'")->find();		
 		if($user) {
 			$user = $user->toArray();
-			$user["pwd"] = $pwd;
+			$user["pwd"] = self::buildPassword($pwd);
 			$id = $user["id"];
 			unset($user["id"]);
 			parent::where("id = " . $id)->update($user);
@@ -187,6 +180,11 @@ class User extends Base {
 			return res_result(NULL, 1, "旧密码不正确");
 		}
 		
+	}
+	
+	protected static function buildPassword($password) {
+		$password = md5($password);
+		return $password;
 	}
 	
 }

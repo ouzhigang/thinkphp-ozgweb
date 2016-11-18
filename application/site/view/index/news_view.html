@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<title>{$Think.config.module_name}</title>
+	{include file="common/meta" /}
+	{include file="common/css" /}
+</head>
+<body>
+	<div id="page_main">
+		{include file="common/header" /}
+		<div id="page_body">
+			<div class="page-body-content">
+				<div class="page-body-currnav">当前位置: 首页 &gt; 新闻中心 &gt; {$data.name}</div>
+				{include file="common/leftmenu" /}
+				<div class="content-body">
+					<div class="title-div">
+						<div class="title">
+							<h5>{$data.name}</h5>
+						</div>
+						<div>
+							<span>发布人：admin</span>
+							<span class="release-time">发布时间：{$data.add_time}</span>
+						</div>
+					</div>
+					<div class="content-body-view">
+						{$data.content}
+					</div>					
+				</div>
+			</div>			
+		</div>
+		{include file="common/footer" /}
+	</div>
+	{include file="common/js" /}	
+	<script src="{$Think.config.web_res_root}site/js/index/news_view.js"></script>
+</body>
+</html>

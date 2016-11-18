@@ -5,7 +5,9 @@ class ArtSingle extends Base {
     
 	public static function findById($id) {
 		$data = parent::where("id", $id)->find();
-		return $data->toArray();
+		if($data)
+			return $data->toArray();
+		return NULL;
 	}
 	
 	public static function saveData($data, $id = 0) {

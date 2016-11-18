@@ -658,6 +658,54 @@ function is_wechat_browser() {
 	}
 }
 
+function is_mobile_browser() {
+	$agent = $_SERVER['HTTP_USER_AGENT'];
+	if(strpos($agent,"NetFront") || strpos($agent,"iPhone") || strpos($agent,"MIDP-2.0") || strpos($agent,"Opera Mini") || strpos($agent,"UCWEB") || strpos($agent,"Android") || strpos($agent,"Windows CE") || strpos($agent,"SymbianOS"))
+		return true;
+	return false;
+}
+
+/**
+ * 验证输入的邮件地址是否合法
+ *
+ * @access  public
+ * @param   string      $email      需要验证的邮件地址
+ *
+ * @return bool
+ */
+function is_email($user_email) {
+    $chars = "/^([a-z0-9+_]|\\-|\\.)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}\$/i";
+    if (strpos($user_email, '@') !== false && strpos($user_email, '.') !== false) {
+        if (preg_match($chars, $user_email)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+	else {
+        return false;
+    }
+}
+
+/**
+ * 验证输入的手机号是否合法
+ *
+ * @access  public
+ * @param   string      $mobile      需要验证的手机号
+ *
+ * @return bool
+ */
+function is_mobile($mobile) {
+    $chars = "/^0?1[3|4|5|6|7|8][0-9]\d{8}$/";
+    if (preg_match($chars, $mobile)) {
+        return true;
+    } 
+	else {
+        return false;
+    }
+}
+
 //公用格式的返回json函数
 function res_result($data = NULL, $code = 0, $msg = NULL) {
 	
@@ -668,5 +716,81 @@ function res_result($data = NULL, $code = 0, $msg = NULL) {
 		"time" => time()
 	];
 	
+	return $res;
+}
+
+function http_post($url, $postdata) {
+	$header = [
+		"User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
+	];
+	
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+	$data = curl_exec($ch);
+	curl_close($ch);
+
+	return $data;
+}
+
+function http_post_json($url, $postdata) {
+	$data_string = json_encode($postdata, JSON_UNESCAPED_UNICODE);
+	
+	$header = [
+		"User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+		"Content-Type: application/json; charset=utf-8",
+		"Content-Length: " . strlen($data_string)
+	];
+	
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+	$data = curl_exec($ch);
+	curl_close($ch);
+
+	return $data;
+}
+
+function wx_access_token($appid, $secret, $code) {
+	//获取token
+	/*
+	access_token
+	expires_in
+	refresh_token
+	openid
+	scope
+	
+	错误返回 {"errcode":40029,"errmsg":"invalid code"}
+	*/	
+	
+	$res = file_get_contents("https://api.weixin.qq.com/sns/oauth2/access_token?appid=" . $appid . "&secret=" . $secret . "&code=" . $code . "&grant_type=authorization_code");
+	$res = json_decode($res, true);
+	return $res;
+}
+
+function wx_snsapi_userinfo($access_token, $openid) {
+	//获取微信用户信息
+	/*
+	openid
+	nickname
+	sex
+	language
+	city
+	province
+	country
+	headimgurl
+	privilege
+	
+	错误返回 {"errcode":40003,"errmsg":" invalid openid "}
+	*/
+	
+	$res = file_get_contents("https://api.weixin.qq.com/sns/userinfo?access_token=" . $access_token . "&openid=" . $openid . "&lang=zh_CN");
+	$res = json_decode($res, true);
 	return $res;
 }

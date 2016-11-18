@@ -1,8 +1,6 @@
 <?php
 namespace app\common\model;
 
-use \think\Response;
-
 class Feedback extends Base {
     
 	public static function getList($page, $page_size) {
@@ -11,18 +9,12 @@ class Feedback extends Base {
 		
 		$page_count = page_count($total, $page_size);
 		
-		$offset = ($page - 1) * $page_size;
-		$limit = $page_size;
-		
-		$data = parent::all(function($query) use($offset, $limit) {
-			$query->order([ "id" => "desc" ])->limit($offset, $limit);
+		$list = parent::all(function($query) use($page, $page_size) {
+			$query->order([ "id" => "desc" ])->page($page, $page_size);
 		});
 		
-		$list = [];
-		foreach($data as $v) {
-			$item = $v->toArray();
+		foreach($list as &$v) {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
-			$list[] = $item;
 		}
 		
 		$r = [

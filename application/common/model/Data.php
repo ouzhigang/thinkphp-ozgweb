@@ -1,34 +1,32 @@
 <?php
 namespace app\common\model;
 
-use \think\Response;
-
 class Data extends Base {
 	
-	public static function getList($page, $page_size, $type) {
-		$total = parent::where("type = " . $type)->count();
+	public static function getList($page, $page_size, $type, $wq = "") {
+		if($wq != "")
+			$wq = " and " . $wq;
+		
+		$total = parent::where("d.type = " . $type . " " . $wq)
+			->alias("d")
+			->join("data_class as dc", "d.data_class_id = dc.id", "left")
+			->count();
 		
 		$page_count = page_count($total, $page_size);
-		$offset = ($page - 1) * $page_size;
-		$limit = $page_size;
 		
-		$prefix = config("database.prefix");
-		$data = parent::where("d.type = " . $type)
-			->field("d.*, dc.name as dc_name")
+		$list = self::where("d.type = " . $type . " " . $wq)
 			->alias("d")
-			->join($prefix . "data_class as dc", "d.data_class_id = dc.id", "left")
-			->order("sort desc, id desc")
-			->limit($offset . ", " . $limit)
+			->field("d.*, dc.name as dc_name")
+			->join("data_class as dc", "d.data_class_id = dc.id", "left")
+			->order("d.sort desc, d.id desc")
+			->page($page, $page_size)
 			->select();
-			
-		$list = [];
-		foreach($data as $v) {
+		
+		foreach($list as &$v) {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
 			$v["dc_name"] = $v["dc_name"] ? $v["dc_name"] : "[暂无]";
-			
-			$v["picture"] = explode(",", $v["picture"]);
-			
-			$list[] = $v;
+			$v["picture"] = json_decode($v["picture"], true);
+			$v["picture"] = count($v["picture"]) > 0 ? $v["picture"][0] : "";
 		}
 		
 		$r = [
@@ -44,8 +42,11 @@ class Data extends Base {
 	
 	public static function findById($id) {
 		$data = parent::where("id = " . $id)->find();
-		$data["picture"] = json_decode($data["picture"], true);
-		return $data->toArray();
+		if($data) {
+			$data["picture"] = json_decode($data["picture"], true);
+			return $data->toArray();
+		}
+		return NULL;
 	}
 	
 	public static function saveData($data, $id = 0) {
@@ -60,8 +61,7 @@ class Data extends Base {
 		
 		if($id) {
 			parent::where("id = " . $id)->update($data);
-			
-			return res_result(NULL, 0, "更新成功");
+			return res_result(NULL, 0, "修改成功");
 		}
 		else {
 			unset($data["id"]);
@@ -70,11 +70,34 @@ class Data extends Base {
 			
 			return res_result(NULL, 0, "添加成功");
 		}
-		
 	}
 	
 	public static function delById($id = 0) {
 		parent::where("id = " . $id)->delete();
+		return true;
+	}
+	
+	public static function upHits($id = 0) {
+		
+		$history = [];
+		if(cookie('history')) {
+			$history = cookie('history');
+			$history = explode(",", $history);
+		}
+		
+		if(!in_array($id, $history)) {
+		
+			$data = self::findById($id);
+			if($data) {
+				$data["hits"]++;
+				self::saveData($data, $id);
+			}
+			
+			$history[] = $id;
+			
+			cookie('history', implode(",", $history), 86400 * 30);
+		}
+		
 		return true;
 	}
 	

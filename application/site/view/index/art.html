@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<title>{$Think.config.module_name}</title>
+	{include file="common/meta" /}
+	{include file="common/css" /}
+</head>
+<body>
+	<div id="page_main">
+		{include file="common/header" /}
+		<div id="page_body">
+			<div class="page-body-content">
+				<div class="page-body-currnav">当前位置: 首页 &gt; {$title}</div>
+				{include file="common/leftmenu" /}
+				<div class="content-body">
+					<div class="content-body-view">	
+						{$content}
+					</div>					
+				</div>
+			</div>			
+		</div>
+		{include file="common/footer" /}
+	</div>
+	{include file="common/js" /}	
+	<script src="{$Think.config.web_res_root}site/js/index/art.js"></script>
+</body>
+</html>

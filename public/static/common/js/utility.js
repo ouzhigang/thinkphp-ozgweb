@@ -1,3 +1,4 @@
+//修改日期2011-03-11
 
 //获取URL参数
 function getUrlParam(name){  

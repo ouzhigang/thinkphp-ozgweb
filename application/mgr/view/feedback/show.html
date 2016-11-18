@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	{include file="common/header" /}
+	{include file="common/css" /}
+</head>
+
+<body>
+    <div id="wrapper">
+		{include file="common/dialog" /}
+		{include file="common/navbar" /}
+        <div id="page-wrapper">			
+			<div class="row" id="first_row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+							其他相关 - <span class="table_title">留言列表</span>                            
+                        </div>
+                        <div class="panel-body">
+                            <div class="dataTable_wrapper">
+                                <table class="table table-hover" id="datalist">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>内容</th>
+                                            <th>时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>                            
+							<div id="page_nav">
+								<span id="page_index">页次 <span id="page">1</span> / <span id="page_count">10</span></span>
+								<button class="btn btn-outline btn-link" type="button" id="page_first">首页</button>
+								<button class="btn btn-outline btn-link" type="button" id="page_prev">上一页</button>
+								<button class="btn btn-outline btn-link" type="button" id="page_next">下一页</button>
+								<button class="btn btn-outline btn-link" type="button" id="page_last">末页</button>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>			
+        </div>
+    </div>
+	{include file="common/js" /}			
+	<script src="{$Think.config.web_res_root}mgr/js/feedback/show.js"></script>	
+</body>
+</html>
