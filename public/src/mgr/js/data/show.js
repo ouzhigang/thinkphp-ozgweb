@@ -209,8 +209,8 @@ function upload_btn() {
 				$("#picture_" + id).val(data.result.data.filepath);
 			}
 			else {
-				$("#dialog_message").html(data.result.msg);
-				$("#dialog_message").dialog("open");
+				$("#dialog_alert").find(".modal-body").html(data.result.msg);
+				$("#dialog_alert").modal("show");
 			}				
 		},
 		progressall: function (e, data) {
@@ -376,8 +376,8 @@ $(function() {
 			
 			if($("#type").val() == "1") {
 				if($("#data_class_id").val() == "0" || $("#data_class_id").val() == "") {
-					$("#dialog_message").html("没有选择分类");
-					$("#dialog_message").dialog("open");
+					$("#dialog_alert").find(".modal-body").html("没有选择分类");
+					$("#dialog_alert").modal("show");	
 					return false;
 				}
 			}
