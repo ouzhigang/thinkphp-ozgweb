@@ -210,7 +210,7 @@ function upload_btn() {
 			}
 			else {
 				$("#dialog_message").html(data.result.msg);
-				alert_dialog.dialog("open");
+				$("#dialog_message").dialog("open");
 			}				
 		},
 		progressall: function (e, data) {
@@ -377,7 +377,7 @@ $(function() {
 			if($("#type").val() == "1") {
 				if($("#data_class_id").val() == "0" || $("#data_class_id").val() == "") {
 					$("#dialog_message").html("没有选择分类");
-					alert_dialog.dialog("open");
+					$("#dialog_message").dialog("open");
 					return false;
 				}
 			}
