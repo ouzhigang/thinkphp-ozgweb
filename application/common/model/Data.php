@@ -7,20 +7,18 @@ class Data extends Base {
 		if($wq != "")
 			$wq = " and " . $wq;
 		
-		$total = parent::where("d.type = " . $type . " " . $wq)
-			->alias("d")
-			->join("data_class as dc", "d.data_class_id = dc.id", "left")
-			->count();
-		
+		$total = \think\Db::query('select count(d.id) as total from ' . config("database.prefix") . 'data as d left join ' . config("database.prefix") . 'data_class as dc on d.data_class_id = dc.id where 1 = 1' . $wq);
+		$total = intval($total[0]["total"]);
 		$page_count = page_count($total, $page_size);
 		
-		$list = self::where("d.type = " . $type . " " . $wq)
-			->alias("d")
-			->field("d.*, dc.name as dc_name")
-			->join("data_class as dc", "d.data_class_id = dc.id", "left")
-			->order("d.sort desc, d.id desc")
-			->page($page, $page_size)
-			->select();
+		$list = self::select(function($query) use($type, $wq, $page, $page_size) {
+			$query->where("d.type = " . $type . " " . $wq)
+				->alias("d")
+				->field("d.*, dc.name as dc_name")
+				->join("data_class dc", "d.data_class_id = dc.id", "left")
+				->order("d.sort desc, d.id desc")
+				->page($page, $page_size);
+		});
 		
 		foreach($list as &$v) {
 			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
@@ -41,7 +39,7 @@ class Data extends Base {
 	}
 	
 	public static function findById($id) {
-		$data = parent::where("id = " . $id)->find();
+		$data = self::where("id = " . $id)->find();
 		if($data) {
 			$data["picture"] = json_decode($data["picture"], true);
 			return $data->toArray();
@@ -60,20 +58,20 @@ class Data extends Base {
 		}
 		
 		if($id) {
-			parent::where("id = " . $id)->update($data);
+			self::where("id = " . $id)->update($data);
 			return res_result(NULL, 0, "修改成功");
 		}
 		else {
 			unset($data["id"]);
 			$data["add_time"] = time();
-			parent::create($data);
+			self::create($data);
 			
 			return res_result(NULL, 0, "添加成功");
 		}
 	}
 	
 	public static function delById($id = 0) {
-		parent::where("id = " . $id)->delete();
+		self::where("id = " . $id)->delete();
 		return true;
 	}
 	

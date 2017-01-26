@@ -12,8 +12,7 @@
 
 return [
     'type' => 'sqlite',
-    'dsn' => 'sqlite:' . __DIR__ . '/../db.php',
+    'database' => __DIR__ . '/../db.php',
     'charset' => 'utf8',
 	'prefix' => 't_',
-	'debug' => true
 ];
