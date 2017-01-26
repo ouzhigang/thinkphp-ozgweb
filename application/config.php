@@ -24,6 +24,7 @@ return [
 	'default_lang' => 'zh-cn',
 	'show_error_msg' => true,
 	'session_auto_start' => true,
+	'default_ajax_return' => 'html',
 	
 	//以下是本项目的私有配置
 	'web_root' => 'http://192.168.33.10/thinkphp-ozgweb/public/',

@@ -14,6 +14,12 @@ class DataClass extends Base {
 		return $this->fetch("show");
 	}
 	
+	public function get() {
+		$id = input("param.id", 0, "intval");
+		$data = \app\common\model\DataClass::getById($id);
+		return json(res_result($data, 0, "请求成功"));
+	}
+	
 	public function add() {
 		$id = input("param.id", 0, "intval");
 		

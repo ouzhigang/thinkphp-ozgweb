@@ -21,4 +21,9 @@ $(function() {
 		return this.optional(element) || (length == 11 && mobile.test(value));
 	}, "请正确填写您的手机号码");
 	
+	//pjax
+	$(document).pjax('.main-pjax-btn', '#page-wrapper', {
+		fragment: '#page-wrapper'
+	});
+	
 });

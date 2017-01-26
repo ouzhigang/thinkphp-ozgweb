@@ -3,6 +3,7 @@
 <head>
 	{include file="common/header" /}
 	{include file="common/css" /}
+	{include file="common/js" /}
 </head>
 
 <body>
@@ -31,14 +32,48 @@
                     </div>
                 </div>              				
             </div>
+			<script src="{$Think.config.web_res_root}mgr/js/art_single/get.js"></script>
+<script>
+$(function() {
 			
+	$('#content').ckeditor({ 
+		height: '450px' 
+	});
+	$("#btn_submit").click(function() {
+		
+		var data = {
+			id: $("#id").val(),
+			content: CKEDITOR.instances.content.getData()
+		};
+		
+		$.ajax({
+			url: cfg.web_root + "mgr/art_single/get",
+			type: "post",
+			dataType: "json",
+			data: data,
+			beforeSend: function() {
+				$("#btn_submit").attr("disabled", true);
+			},
+			success: function(res, status) {
+				
+				$("#dialog_alert").find(".modal-body").html(res.msg);
+				$("#dialog_alert").modal('show');
+				
+			},
+			complete: function() {
+				$("#btn_submit").attr("disabled", false);
+			}
+		});
+		
+		return false;
+	});
+});
+</script>
         </div>
         <!-- /#page-wrapper -->
 
     </div>
     <!-- /#wrapper -->
-	{include file="common/js" /}
-	<script src="{$Think.config.web_res_root}mgr/js/art_single/get.js"></script>
 </body>
 
 </html>

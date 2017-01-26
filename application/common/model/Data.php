@@ -7,7 +7,7 @@ class Data extends Base {
 		if($wq != "")
 			$wq = " and " . $wq;
 		
-		$total = \think\Db::query('select count(d.id) as total from ' . config("database.prefix") . 'data as d left join ' . config("database.prefix") . 'data_class as dc on d.data_class_id = dc.id where 1 = 1' . $wq);
+		$total = \think\Db::query('select count(d.id) as total from ' . config("database.prefix") . 'data as d left join ' . config("database.prefix") . 'data_class as dc on d.data_class_id = dc.id where d.type = ' . $type . ' ' . $wq);
 		$total = intval($total[0]["total"]);
 		$page_count = page_count($total, $page_size);
 		
