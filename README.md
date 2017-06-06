@@ -16,12 +16,9 @@
 	
 	
 	6.验证码部分的配置，https://github.com/top-think/think-captcha
-
-
-	7.在thinkphp-ozgweb目录下执行一次npm install，然后执行一次webpack
-
 	
-	8.nginx运行需要在server节加入如下配置	
+	
+	7.nginx运行需要在server节加入如下配置	
 	location /thinkphp-ozgweb/public/static/ {
 		access_log off;
 		expires 10d;
