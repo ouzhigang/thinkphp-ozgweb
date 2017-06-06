@@ -1,0 +1,25 @@
+
+@import "../common/base.css";
+
+a:link {
+	color: #fff;
+	text-decoration: none;				
+}
+a:hover {
+	color: #fff;
+	text-decoration: none;
+}
+a:visited {
+	color: #fff;
+	text-decoration: none;
+}
+
+#vcode {
+	
+	width: 180px;
+}
+
+#vcode_img {	
+    width: 130px;
+	cursor: pointer;
+}

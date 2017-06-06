@@ -1,0 +1,38 @@
+@import "../common/base.css";
+
+.content-body {
+	display: inline-block;
+	width: 79%;
+	vertical-align: top;
+	padding: 5px 15px;	
+}
+
+#news_list {
+	float: none;
+	padding: 0;
+	margin: 0;	
+}
+
+#news_list li {
+	float: none;
+	border-bottom: 1px #ddd solid;
+	height: 38px;
+	line-height: 28px;	
+}
+
+#news_list li img {
+	position: relative;
+	top: -4px;
+}
+#news_list li a {
+	display: inline-block;
+	margin-top: 8px;
+}
+#news_list li span {
+	margin-top: 8px;
+	float: right;
+}
+
+#news_list .last {
+	border-bottom: 0;
+}

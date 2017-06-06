@@ -11,6 +11,7 @@
 		{include file="common/dialog" /}
 		{include file="common/navbar" /}
         <div id="page-wrapper">			
+			<link href="{$Think.config.web_res_root}mgr/css/feedback/show.css" rel="stylesheet" />
 			<div class="row" id="first_row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
@@ -43,8 +44,8 @@
                     </div>
                 </div>
             </div>
-            <script src="{$Think.config.web_res_root}mgr/js/feedback/show.js"></script>	
 <script>
+
 var curr_page = 1;
 var page_count = 1;
 
@@ -155,9 +156,11 @@ $(function() {
 	});
 		
 });
-</script>		
+
+</script>
+
         </div>
     </div>
-
+	<script src="{$Think.config.web_res_root}mgr/js/common.js"></script>
 </body>
 </html>

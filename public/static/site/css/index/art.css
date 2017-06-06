@@ -1,0 +1,26 @@
+@import "../common/base.css";
+
+.content-body {
+	display: inline-block;
+	width: 79%;
+	vertical-align: top;
+	padding: 5px 15px;	
+}
+
+.content-body .title-div {
+	text-align: center;	
+}	
+
+.content-body .title-div .title {
+	border-bottom: 1px #ddd solid; 
+	margin-bottom: 5px; 
+	padding-bottom: 5px;
+}
+
+.content-body .title-div .release-time {
+	margin-left: 10px;
+}
+
+.content-body .content-body-view {
+	margin-top: 20px;
+}
