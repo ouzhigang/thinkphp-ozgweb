@@ -5,7 +5,6 @@ thinkphp/
 runtime/
 startbootstrap-sb-admin-2/
 ckeditor/
-ckeditor/
 extend/com/
 extend/org/
 vendor/
@@ -16,6 +15,4 @@ public/static/upload/*.jpg
 public/static/upload/*.jpeg
 public/static/upload/*.png
 public/static/upload/*.gif
-public/static/mgr/js/*/
-public/static/site/js/*/
 .DS_Store
