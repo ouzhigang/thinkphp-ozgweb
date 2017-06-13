@@ -12,12 +12,12 @@
 		{include file="common/navbar" /}
         <div id="page-wrapper">			
 			<link href="{$Think.config.web_res_root}mgr/css/user/show.css" rel="stylesheet" />
-			<div class="row" id="getlist_table">
+			<div class="row">
                 <div class="col-lg-8">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                         	用户管理 - <span class="table_title">管理员列表</span>
-							<button type="button" class="btn btn-success btn-xs" id="btn_add">添加管理员</button>
+							<a type="button" class="btn btn-success btn-xs main-pjax-btn btn-change" href="{$Think.config.web_root}mgr/user/add">添加管理员</a>
                         </div>
                         <div class="panel-body">							
 							<div class="table-responsive">
@@ -30,259 +30,84 @@
                                             <th>操作</th>
                                         </tr>
                                     </thead>
-                                    <tbody>										
+                                    <tbody>		
+										{foreach name="data.list" item="v"}
+										<tr>
+											<td>{$v.id}</td>
+											<td>{$v.name}</td>
+											<td>{$v.add_time}</td>
+											<td>
+												<button class="btn btn-outline btn-link btn-xs" type="button" id="btn_del_{$v.id}" data-id="{$v.id}">删除</button>
+											</td>
+										</tr>
+										{/foreach}
                                     </tbody>
                                 </table>
                             </div>							
-							<div id="page_nav">
-								<span id="page_index">页次 <span id="page">1</span> / <span id="page_count">10</span></span>
-								<button class="btn btn-outline btn-link" type="button" id="page_first">首页</button>
-								<button class="btn btn-outline btn-link" type="button" id="page_prev">上一页</button>
-								<button class="btn btn-outline btn-link" type="button" id="page_next">下一页</button>
-								<button class="btn btn-outline btn-link" type="button" id="page_last">末页</button>
-							</div>
+							{include file="common/page" /}
 							
 						</div>
 					</div>
 				</div>
 			</div>			
 			
-			<div class="row" id="add_table">
-                <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                        	用户管理 - <span class="table_title">添加管理员</span>
-							<button type="button" class="btn btn-success btn-xs" id="btn_getlist">管理员列表</button>
-						</div>
-                        <div class="panel-body">
-							<form id="main_form" role="form">
-								<div class="form-group">
-									<table>
-										<tr>
-											<td class="title_column">
-												<label>用户名：</label>
-											</td>
-											<td>
-												<input class="form-control" placeholder="请输入用户名" id="name" name="name" />												
-											</td>
-										</tr>
-										<tr>
-											<td class="title_column">
-												<label>密码：</label>
-											</td>
-											<td>
-												<input class="form-control" placeholder="请输入确认密码" type="password" id="pwd" name="pwd" />
-											</td>
-										</tr>
-										<tr>
-											<td class="title_column">
-												<label>确认密码：</label>
-											</td>
-											<td>
-												<input class="form-control" placeholder="请输入确认密码" type="password" id="pwd2" name="pwd2" />
-											</td>
-										</tr>
-										<tr>
-											<td colspan="2">
-												<div class="btn_submit_div">
-													<input type="hidden" id="id" name="id" />
-													<input type="submit" id="btn_submit" class="btn btn-outline btn-primary" value="添加" />
-												</div>
-											</td>
-										</tr>
-									</table>									
-								</div>
-							</form>	
-						</div>
-					</div>
-				</div>
-			</div>
+			
 <script>
 
 $(function() {
 	
-	var curr_page = 1;
-	var page_count = 1;
-
-	function show_data(page) {
-	
+	//点击删除
+	$("button[id ^= 'btn_del_']").click(function() {
+		var curr_obj = $(this);			
 		var data = {
-			get_data: 1,
-			page: page
+			id: curr_obj.attr("data-id")
 		};
-	
-		$.ajax({
-			url: cfg.web_root + "mgr/user/show",
-			type: "get",
-			dataType: "json",
-			data: data,
-			beforeSend: function() {
-			
-			},
-			success: function(res, status) {
-				if(res.code == 0) {
-				
-					$("#datalist > tbody").empty();
-					for(var i = 0; i < res.data.list.length; i++) {				
-						var row = "<tr>";
-						row += "<td>" + res.data.list[i].id + "</td>"
-						row += "<td>" + res.data.list[i].name + "</td>";
-						row += "<td>" + res.data.list[i].add_time + "</td>";
-						row += "<td>";
-						row += "<button class=\"btn btn-outline btn-link btn-xs\" type=\"button\" id=\"btn_del_" + res.data.list[i].id + "\" data-id=\"" + res.data.list[i].id + "\">删除</button>";
-						row += "</td>";
-						row += "</tr>";
-					
-						$("#datalist > tbody").append(row);
-					}
-				
-					page = res.data.page;
-					page_count = res.data.page_count;				
-					$("#page").html(page);
-					$("#page_count").html(page_count);
-				
-					//点击删除
-					$("button[id ^= 'btn_del_']").click(function() {
-						var curr_obj = $(this);			
-						var data = {
-							id: curr_obj.attr("data-id")
-						};
-						$("#dialog_confirm").find(".modal-body").html("确定删除吗？");
-						$("#dialog_confirm").modal('show');
-						$("#dialog_confirm_btn").unbind().click(function() {
-						
-							$.ajax({
-								url: cfg.web_root + "mgr/user/del",
-								type: "get",
-								dataType: "json",
-								data: data,
-								beforeSend: function() {
-									curr_obj.attr("disabled", true);
-								},
-								success: function(res, status) {
-									$("#dialog_confirm").modal("hide");						
-									if(res.code == 0) {
-									
-										show_data(curr_page);
-									}
-									else {
-										$("#dialog_alert").find(".modal-body").html(res.msg);
-										$("#dialog_alert").modal("show");		
-									}
-								},
-								complete: function() {
-									curr_obj.attr("disabled", false);
-								}
-							});
-						
-						});
-					
-					});
-				}
-			},
-			complete: function() {
-			
-			}
-		});
-	
-	}
-	
-	show_data(curr_page);		
-	$("#page_first").click(function() {
-		curr_page = 1;		
-		show_data(curr_page);	
-	});
-	$("#page_prev").click(function() {
-		curr_page--;
-		if(curr_page < 1)
-			curr_page = 1;
-		show_data(curr_page);	
-	});
-	$("#page_next").click(function() {
-		curr_page++;
-		if(curr_page > page_count)
-			curr_page = page_count;
-		show_data(curr_page);
-	});
-	$("#page_last").click(function() {
-		curr_page = page_count;
-		show_data(page_count);	
-	});
-	
-	$("#btn_add").click(function() {
-		//初始化表单		
-		$("#name").val("");
-		$("#pwd").val("");
-		$("#pwd2").val("");
+		$("#dialog_confirm").find(".modal-body").html("确定删除吗？");
+		$("#dialog_confirm").modal('show');
+		$("#dialog_confirm_btn").unbind().click(function() {
 		
-		$("#btn_submit").val("添加");
-		
-		$("#add_table").show();
-		$("#getlist_table").hide();
-	});
-	$("#btn_getlist").click(function() {
-		$("#add_table").hide();
-		$("#getlist_table").show();
-		
-		show_data(curr_page);
-	});
-	$("#add_table").hide();
-	
-	$("#main_form").validate({
-		rules: {
-			name: {
-				required: true,
-				minlength: 5
-			},
-			pwd: {
-				required: true,
-				minlength: 5,
-				equalTo: "#pwd2"
-			}
-		},
-		messages: {
-			name: {
-				required: "没有填写用户名",
-				minlength: $.validator.format("用户名不能小于{0}个字符")
-			},
-			pwd: {
-				required: "没有填写密码",
-				minlength: "密码不能小于{0}个字符",
-				equalTo: "两次输入密码不一致"
-			}
-		},
-		submitHandler: function(form) {
-			
-			var data = {
-				name: $("#name").val(),
-				pwd: hex_md5($("#pwd").val()),
-				pwd2: hex_md5($("#pwd2").val())
-			};
-			
 			$.ajax({
-				url: cfg.web_root + "mgr/user/add",
-				type: "post",
+				url: cfg.web_root + "mgr/user/del",
+				type: "get",
 				dataType: "json",
 				data: data,
 				beforeSend: function() {
-					$("#btn_submit").attr("disabled", true);
+					curr_obj.attr("disabled", true);
 				},
 				success: function(res, status) {
+					$("#dialog_confirm").modal("hide");						
 					if(res.code == 0) {
-						$("#btn_getlist").get(0).click();						
+					
+						$.pjax.reload('#page-wrapper', {
+							fragment: '#page-wrapper'
+						});
 					}
 					else {
 						$("#dialog_alert").find(".modal-body").html(res.msg);
-						$("#dialog_alert").modal("show");
+						$("#dialog_alert").modal("show");		
 					}
 				},
 				complete: function() {
-					$("#btn_submit").attr("disabled", false);
+					curr_obj.attr("disabled", false);
 				}
 			});
-			
-			return false;
-		}
+		
+		});
+	
+	});
+	
+	//分页导航的下拉
+	for(var i = 0; i < parseInt($("#page_count").text()); i++) {
+		var page = i + 1;
+		$("#jump_page").append('<option value="' + page + '" ' + (page == parseInt($("#page").text()) ? 'selected="selected"' : '') + '>' + page + '</option>');
+	}
+	$("#jump_page").change(function() {
+		var url = cfg.web_root + "mgr/user/show?page=" + $(this).val();
+		$.pjax({
+			url: url, 
+			container: '#page-wrapper',
+			fragment: '#page-wrapper'
+		});
 	});
 	
 });

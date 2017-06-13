@@ -21,20 +21,23 @@ class DataClass extends Base {
 	}
 	
 	public function add() {
-		$id = input("param.id", 0, "intval");
-		
-		$row = [];
-		$row["name"] = input("post.name", "", "str_filter");
-		$row["parent_id"] = input("post.parent_id", 0, "intval");
-		$row["sort"] = input("post.sort", 0, "intval");
-		$row["type"] = input("post.type", 0, "intval");
-		
-		if($id != 0) {				
-			return json(\app\common\model\DataClass::saveData($row, $id));
+		if(request()->isPOST()) {
+			$id = input("param.id", 0, "intval");
+			
+			$row = [];
+			$row["name"] = input("post.name", "", "str_filter");
+			$row["parent_id"] = input("post.parent_id", 0, "intval");
+			$row["sort"] = input("post.sort", 0, "intval");
+			$row["type"] = input("post.type", 0, "intval");
+			
+			if($id != 0) {				
+				return json(\app\common\model\DataClass::saveData($row, $id));
+			}
+			else {
+				return json(\app\common\model\DataClass::saveData($row));
+			}
 		}
-		else {
-			return json(\app\common\model\DataClass::saveData($row));
-		}
+		return $this->fetch("add");
 	}
 	
 	public function gettree() {
