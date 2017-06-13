@@ -12,10 +12,10 @@ class Data extends Base {
 		$this->assign("data", $data);
 		
 		//分页导航
-		$page_first = config("web_root") . "mgr/data/show?page=1";
-		$page_prev = config("web_root") . "mgr/data/show?page=" . ($page <= 1 ? 1 : $page - 1);
-		$page_next = config("web_root") . "mgr/data/show?page=" . ($page >= $data["page_count"] ? $data["page_count"] : $page + 1);
-		$page_last = config("web_root") . "mgr/data/show?page=" . $data["page_count"];
+		$page_first = config("web_root") . "mgr/data/show?type=" . $type . "&page=1";
+		$page_prev = config("web_root") . "mgr/data/show?type=" . $type . "&page=" . ($page <= 1 ? 1 : $page - 1);
+		$page_next = config("web_root") . "mgr/data/show?type=" . $type . "&page=" . ($page >= $data["page_count"] ? $data["page_count"] : $page + 1);
+		$page_last = config("web_root") . "mgr/data/show?type=" . $type . "&page=" . $data["page_count"];
 		
 		$this->assign("page_first", $page_first);
 		$this->assign("page_prev", $page_prev);
