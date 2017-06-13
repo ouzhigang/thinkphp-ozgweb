@@ -42,7 +42,7 @@
 										{foreach name="data.list" item="v"}
 										<tr>
 											<td>{$v.id}</td>
-											<td>{$v.name}</td>
+											<td><a href="{$Think.config.web_root}site/index/{if condition='$Request.param.type == 1'}productView{else}newsView{/if}?id={$v.id}" target="_blank">{$v.name}</a></td>
 											<td>{$v.dc_name}</td>
 											<td>{$v.hits}</td>
 											<td>{$v.add_time}</td>
