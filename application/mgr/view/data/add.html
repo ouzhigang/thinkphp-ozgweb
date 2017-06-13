@@ -246,7 +246,7 @@ $(function() {
 	$("#picture_list").append(html);
 	upload_btn();
 	
-	if($("#id").val() != "0") {
+	if($("#id").val() != "0" && $("#id").val() != "") {
 		var data = {
 			id: $("#id").val()
 		};

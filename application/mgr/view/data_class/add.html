@@ -99,7 +99,7 @@ function req_parent() {
 $(function() {
 	req_parent();
 	
-	if($("#id").val() != "0") {
+	if($("#id").val() != "0" && $("#id").val() != "") {
 		var data = {
 			id: $("#id").val()
 		};
