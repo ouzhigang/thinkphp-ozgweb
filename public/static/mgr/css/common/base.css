@@ -61,3 +61,7 @@ a:visited {
 .row {
     padding-top: 15px;
 }
+
+#page_index, #page_data_total {
+    font-size: 16px;
+}
