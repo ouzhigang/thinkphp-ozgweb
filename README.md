@@ -16,13 +16,13 @@
 	
 	
 	6.nginx运行需要在server节加入如下配置	
-	location /thinkphp-ozgweb/public/static/ {
+	location /thinkphp-ozgweb/static/ {
 		access_log off;
 		expires 10d;
 	}
-	location /thinkphp-ozgweb/public/ {
+	location /thinkphp-ozgweb/ {
 		if (!-e $request_filename) {
-			rewrite ^/thinkphp-ozgweb/public/(.*)$ /thinkphp-ozgweb/public/index.php?s=$1 last;
+			rewrite ^/thinkphp-ozgweb/(.*)$ /thinkphp-ozgweb/public/index.php?s=$1 last;
 			break;
 		}
 	}
@@ -32,7 +32,7 @@
 
 前台入口：thinkphp-ozgweb/
 
-后台入口：thinkphp-ozgweb/public/mgr
+后台入口：thinkphp-ozgweb/mgr
 
 
 后台用户密码都是admin。
