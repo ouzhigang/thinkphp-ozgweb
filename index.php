@@ -1,3 +1,3 @@
 <?php
 
-header("location: ./public/site/index/index");
+header("location: ./site/index/index");
