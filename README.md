@@ -3,7 +3,7 @@
 	1.需要根据实际情况设置thinkphp-ozgweb/application/config.php的web_res_root部分（资源文件的目录）和web_root部分（网站的根目录）
 
 	
-	2.需要根据实际情况设置thinkphp-ozgweb/public/static/simple/js/cfg.js的web_res_root部分（资源文件的目录）和web_root部分（网站的根目录）
+	2.需要根据实际情况设置thinkphp-ozgweb/public/static/mgr/js/cfg.js、thinkphp-ozgweb/public/static/site/js/cfg.js的web_res_root部分（资源文件的目录）和web_root部分（网站的根目录）
 	
 
 	3.sb-admin2需要自行下载，https://github.com/BlackrockDigital/startbootstrap-sb-admin-2 ，对应目录thinkphp-ozgweb/public/static/startbootstrap-sb-admin-2
