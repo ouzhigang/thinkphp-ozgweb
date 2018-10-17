@@ -21,10 +21,11 @@ class Data extends Base {
 		});
 		
 		foreach($list as &$v) {
-			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
+			$v["add_time_s"] = date("Y-m-d H:i:s", $v["add_time"]);
 			$v["dc_name"] = $v["dc_name"] ? $v["dc_name"] : "[暂无]";
 			$v["picture"] = json_decode($v["picture"], true);
-			$v["picture"] = count($v["picture"]) > 0 ? $v["picture"][0] : "";
+			$v["picture_0"] = count($v["picture"]) > 0 ? $v["picture"][0] : "";
+			$v["content"] = html_entity_decode($v["content"]);
 		}
 		
 		$r = [
@@ -41,8 +42,10 @@ class Data extends Base {
 	public static function findById($id) {
 		$data = self::where("id = " . $id)->find();
 		if($data) {
+			$data = $data->toArray();
 			$data["picture"] = json_decode($data["picture"], true);
-			return $data->toArray();
+			$data["content"] = html_entity_decode($data["content"]);
+			return $data;
 		}
 		return NULL;
 	}
@@ -70,9 +73,13 @@ class Data extends Base {
 		}
 	}
 	
-	public static function delById($id = 0) {
-		self::where("id = " . $id)->delete();
-		return true;
+	public static function delById($ids = []) {
+		$result = parent::whereIn("id", $ids)->delete();
+		if($result) {
+			return res_result(NULL, 0, "删除成功");
+		}
+		
+		return res_result(NULL, 1, "删除失败");
 	}
 	
 	public static function upHits($id = 0) {

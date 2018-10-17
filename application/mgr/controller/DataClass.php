@@ -6,12 +6,8 @@ class DataClass extends Base {
 	public function show() {
 		$type = input("param.type", 0, "intval");
 		
-		if(input("param.get_data", 0, "intval")) {			
-			$data = \app\common\model\DataClass::getList($type);
-			return json(res_result($data, 0, "请求成功"));
-		}
-		
-		return $this->fetch("show");
+		$data = \app\common\model\DataClass::getList($type);
+		return json(res_result($data, 0, "请求成功"));
 	}
 	
 	public function get() {
@@ -21,30 +17,20 @@ class DataClass extends Base {
 	}
 	
 	public function add() {
-		if(request()->isPOST()) {
-			$id = input("param.id", 0, "intval");
+		$id = input("param.id", 0, "intval");
 			
-			$row = [];
-			$row["name"] = input("post.name", "", "str_filter");
-			$row["parent_id"] = input("post.parent_id", 0, "intval");
-			$row["sort"] = input("post.sort", 0, "intval");
-			$row["type"] = input("post.type", 0, "intval");
+		$row = [];
+		$row["name"] = input("post.name", "", "str_filter");
+		$row["parent_id"] = input("post.parent_id", 0, "intval");
+		$row["sort"] = input("post.sort", 0, "intval");
+		$row["type"] = input("post.type", 0, "intval");
 			
-			if($id != 0) {				
-				return json(\app\common\model\DataClass::saveData($row, $id));
-			}
-			else {
-				return json(\app\common\model\DataClass::saveData($row));
-			}
+		if($id != 0) {				
+			return json(\app\common\model\DataClass::saveData($row, $id));
 		}
-		return $this->fetch("add");
-	}
-	
-	public function gettree() {
-		$type = input("param.type", 0, "intval");
-		$data = \app\common\model\DataClass::getTreeSelector($type);
-		
-		return json(res_result($data, 0, "请求成功"));
+		else {
+			return json(\app\common\model\DataClass::saveData($row));
+		}
 	}
 	
 	public function del() {

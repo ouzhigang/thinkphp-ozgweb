@@ -1,0 +1,1 @@
+webpackJsonp([0],{KKrt:function(r,t,n){"use strict";n.d(t,"a",function(){return e}),n.d(t,"b",function(){return o});var e={web_server_root:"/thinkphp-ozgweb/server/mgr/",web_root:"/thinkphp-ozgweb/mgr/"},o={get_rest_param:function(r){for(var t=location.href.split("#"),n=(t=t[1]).split("/"),e=0;e<n.length;e++)if(n[e]==r){var o=e+1;return void 0!=n[o]?n[o]:null}return null}}}});

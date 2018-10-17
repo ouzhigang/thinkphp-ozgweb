@@ -44,42 +44,6 @@ class DataClass extends Base {
 		}
 		return $list;
 	}
-	
-	public static function getTreeSelector($type) {
-		$data = [];
-		$list = parent::all(function($query) use($type) {
-			$query->where("parent_id = 0 and type = " . $type)->order(["sort" => "desc", "id" => "desc"]);
-		});
-		
-		foreach($list as $v) {
-			$data[] = [
-				"id" => intval($v["id"]),
-				"parent_id" => 0,
-				"name" => $v["name"]
-			];
-			$res = parent::where("parent_id = " . $v["id"])->count();
-			if($res) {
-				self::treeSelector($data, $v["id"]);
-			}
-		}
-		return $data;
-	}
-	
-	protected static function treeSelector(&$data, $parent_id) {
-		$list = parent::all(function($query) use($parent_id) {
-			$query->where("parent_id = " . $parent_id)->order([ "sort" => "desc", "id" => "desc" ]);
-		});
-		
-		foreach($list as $v) {
-			$item = $v->toArray();
-			$data[] = [
-				"id" => intval($item["id"]),
-				"parent_id" => intval($item["parent_id"]),
-				"name" => $item["name"]
-			];
-			self::treeSelector($data, $item["id"]);
-		}
-	}
 
 	public static function saveData($data, $id = 0) {
 		if($id) {

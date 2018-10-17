@@ -17,7 +17,7 @@ class User extends Base {
 		});
 		
 		foreach($list as &$v){
-			$v["add_time"] = date("Y-m-d H:i:s", $v["add_time"]);
+			$v["add_time_s"] = date("Y-m-d H:i:s", $v["add_time"]);
 		}
 		$r = [
 			"page_size" => $page_size,
@@ -30,7 +30,7 @@ class User extends Base {
 	}
 	
 	//管理员登录
-	public static function adminLogin($name, $pwd, $vcode, $remember = 0) {
+	public static function adminLogin($name, $pwd, $vcode) {
 		$user = parent::where("name = '" . $name . "' and is_admin = 1")->find();
 		if($user) {
 			$user = $user->toArray();
@@ -40,13 +40,13 @@ class User extends Base {
 					return res_result(NULL, 2, "输入错误密码次数过多，需要输入验证码");
 				}
 				elseif($vcode == "") {
-					return res_result(NULL, 1, "验证码不能为空");
+					return res_result(NULL, 2, "验证码不能为空");
 				}
 				else {
 					$captcha = new Captcha((array)Config::get('captcha'));
 					if(!$captcha->check($vcode)) {
 						//验证失败
-						return res_result(NULL, 1, "验证码错误");
+						return res_result(NULL, 2, "验证码错误");
 					};
 				}
 			}
@@ -61,14 +61,7 @@ class User extends Base {
 				unset($user["id"]);
 				parent::where("id = " . $id)->update($user);
 				
-				if($remember == 1) {
-					$curr_user_name = \utility\Encrypt::encode($user["name"]);
-					
-					cookie('curr_user_name', $curr_user_name, ['expire' => 86400 * 7]); //保存7天
-					//echo $curr_user_name;exit();
-				}
-				
-				$arr = res_result(NULL, 0, "登录成功");
+				$arr = res_result([ "id" => $id, "name" => $name ], 0, "登录成功");
 			}
 			else {				
 				$user["err_login"] += 1;
@@ -86,14 +79,16 @@ class User extends Base {
 		}
 	}
 	
-	public static function delById($id = 0) {
+	public static function delById($ids = []) {
 		
 		$user = session("user");
-		if($user["id"] == $id) {
-			return res_result(NULL, 1, "不能删除自己");
+		foreach($ids as $id) {
+			if($user["id"] == $id) {
+				return res_result(NULL, 1, "不能删除自己");
+			}
 		}
 		
-		$result = parent::where("id = " . $id)->delete();
+		$result = parent::whereIn("id", $ids)->delete();
 		if($result) {
 			return res_result(NULL, 0, "删除成功");
 		}
@@ -105,9 +100,6 @@ class User extends Base {
 	public static function logout() {
 	
 		session("user", NULL);
-		
-		if(isset($_COOKIE["curr_user_name"]))
-			cookie("curr_user_name", null);
 			
 		return res_result(NULL, 0, "退出成功");
 	}
@@ -129,12 +121,8 @@ class User extends Base {
 		if(!$data["pwd"]) {
 			return res_result(NULL, 1, "密码不能为空");
 		}
-		if($data["pwd"] != $data["pwd2"]) {
-			return res_result(NULL, 1, "确认密码不正确");
-		}
 		
 		$data["pwd"] = self::buildPassword($data["pwd"]);
-		unset($data["pwd2"]);
 
 		if($id) {
 			parent::where("id = " . $id)->update($data);
