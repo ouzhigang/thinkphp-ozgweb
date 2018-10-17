@@ -26,7 +26,7 @@
 
 ==========
 
-前台入口：thinkphp-ozgweb/mgr
+后台入口：thinkphp-ozgweb/mgr
 
 
 后台用户密码都是admin。
