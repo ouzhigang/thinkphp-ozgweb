@@ -13,19 +13,15 @@ class User extends Base {
 	}
 	
 	public function add() {
-		if(request()->isPOST()) {
-			$name = input("post.name", "", "str_filter");
-			$pwd = input("post.pwd", "", "str_filter");
+		$name = input("post.name", "", "str_filter");
+		$pwd = input("post.pwd", "", "str_filter");
 				
-			$user = [
-				"name" => $name,
-				"pwd" => $pwd,
-			];
-			$res = \app\common\model\User::saveData($user);
-			return json($res);
-		}
-		
-		return $this->fetch("add");
+		$user = [
+			"name" => $name,
+			"pwd" => $pwd,
+		];
+		$res = \app\common\model\User::saveData($user);
+		return json($res);
 	}
 	
 	public function del() {
