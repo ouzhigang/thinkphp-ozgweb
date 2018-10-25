@@ -77,6 +77,8 @@
 
         },
         created() {
+            document.title = cfg.web_title;
+
             var that = this;
             that.$axios.get(cfg.web_server_root + "other/serverInfo").then(function (response) {
                 that.server_info = response.data.data;

@@ -17,7 +17,7 @@
                     <el-input placeholder="请输入验证码" v-model="ruleForm.vcode" maxlength="10" @keyup.enter.native="submitForm('ruleForm')">
                         <el-button slot="prepend" icon="el-icon-lx-info"></el-button>
                     </el-input>
-                    <img v-if="is_show_vcode" class="vcode-img" :src="vcode_img" @click="vcodeUpdate($event)" />
+                    <img v-if="is_show_vcode" ref="vcode_img" class="vcode-img" :src="vcode_img" @click="vcodeUpdate($event)" />
                 </el-form-item>
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
@@ -51,6 +51,9 @@
                 vcode_img: cfg.web_server_root + "index/getvcode"
             }
         },
+        created() {
+            document.title = cfg.web_title
+        },
         methods: {
             submitForm(formName) {
                 var that = this;
@@ -72,6 +75,15 @@
                                 //需要输入验证码
                                 that.ruleForm.vcode = "";
                                 that.is_show_vcode = true;
+                            }
+                            else if(response.data.code == 3) {
+                                //验证码错误
+                                that.$alert(response.data.msg, '提示', {
+                                    confirmButtonText: '确定',
+                                    type: 'error'
+                                });
+                                that.ruleForm.vcode = "";
+                                that.$refs.vcode_img.click()
                             }
                             else {
                                 that.is_show_vcode = false;

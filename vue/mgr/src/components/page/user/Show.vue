@@ -91,6 +91,9 @@
                 idx: -1
             }
         },
+        created() {
+            document.title = cfg.web_title;
+        },
         mounted() {
             this.loadData();
         },

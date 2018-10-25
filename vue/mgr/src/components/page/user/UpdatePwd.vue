@@ -108,6 +108,9 @@ export default {
                 }
             });
         }
+    },
+    created() {
+        document.title = cfg.web_title;
     }
 }
 </script>

@@ -46,7 +46,7 @@ class User extends Base {
 					$captcha = new Captcha((array)Config::get('captcha'));
 					if(!$captcha->check($vcode)) {
 						//验证失败
-						return res_result(NULL, 2, "验证码错误");
+						return res_result(NULL, 3, "验证码错误");
 					};
 				}
 			}

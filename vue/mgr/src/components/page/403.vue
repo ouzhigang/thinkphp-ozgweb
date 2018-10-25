@@ -12,12 +12,17 @@
 </template>
 
 <script>
+import { cfg } from '../common/common.js';
+
 export default {
-  methods: {
-      goBack(){
-          this.$router.go(-1);
-      }
-  }
+    methods: {
+        goBack() {
+            this.$router.go(-1);
+        }
+    },
+    created() {
+        document.title = cfg.web_title;
+    }
 }
 </script>
 
