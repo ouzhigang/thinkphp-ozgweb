@@ -83,7 +83,7 @@
                                     type: 'error'
                                 });
                                 that.ruleForm.vcode = "";
-                                that.$refs.vcode_img.click()
+                                that.$refs.vcode_img.click();
                             }
                             else {
                                 that.is_show_vcode = false;
@@ -109,8 +109,8 @@
                 });
             },
             vcodeUpdate(event) {
-                var el = event.currentTarget
-                el.src = this.vcode_img + "?dt=" + Math.random()
+                var el = event.currentTarget;
+                el.src = this.vcode_img + "?dt=" + Math.random();
             }
         }
     }
