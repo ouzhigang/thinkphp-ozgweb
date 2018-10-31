@@ -9,8 +9,8 @@ export default class DataShow extends React.Component {
 		super(props);
     	
     	this.state = {
-    		first_type_name: func.get_rest_param("type") == 2 ? "新闻管理" : "产品管理",
-    		second_type_name: func.get_rest_param("type") == 2 ? "新闻列表" : "产品列表",
+    		first_type_name: func.get_rest_param("type") === 2 ? "新闻管理" : "产品管理",
+    		second_type_name: func.get_rest_param("type") === 2 ? "新闻列表" : "产品列表",
     	};
     	
     	document.title = cfg.web_title;

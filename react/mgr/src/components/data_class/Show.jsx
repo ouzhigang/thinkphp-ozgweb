@@ -9,8 +9,8 @@ export default class DataClassShow extends React.Component {
 		super(props);
     	
     	this.state = {
-    		first_type_name: func.get_rest_param("type") == 2 ? "" : "分类管理",
-    		second_type_name: func.get_rest_param("type") == 2 ? "" : "分类列表",
+    		first_type_name: func.get_rest_param("type") === 2 ? "" : "分类管理",
+    		second_type_name: func.get_rest_param("type") === 2 ? "" : "分类列表",
     	};
     	
     	document.title = cfg.web_title;

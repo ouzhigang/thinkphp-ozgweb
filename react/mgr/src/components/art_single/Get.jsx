@@ -33,7 +33,7 @@ export default class UserUpdatePwd extends React.Component {
         	id: that.state.id,
             content: that.state.content
         }).then(function (response) {
-            if(response.data.code == 0) {
+            if(response.data.code === 0) {
                 message.info(response.data.msg);
                 that.loadData();
             }

@@ -9,9 +9,15 @@ import '../../style/css/common.css';
 
 class UserShow_ extends React.Component {
 	
-	loadData() {
+	loadData(req_obj) {
+		if(!req_obj || !req_obj.page) {
+			req_obj = {
+				page: 1
+			};
+		}
+		
 		var that = this;
-		axios.get(cfg.web_server_root + "user/show?page=" + that.state.page).then(function (response) {
+		axios.get(cfg.web_server_root + "user/show?page=" + req_obj.page).then(function (response) {
             if(response.data.code == 0) {
                 that.setState({
                 	maindata: response.data.data.list,
@@ -31,45 +37,54 @@ class UserShow_ extends React.Component {
 	}
 	
 	onPage = (page, pageSize) => {
-		this.setState({
-			page: page,
-			page_size: pageSize,
+		
+		this.loadData({
+			page: page
 		});
-		this.loadData();
+		
 	};
 	
+	onManyDelete(event) {
+		var that = this;
+		if(that.state.selected_rows.length == 0) {
+			message.error("请选择要删除的用户");
+		}
+		else {
+			var url = cfg.web_server_root + "user/del?ids=";
+			for(var i = 0; i < that.state.selected_rows.length; i++) {
+				url += that.state.selected_rows[i].id;
+				if(i + 1 < that.state.selected_rows.length) {
+					url += ",";
+				}
+			}
+			
+			axios.get(url).then(function (response) {
+				if(response.data.code == 0) {
+					that.loadData({
+						page: that.state.page
+					});
+					
+					message.info(response.data.msg);
+				}
+				else {
+					message.error(response.data.msg);
+				}
+			}).catch(function (error) {
+				message.error(error);
+			});
+		}
+		
+	}
 	onDelete(id, event) {
 		
 		var that = this;
-
-        var url = null;
-        /*if(that.doMany) {
-            //删除多条数据
-            if(that.selected_objs.length == 0) {
-                        that.$message({
-                            message: "请选择要删除的用户",
-                            type: 'error'
-                        });
-                        this.delVisible = false;
-                        return false;
-                    }
-                    else {
-                        url = cfg.web_server_root + "user/del?ids=";
-                        for(var i = 0; i < that.selected_objs.length; i++) {
-                            url += that.selected_objs[i].id;
-                            if(i + 1 < that.selected_objs.length) {
-                                url += ",";
-                            }
-                        }
-                    }
-                }
-                else {*/
-                    //删除单条数据
-            url = cfg.web_server_root + "user/del?ids=" + id;
-                //}
+        var url = cfg.web_server_root + "user/del?ids=" + id;
+		
         axios.get(url).then(function (response) {
             if(response.data.code == 0) {
-                that.loadData();
+                that.loadData({
+					page: that.state.page
+				});
                 
                 message.info(response.data.msg);
             }
@@ -94,44 +109,38 @@ class UserShow_ extends React.Component {
 		});
 
         var that = this;
-
-        /*that.refs.mainform.validate((valid) => {
-                    if (valid) {
-                        that.$axios.post(cfg.web_server_root + "user/add", {
-                            name: that.mainform.name,
-                            pwd: that.mainform.pwd
-                        }).then(function (response) {
-                            if(response.data.code == 0) {
-                                that.mainform.name = "";
-                                that.mainform.pwd = "";
-                                that.page = 1;
-                                that.loadData();
-                                that.$message({
-                                    message: response.data.msg,
-                                    type: 'success'
-                                });
-                            }
-                            else {
-                                that.$message({
-                                    message: response.data.msg,
-                                    type: 'error'
-                                });
-                            }
-                        }).catch(function (error) {
-                            that.$alert(error, '提示', {
-                                confirmButtonText: '确定',
-                                type: 'error'
-                            });
-                        });
-                    }
+		
+		this.props.form.validateFields((err, values) => {
+            if (!err) {
+                axios.post(cfg.web_server_root + "user/add", {
+                    name: values.name,
+                    pwd: values.pwd
+                }).then(function (response) {					
+					if(response.data.code === 0) {
+                        
+						that.props.form.setFieldsValue({
+							name: "",
+							pwd: "",
+						});
+						
+						that.setState({
+							page: 1
+						});
+						that.loadData();
+						message.info(response.data.msg);
+                    }                    
                     else {
-                        that.$alert('请正确输入完整信息', '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        });
-                        return false;
+                         message.info(response.data.msg);
                     }
-        });*/
+				}).catch(function (error) {
+					message.error(error);
+				});                
+            }
+			else {
+				message.error(err);
+			}
+        });
+		
 	}
 	
 	onAddCancel(event) {
@@ -149,19 +158,16 @@ class UserShow_ extends React.Component {
             page_count: 1,
             page_size: 1,
             total: 1,
-            doMany: false,
             is_add_visible: false,
-            mainform: {
-            	name: '',
-            	pwd: ''
-            }
+			selected_rows: [],
     	};
     	
     	document.title = cfg.web_title;
 	}
 	
 	componentDidMount() {
-		this.loadData();
+		this.loadData();		
+		
 	}
 	
     render() {
@@ -191,17 +197,21 @@ class UserShow_ extends React.Component {
 				),
 			}
 		];
-
+		
+		var that = this;
 		const rowSelection = {
 			onChange: (selectedRowKeys, selectedRows) => {
-				console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+				//console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+				that.setState({
+					selected_rows: selectedRows
+				});
 			},
 			getCheckboxProps: record => ({
 				name: "id_" + record.id,
 			}),
 		};
     	
-    	const { getFieldDecorator } = this.props.form;
+    	const { getFieldDecorator } = that.props.form;
         return (        
             <div>
                 <BreadcrumbCustom first="用户管理" firsturl="/app/user/show" second="用户列表" />
@@ -211,29 +221,21 @@ class UserShow_ extends React.Component {
                             <Card bordered={false}>
                                 <div style={ { padding: '5px 0' } }>
                                 	<Modal title="添加用户" visible={this.state.is_add_visible} onOk={this.onAddSubmit.bind(this)} onCancel={this.onAddCancel.bind(this)} okText="添加" cancelText="取消">
-										<Form ref="mainform">
-											<table style={ { width: '100%' } }>
-												<tr>
-													<td style={ { width: '20%', textAlign: 'right', padding: '15px 10px 15px 0' } }>用户名</td>
-													<td>
-														<Form.Item style={ { margin: '0' } }>
-															{getFieldDecorator('name', {
-                                								rules: [{ required: true, message: '请输入用户名!' }],
-                            								})(
-																<Input placeholder="请输入用户名" />
-															)}
-														</Form.Item>
-													</td>
-												</tr>
-												<tr>
-													<td style={ { textAlign: 'right', padding: '15px 10px 15px 0' } }>密码</td>
-													<td>
-														<Form.Item style={ { margin: '0' } }>
-															<Input placeholder="请输入密码" value={this.state.mainform.pwd} />
-														</Form.Item>
-													</td>
-												</tr>
-											</table>
+										<Form>
+											<Form.Item style={ { margin: '0' } } label="用户名">
+												{getFieldDecorator('name', {
+													rules: [{ required: true, message: '请输入用户名!' }],
+												})(
+													<Input placeholder="请输入用户名" />
+												)}
+											</Form.Item>
+											<Form.Item style={ { margin: '0', marginTop: '20px' } } label="密码">
+												{getFieldDecorator('pwd', {
+													rules: [{ required: true, message: '请输入密码!' }],
+												})(
+													<Input placeholder="请输入密码" />
+												)}
+											</Form.Item>
 										</Form>
 									</Modal>
                                 	<Button style={ { float: 'right' } } onClick={this.onAddBtnClick.bind(this)}>添加用户</Button>
@@ -241,6 +243,11 @@ class UserShow_ extends React.Component {
                                 </div>
                                 <Table rowSelection={rowSelection} columns={main_data_columns} dataSource={this.state.maindata} locale={ { emptyText: "没有数据" } } pagination={ { current: this.state.page, pageSize: this.state.page_size, total: this.state.total, onChange: this.onPage } } />
                             	
+								<div ref="action_btn_div" style={ { position: 'absolute', marginTop: '-48px' } }>
+									<Popconfirm title="确定删除吗？" onConfirm={this.onManyDelete.bind(this)} okText="删除" cancelText="取消">
+										<Button>删除</Button>
+									</Popconfirm>									
+								</div>
                             </Card>
                         </div>
                     </Col>
