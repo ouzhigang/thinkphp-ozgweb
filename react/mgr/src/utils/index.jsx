@@ -1,6 +1,4 @@
-/**
- * Created by hao.cheng on 2017/4/28.
- */
+
 // 获取url的参数
 export const queryString = () => {
     let _queryString = {};

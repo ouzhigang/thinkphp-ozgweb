@@ -1,0 +1,8 @@
+
+.ant-tree-node-content-wrapper {
+	width: 100%;
+}
+
+.ant-tree-node-content-wrapper .ant-btn {
+	float: right;
+}

@@ -1,7 +1,4 @@
-/**
- * Created by 叶子 on 2017/7/30.
- * http通用工具函数
- */
+
 import axios from 'axios';
 import { message } from 'antd';
 
