@@ -6,3 +6,7 @@
 .ant-tree-node-content-wrapper .ant-btn {
 	float: right;
 }
+
+.ant-tree {
+    width: 97%;
+}

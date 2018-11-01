@@ -246,7 +246,7 @@ class UserShow_ extends React.Component {
 								<div ref="action_btn_div" style={ { position: 'absolute', marginTop: '-48px' } }>
 									<Popconfirm title="确定删除吗？" onConfirm={this.onManyDelete.bind(this)} okText="删除" cancelText="取消">
 										<Button>删除</Button>
-									</Popconfirm>									
+									</Popconfirm>
 								</div>
                             </Card>
                         </div>
