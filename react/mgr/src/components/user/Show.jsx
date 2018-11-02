@@ -104,10 +104,6 @@ class UserShow_ extends React.Component {
 	}
 	
 	onAddSubmit(event) {
-		this.setState({
-			is_add_visible: false,
-		});
-
         var that = this;
 		
 		this.props.form.validateFields((err, values) => {
@@ -128,6 +124,10 @@ class UserShow_ extends React.Component {
 						});
 						that.loadData();
 						message.info(response.data.msg);
+						
+						that.setState({
+							is_add_visible: false,
+						});
                     }                    
                     else {
                          message.info(response.data.msg);

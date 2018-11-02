@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Row, Col, Card, Timeline, Icon, Table, Popconfirm, Button, Modal, Form, Input, Menu, Dropdown, message } from 'antd';
+import { Row, Col, Card, Timeline, Icon, Table, Popconfirm, Button, Modal, Form, Input, Menu, Dropdown, Checkbox, message } from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
+import Editor from 'react-umeditor';
 import axios from 'axios';
 import { cfg, func } from '../../common';
 
@@ -129,30 +130,40 @@ class DataShow_ extends React.Component {
 	}
 	
 	onAddSubmit(event) {
-		this.setState({
-			is_add_visible: false,
-		});
-
         var that = this;
-		
 		this.props.form.validateFields((err, values) => {
             if (!err) {
-                axios.post(cfg.web_server_root + "data/add", {
+				var post_data = {
                     name: values.name,
-                    pwd: values.pwd
-                }).then(function (response) {					
+                    sort: values.sort,
+					content: that.state.content,
+					type: that.state.type,
+                };
+				
+				if(that.state.is_index_show) {
+					post_data.is_index_show = 1;
+				}
+				if(that.state.recommend) {
+					post_data.recommend = 1;
+				}
+				if(that.state.is_index_top) {
+					post_data.is_index_top = 1;
+				}
+				
+                axios.post(cfg.web_server_root + "data/add", post_data).then(function (response) {					
 					if(response.data.code === 0) {
                         
-						that.props.form.setFieldsValue({
-							name: "",
-							pwd: "",
-						});
+						that.resetAddForm();
 						
 						that.setState({
 							page: 1
 						});
 						that.loadData();
 						message.info(response.data.msg);
+						
+						that.setState({
+							is_add_visible: false,
+						});
                     }                    
                     else {
                          message.info(response.data.msg);
@@ -172,10 +183,17 @@ class DataShow_ extends React.Component {
 		this.setState({
 			is_add_visible: false,
 		});
+		this.resetAddForm();
 	}
 	
 	onDropdown(event) {
 		
+	}
+	
+	onAddChkChange(name, event) {
+		var obj = {};
+		obj[name] = event.target.checked;
+		this.setState(obj);
 	}
 	
 	onSearchBtnClick(event) {
@@ -199,10 +217,48 @@ class DataShow_ extends React.Component {
 		});
 	}
 	
+	resetAddForm() {
+		var that = this;
+		that.props.form.setFieldsValue({
+			name: "",
+			sort: 0,
+		});
+		that.setState({
+			content: "",
+			is_index_show: false,
+			recommend: false,
+			is_index_top: false,
+		});
+		for(var item of document.getElementsByTagName("input")) {
+			if(item.getAttribute("name") == "is_index_show" || item.getAttribute("name") == "recommend" || item.getAttribute("name") == "is_index_top") {
+				item.checked = false;
+				item.parentNode.setAttribute("class", "ant-checkbox");
+			}
+		}
+		
+	}
+	
+	handleEditorChange = (content) => {
+		this.setState({
+			content: content
+		})
+	};
+	
+	getIcons() {
+		var icons = [
+			"source | undo redo | bold italic underline strikethrough fontborder emphasis | ",
+			"paragraph fontfamily fontsize | superscript subscript | ",
+			"forecolor backcolor | removeformat | insertorderedlist insertunorderedlist | selectall | ",
+			"cleardoc  | indent outdent | justifyleft justifycenter justifyright | touppercase tolowercase | ",
+			"horizontal date time  | spechars inserttable"
+		];
+		return icons;
+	}
+	
 	constructor(props) {
 		super(props);
     	
-    	var type = parseInt(func.get_rest_param("type"));
+    	var type = parseInt(func.get_rest_param("type"));		
     	this.state = {
     		first_type_name: type === 2 ? "新闻管理" : "产品管理",
     		second_type_name: type === 2 ? "新闻列表" : "产品列表",
@@ -218,6 +274,11 @@ class DataShow_ extends React.Component {
 			selected_rows: [],
 			is_search_visible: false,
 			data_class_data: [],
+			content: "",
+			is_index_show: false,
+			recommend: false,
+			is_index_top: false,
+			edit_id: 0,
     	};
     	
     	document.title = cfg.web_title;
@@ -292,6 +353,7 @@ class DataShow_ extends React.Component {
 			}),
 		};
 		
+		var editor_icons = that.getIcons();
     	const { getFieldDecorator } = that.props.form;
         return (
             <div>
@@ -322,7 +384,14 @@ class DataShow_ extends React.Component {
 													<Input placeholder="请输入排序" type="number" />
 												)}
 											</Form.Item>
-											
+											<Form.Item style={ { margin: '0', marginTop: '10px' } } className="add-chk-div">
+												<Checkbox name="is_index_show" onChange={this.onAddChkChange.bind(this, "is_index_show")}>首页显示</Checkbox>
+												<Checkbox name="recommend" onChange={this.onAddChkChange.bind(this, "recommend")}>推荐</Checkbox>
+												<Checkbox name="is_index_top" onChange={this.onAddChkChange.bind(this, "is_index_top")} style={ { display: this.state.type === 2 ? 'inline-block' : 'none' } }>顶部显示</Checkbox>
+											</Form.Item>
+											<Form.Item style={ { margin: '0', marginTop: '10px' } } className="data">
+												<Editor ref="editor" icons={editor_icons} value={this.state.content} defaultValue="" onChange={this.handleEditorChange} />
+											</Form.Item>
 										</Form>
 									</Modal>
 									<Modal title={ '搜索' + this.state.type_name } visible={this.state.is_search_visible} onOk={this.onSearchSubmit.bind(this)} onCancel={this.onSearchCancel.bind(this)} okText="搜素" cancelText="取消">
@@ -337,7 +406,7 @@ class DataShow_ extends React.Component {
 												<Dropdown.Button onClick={this.onDropdown.bind(this)} overlay={menu}>
 												请选择分类
 												</Dropdown.Button>
-											</Form.Item>											
+											</Form.Item>	
 											
 										</Form>
 									</Modal>

@@ -22,7 +22,7 @@ export default class UserUpdatePwd extends React.Component {
 			"forecolor backcolor | removeformat | insertorderedlist insertunorderedlist | selectall | ",
 			"cleardoc  | indent outdent | justifyleft justifycenter justifyright | touppercase tolowercase | ",
 			"horizontal date time  | spechars inserttable"
-		]
+		];
 		return icons;
 	}
 	
