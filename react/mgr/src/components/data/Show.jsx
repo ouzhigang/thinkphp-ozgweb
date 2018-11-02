@@ -361,5 +361,6 @@ class DataShow_ extends React.Component {
         )
     }
 }
+
 const DataShow = Form.create()(DataShow_);
 export default DataShow;
