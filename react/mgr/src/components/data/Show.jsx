@@ -20,7 +20,7 @@ class DataShow_ extends React.Component {
 		}
 		
 		var that = this;
-		axios.get(cfg.web_server_root + "data/show?page=" + req_obj.page).then(function (response) {
+		axios.get(cfg.web_server_root + "data/show?type=" + that.state.type + "&page=" + req_obj.page).then(function (response) {
             if(response.data.code == 0) {
                 that.setState({
                 	maindata: response.data.data.list,
@@ -37,6 +37,28 @@ class DataShow_ extends React.Component {
         }).catch(function (error) {
             message.error(error);
         });
+	}
+	
+	loadDataClassData() {		
+		
+		var that = this;
+		
+		if(parseInt(that.state.type) === 2) {
+			return;
+		}
+		
+		axios.get(cfg.web_server_root + "data_class/show?type=" + that.state.type).then(function (response) {
+			if(response.data.code === 0) {
+				that.setState({
+					data_class_data: response.data.data,
+				});
+			}
+			else {
+				message.error(response.data.msg);				
+			}
+		}).catch(function (error) {
+			message.error(error);
+		});
 	}
 	
 	onPage = (page, pageSize) => {
@@ -156,15 +178,37 @@ class DataShow_ extends React.Component {
 		
 	}
 	
+	onSearchBtnClick(event) {
+		this.setState({
+			is_search_visible: true,
+		});
+	}
+	
+	onSearchSubmit(event) {
+		this.setState({
+			is_search_visible: false,
+		});
+
+        var that = this;
+		
+	}
+	
+	onSearchCancel(event) {
+		this.setState({
+			is_search_visible: false,
+		});
+	}
+	
 	constructor(props) {
 		super(props);
     	
-    	var type = parseInt(func.get_rest_param("type"));    	
+    	var type = parseInt(func.get_rest_param("type"));
     	this.state = {
     		first_type_name: type === 2 ? "新闻管理" : "产品管理",
     		second_type_name: type === 2 ? "新闻列表" : "产品列表",
     		type_name: type === 2 ? "新闻" : "产品",
-    		
+    		type: type,
+			
     		maindata: [],
     		page: 1,
             page_count: 1,
@@ -172,14 +216,20 @@ class DataShow_ extends React.Component {
             total: 1,
             is_add_visible: false,
 			selected_rows: [],
+			is_search_visible: false,
+			data_class_data: [],
     	};
     	
     	document.title = cfg.web_title;
 	}
 
 	componentDidMount() {
-		this.loadData();		
+		this.loadData();
+		this.loadDataClassData();
 		
+		this.props.form.setFieldsValue({
+			sort: "0",
+		});
 	}
 	
     render() {
@@ -260,7 +310,7 @@ class DataShow_ extends React.Component {
 													<Input placeholder={ '请输入' + this.state.type_name + '名称' } />
 												)}
 											</Form.Item>
-											<Form.Item style={ { margin: '0', marginTop: '10px' } }>
+											<Form.Item style={ { margin: '0', marginTop: '10px', display: this.state.type !== 2 ? 'block' : 'none' } }>
 												<Dropdown.Button onClick={this.onDropdown.bind(this)} overlay={menu}>
 												请选择分类
 												</Dropdown.Button>
@@ -269,13 +319,30 @@ class DataShow_ extends React.Component {
 												{getFieldDecorator('sort', {
 													rules: [{ required: true, message: '请输入排序!' }],
 												})(
-													<Input placeholder="请输入排序" type="number" value="0" />
+													<Input placeholder="请输入排序" type="number" />
 												)}
 											</Form.Item>
 											
 										</Form>
 									</Modal>
-                                	<Button style={ { float: 'right' } } onClick={this.onAddBtnClick.bind(this)}>添加</Button>
+									<Modal title={ '搜索' + this.state.type_name } visible={this.state.is_search_visible} onOk={this.onSearchSubmit.bind(this)} onCancel={this.onSearchCancel.bind(this)} okText="搜素" cancelText="取消">
+										<Form>
+											<Form.Item style={ { margin: '0' } }>
+												{getFieldDecorator('k_name', {													
+												})(
+													<Input placeholder={ '请输入搜索的' + this.state.type_name + '名称' } />
+												)}
+											</Form.Item>
+											<Form.Item style={ { margin: '0', marginTop: '10px', display: this.state.type !== 2 ? 'block' : 'none' } }>
+												<Dropdown.Button onClick={this.onDropdown.bind(this)} overlay={menu}>
+												请选择分类
+												</Dropdown.Button>
+											</Form.Item>											
+											
+										</Form>
+									</Modal>
+									<Button style={ { float: 'right' } } onClick={this.onAddBtnClick.bind(this)}>添加</Button>
+                                	<Button style={ { float: 'right', marginRight: '10px' } } onClick={this.onSearchBtnClick.bind(this)}>搜索</Button>
                                 	<div className="clear" />
                                 </div>
                                 <Table rowSelection={rowSelection} columns={main_data_columns} dataSource={this.state.maindata} locale={ { emptyText: "没有数据" } } pagination={ { current: this.state.page, pageSize: this.state.page_size, total: this.state.total, onChange: this.onPage } } />

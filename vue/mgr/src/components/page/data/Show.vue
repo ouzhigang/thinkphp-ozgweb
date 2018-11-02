@@ -446,7 +446,7 @@
                         that.data_class_data = response.data.data;
                     }
                     else {
-                        that.$alert(error, '提示', {
+                        that.$alert(response.data.msg, '提示', {
                             confirmButtonText: '确定',
                             type: 'error',
                         });
