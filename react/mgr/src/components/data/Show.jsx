@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Row, Col, Card, Timeline, Icon, Table, Popconfirm, Button, Modal, Form, Input, Menu, Dropdown, Checkbox, message } from 'antd';
+import { Row, Col, Card, Timeline, Icon, Table, Popconfirm, Button, Modal, Form, Input, InputNumber, Menu, Dropdown, Checkbox, message } from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 import Editor from 'react-umeditor';
 import axios from 'axios';
@@ -21,7 +21,12 @@ class DataShow_ extends React.Component {
 		}
 		
 		var that = this;
-		axios.get(cfg.web_server_root + "data/show?type=" + that.state.type + "&page=" + req_obj.page).then(function (response) {
+		var url = cfg.web_server_root + "data/show?type=" + that.state.type + "&page=" + req_obj.page;
+		
+		if(that.state.k_name != "" && !req_obj.k_name) { req_obj.k_name = that.state.k_name; }
+		if(req_obj.k_name && req_obj.k_name != "") { url += "&k_name=" + encodeURI(req_obj.k_name); }
+		
+		axios.get(url).then(function (response) {
             if(response.data.code == 0) {
                 that.setState({
                 	maindata: response.data.data.list,
@@ -29,8 +34,7 @@ class DataShow_ extends React.Component {
             		page_count: response.data.data.page_count,
             		page_size: response.data.data.page_size,
             		total: response.data.data.total,
-                });
-                
+                });                
             }
             else {
                 message.error(response.data.msg);
@@ -63,16 +67,15 @@ class DataShow_ extends React.Component {
 	}
 	
 	onPage = (page, pageSize) => {
-		
-		this.loadData({
-			page: page
-		});
-		
+		var req_obj = {
+			page: page,
+		}
+		this.loadData(req_obj);		
 	};
 	
 	onManyDelete(event) {
 		var that = this;
-		if(that.state.selected_rows.length == 0) {
+		if(that.state.selected_rows.length === 0) {
 			message.error("请选择要删除的" + this.state.type_name);
 		}
 		else {
@@ -85,10 +88,19 @@ class DataShow_ extends React.Component {
 			}
 			
 			axios.get(url).then(function (response) {
-				if(response.data.code == 0) {
+				if(response.data.code === 0) {
 					that.loadData({
-						page: that.state.page
+						page: that.state.page,
 					});
+					that.setState({
+						selected_rows: [],
+					});
+					
+					for(var item of document.querySelectorAll(".ant-table-tbody .ant-checkbox-input")) {
+						if(item.checked) {
+							item.click();
+						}
+					}
 					
 					message.info(response.data.msg);
 				}
@@ -107,7 +119,7 @@ class DataShow_ extends React.Component {
         var url = cfg.web_server_root + "data/del?ids=" + id;
 		
         axios.get(url).then(function (response) {
-            if(response.data.code == 0) {
+            if(response.data.code === 0) {
                 that.loadData({
 					page: that.state.page
 				});
@@ -126,7 +138,40 @@ class DataShow_ extends React.Component {
 	onAddBtnClick(event) {
 		this.setState({
 			is_add_visible: true,
+			edit_data: { id: 0 },
 		});
+	}
+	
+	onEditBtnClick(edit_data, event) {
+		var that = this;
+		
+		that.setState({
+			is_add_visible: true,
+			edit_data: edit_data,
+		});
+		
+		
+		that.props.form.setFieldsValue({
+			name: edit_data.name,
+			sort: edit_data.sort,
+		});
+		that.setState({
+			content: edit_data.content,
+			is_index_show: edit_data.is_index_show == "1" ? true : false,
+			recommend: edit_data.recommend == "1" ? true : false,
+			is_index_top: edit_data.is_index_top == "1" ? true : false,
+		});
+		//console.log(edit_data);
+		//console.log(edit_data.is_index_show);
+		//console.log(that.state.is_index_show);
+		for(var item of document.getElementsByTagName("input")) {
+			if(item.getAttribute("name") == "is_index_show" || item.getAttribute("name") == "recommend" || item.getAttribute("name") == "is_index_top") {
+				//console.log(edit_data[item.getAttribute("name")]);
+				if(edit_data[item.getAttribute("name")] == 1) {
+					item.click();
+				}
+			}
+		}
 	}
 	
 	onAddSubmit(event) {
@@ -150,14 +195,23 @@ class DataShow_ extends React.Component {
 					post_data.is_index_top = 1;
 				}
 				
+				if(that.state.edit_data.id !== 0) {
+					post_data.id = that.state.edit_data.id;
+				}
+				
                 axios.post(cfg.web_server_root + "data/add", post_data).then(function (response) {					
 					if(response.data.code === 0) {
                         
 						that.resetAddForm();
 						
 						that.setState({
-							page: 1
+							page: 1,
+							k_name: "",
 						});
+						that.props.form.setFieldsValue({
+							k_name: "",
+						});
+						
 						that.loadData();
 						message.info(response.data.msg);
 						
@@ -203,22 +257,35 @@ class DataShow_ extends React.Component {
 	}
 	
 	onSearchSubmit(event) {
-		this.setState({
+		var that = this;
+		
+		that.setState({
 			is_search_visible: false,
 		});
-
-        var that = this;
-		
+        
+		that.props.form.validateFields((err, values) => {
+			//这里不需要验证所以忽略了err
+			that.setState({
+				k_name: values.k_name,
+				page: 1,
+			});
+			that.loadData({
+				page: 1,
+				k_name: values.k_name,
+			});
+		});
 	}
 	
 	onSearchCancel(event) {
 		this.setState({
 			is_search_visible: false,
 		});
+		
 	}
 	
 	resetAddForm() {
 		var that = this;
+		//that.props.form.resetFields();
 		that.props.form.setFieldsValue({
 			name: "",
 			sort: 0,
@@ -229,10 +296,13 @@ class DataShow_ extends React.Component {
 			recommend: false,
 			is_index_top: false,
 		});
+		
 		for(var item of document.getElementsByTagName("input")) {
-			if(item.getAttribute("name") == "is_index_show" || item.getAttribute("name") == "recommend" || item.getAttribute("name") == "is_index_top") {
-				item.checked = false;
-				item.parentNode.setAttribute("class", "ant-checkbox");
+			if(
+				(item.getAttribute("name") == "is_index_show" || item.getAttribute("name") == "recommend" || item.getAttribute("name") == "is_index_top")
+				&& item.checked
+			) {
+				item.click();
 			}
 		}
 		
@@ -278,7 +348,8 @@ class DataShow_ extends React.Component {
 			is_index_show: false,
 			recommend: false,
 			is_index_top: false,
-			edit_id: 0,
+			edit_data: { id: 0 },
+			k_name: "",
     	};
     	
     	document.title = cfg.web_title;
@@ -291,6 +362,7 @@ class DataShow_ extends React.Component {
 		this.props.form.setFieldsValue({
 			sort: "0",
 		});
+		
 	}
 	
     render() {
@@ -331,7 +403,7 @@ class DataShow_ extends React.Component {
 				key: 'action',
 				render: (text, record) => (
 					<span>
-						<a href="javascript:void(0)" style={ { marginRight: '15px' } }>修改</a>
+						<a href="javascript:void(0)" style={ { marginRight: '15px' } } onClick={this.onEditBtnClick.bind(this, record)}>修改</a>
 						<Popconfirm title="确定删除吗？" onConfirm={this.onDelete.bind(this, record.id)} okText="删除" cancelText="取消">
 							<a href="javascript:void(0)">删除</a>
 						</Popconfirm>
@@ -363,7 +435,7 @@ class DataShow_ extends React.Component {
                         <div className="gutter-box">
                             <Card bordered={false}>
                                 <div style={ { padding: '5px 0' } }>
-                                	<Modal title={ '添加' + this.state.type_name } visible={this.state.is_add_visible} onOk={this.onAddSubmit.bind(this)} onCancel={this.onAddCancel.bind(this)} okText="添加" cancelText="取消" width="90%">
+                                	<Modal title={ (this.state.edit_data.id === 0 ? '添加' : '修改') + this.state.type_name } visible={this.state.is_add_visible} onOk={this.onAddSubmit.bind(this)} onCancel={this.onAddCancel.bind(this)} okText={ this.state.edit_data.id === 0 ? '添加' : '更新' } cancelText="取消" width="90%">
 										<Form>
 											<Form.Item style={ { margin: '0' } }>
 												{getFieldDecorator('name', {
@@ -377,11 +449,11 @@ class DataShow_ extends React.Component {
 												请选择分类
 												</Dropdown.Button>
 											</Form.Item>
-											<Form.Item style={ { margin: '0', marginTop: '10px' } }>
+											<Form.Item style={ { margin: '0', marginTop: '10px' } } label="排序">
 												{getFieldDecorator('sort', {
 													rules: [{ required: true, message: '请输入排序!' }],
 												})(
-													<Input placeholder="请输入排序" type="number" />
+													<InputNumber placeholder="请输入排序" min={0} value="0" />
 												)}
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px' } } className="add-chk-div">
@@ -397,7 +469,7 @@ class DataShow_ extends React.Component {
 									<Modal title={ '搜索' + this.state.type_name } visible={this.state.is_search_visible} onOk={this.onSearchSubmit.bind(this)} onCancel={this.onSearchCancel.bind(this)} okText="搜素" cancelText="取消">
 										<Form>
 											<Form.Item style={ { margin: '0' } }>
-												{getFieldDecorator('k_name', {													
+												{getFieldDecorator('k_name', {
 												})(
 													<Input placeholder={ '请输入搜索的' + this.state.type_name + '名称' } />
 												)}
@@ -406,19 +478,18 @@ class DataShow_ extends React.Component {
 												<Dropdown.Button onClick={this.onDropdown.bind(this)} overlay={menu}>
 												请选择分类
 												</Dropdown.Button>
-											</Form.Item>	
-											
+											</Form.Item>
 										</Form>
 									</Modal>
-									<Button style={ { float: 'right' } } onClick={this.onAddBtnClick.bind(this)}>添加</Button>
-                                	<Button style={ { float: 'right', marginRight: '10px' } } onClick={this.onSearchBtnClick.bind(this)}>搜索</Button>
+									<Button style={ { float: 'right' } } onClick={this.onAddBtnClick.bind(this)} icon="plus">添加</Button>
+                                	<Button style={ { float: 'right', marginRight: '10px' } } onClick={this.onSearchBtnClick.bind(this)} icon="search">搜索</Button>
                                 	<div className="clear" />
                                 </div>
                                 <Table rowSelection={rowSelection} columns={main_data_columns} dataSource={this.state.maindata} locale={ { emptyText: "没有数据" } } pagination={ { current: this.state.page, pageSize: this.state.page_size, total: this.state.total, onChange: this.onPage } } />
                                 
                                 <div ref="action_btn_div" style={ { position: 'absolute', marginTop: '-48px' } }>
 									<Popconfirm title="确定删除吗？" onConfirm={this.onManyDelete.bind(this)} okText="删除" cancelText="取消">
-										<Button>删除</Button>
+										<Button icon="delete">删除</Button>
 									</Popconfirm>									
 								</div>
 								

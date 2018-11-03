@@ -37,7 +37,7 @@ class DataClass extends Base {
 		
 		$id = input("param.id", 0, "intval");
 		\app\common\model\DataClass::delById($id);
-		return json(res_result(NULL, 0, "请求成功"));
+		return json(res_result(NULL, 0, "删除成功"));
 	}
 	
 }

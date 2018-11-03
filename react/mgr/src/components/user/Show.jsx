@@ -18,7 +18,7 @@ class UserShow_ extends React.Component {
 		
 		var that = this;
 		axios.get(cfg.web_server_root + "user/show?page=" + req_obj.page).then(function (response) {
-            if(response.data.code == 0) {
+            if(response.data.code === 0) {
                 that.setState({
                 	maindata: response.data.data.list,
     				page: response.data.data.page,
@@ -46,7 +46,7 @@ class UserShow_ extends React.Component {
 	
 	onManyDelete(event) {
 		var that = this;
-		if(that.state.selected_rows.length == 0) {
+		if(that.state.selected_rows.length === 0) {
 			message.error("请选择要删除的用户");
 		}
 		else {
@@ -59,10 +59,19 @@ class UserShow_ extends React.Component {
 			}
 			
 			axios.get(url).then(function (response) {
-				if(response.data.code == 0) {
+				if(response.data.code === 0) {
 					that.loadData({
-						page: that.state.page
+						page: that.state.page,
 					});
+					that.setState({
+						selected_rows: [],
+					});
+					
+					for(var item of document.querySelectorAll(".ant-table-tbody .ant-checkbox-input")) {
+						if(item.checked) {
+							item.click();
+						}
+					}
 					
 					message.info(response.data.msg);
 				}
@@ -81,7 +90,7 @@ class UserShow_ extends React.Component {
         var url = cfg.web_server_root + "user/del?ids=" + id;
 		
         axios.get(url).then(function (response) {
-            if(response.data.code == 0) {
+            if(response.data.code === 0) {
                 that.loadData({
 					page: that.state.page
 				});
@@ -238,14 +247,14 @@ class UserShow_ extends React.Component {
 											</Form.Item>
 										</Form>
 									</Modal>
-                                	<Button style={ { float: 'right' } } onClick={this.onAddBtnClick.bind(this)}>添加用户</Button>
+                                	<Button style={ { float: 'right' } } onClick={this.onAddBtnClick.bind(this)} icon="plus">添加</Button>
                                 	<div className="clear" />
                                 </div>
                                 <Table rowSelection={rowSelection} columns={main_data_columns} dataSource={this.state.maindata} locale={ { emptyText: "没有数据" } } pagination={ { current: this.state.page, pageSize: this.state.page_size, total: this.state.total, onChange: this.onPage } } />
                             	
 								<div ref="action_btn_div" style={ { position: 'absolute', marginTop: '-48px' } }>
 									<Popconfirm title="确定删除吗？" onConfirm={this.onManyDelete.bind(this)} okText="删除" cancelText="取消">
-										<Button>删除</Button>
+										<Button icon="delete">删除</Button>
 									</Popconfirm>
 								</div>
                             </Card>
