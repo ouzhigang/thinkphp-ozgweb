@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Row, Col, Card, Timeline, Icon, Table, Popconfirm, Button, Modal, Form, Input, InputNumber, Menu, Dropdown, Checkbox, message } from 'antd';
+import { Row, Col, Card, Timeline, Icon, Table, Popconfirm, Button, Modal, Form, Input, InputNumber, Menu, Dropdown, Checkbox, Upload, message } from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 import Editor from 'react-umeditor';
 import axios from 'axios';
@@ -26,6 +26,9 @@ class DataShow_ extends React.Component {
 		if(that.state.k_name != "" && !req_obj.k_name) { req_obj.k_name = that.state.k_name; }
 		if(req_obj.k_name && req_obj.k_name != "") { url += "&k_name=" + encodeURI(req_obj.k_name); }
 		
+		if(that.state.k_data_class_id != 0 && !req_obj.k_data_class_id) { req_obj.k_data_class_id = that.state.k_data_class_id; }
+		if(req_obj.k_data_class_id && req_obj.k_data_class_id != 0) { url += "&k_data_class_id=" + req_obj.k_data_class_id; }
+		
 		axios.get(url).then(function (response) {
             if(response.data.code == 0) {
                 that.setState({
@@ -44,18 +47,17 @@ class DataShow_ extends React.Component {
         });
 	}
 	
-	loadDataClassData() {		
-		
+	loadDataClassData() {
 		var that = this;
 		
 		if(parseInt(that.state.type) === 2) {
 			return;
 		}
-		
+			
 		axios.get(cfg.web_server_root + "data_class/show?type=" + that.state.type).then(function (response) {
 			if(response.data.code === 0) {
 				that.setState({
-					data_class_data: response.data.data,
+					data_class_data: that.renderDropdownNodes(response.data.data),
 				});
 			}
 			else {
@@ -63,6 +65,36 @@ class DataShow_ extends React.Component {
 			}
 		}).catch(function (error) {
 			message.error(error);
+		});
+	}
+	
+	onDropdownSubMenuClick(id, title, event) {
+		if(this.state.is_search_visible) {
+			//搜索
+			this.setState({
+				k_data_class_selected_text: title,
+				k_data_class_selected_id: id,
+			});
+		}
+		else {
+			//添加或修改
+			this.setState({
+				data_class_selected_text: title,
+				data_class_selected_id: id,
+			});
+		}
+		document.querySelector(".ant-dropdown").setAttribute("class", "ant-dropdown ant-dropdown-placement-bottomRight ant-dropdown-hidden");
+	}
+	renderDropdownNodes = (data) => {
+		return data.map((item) => {			
+			if (item.children && item.children.length > 0) {				
+				return (					
+					<SubMenu title={ item.name } key={ item.id } onTitleClick={this.onDropdownSubMenuClick.bind(this, item.id, item.name)}>
+						{this.renderDropdownNodes(item.children)}
+					</SubMenu>
+				);
+			}
+			return <Menu.Item key={ item.id }>{ item.name }</Menu.Item>;
 		});
 	}
 	
@@ -150,17 +182,32 @@ class DataShow_ extends React.Component {
 			edit_data: edit_data,
 		});
 		
-		
 		that.props.form.setFieldsValue({
 			name: edit_data.name,
 			sort: edit_data.sort,
 		});
+		
+		var i = 0;
+		var upload_file_list = [];
+		for(var item of edit_data.picture) {
+			upload_file_list.push({
+				uid: i + 1,
+				name: item,
+				status: 'done',
+				url: cfg.web_res_root + 'upload/' + item,
+			});
+			
+			i++;
+		}
+		
 		that.setState({
 			content: edit_data.content,
 			is_index_show: edit_data.is_index_show == "1" ? true : false,
 			recommend: edit_data.recommend == "1" ? true : false,
 			is_index_top: edit_data.is_index_top == "1" ? true : false,
+			upload_file_list: upload_file_list
 		});
+		
 		//console.log(edit_data);
 		//console.log(edit_data.is_index_show);
 		//console.log(that.state.is_index_show);
@@ -172,6 +219,20 @@ class DataShow_ extends React.Component {
 				}
 			}
 		}
+		
+		axios.get(cfg.web_server_root + "data_class/get?id=" + edit_data.data_class_id).then(function (response) {
+			if(response.data.code === 0) {
+				that.setState({					
+					data_class_selected_text: response.data.data.name,
+					data_class_selected_id: response.data.data.id,
+				});
+			}
+			else {
+				message.error(response.data.msg);
+			}
+		}).catch(function (error) {
+			message.error(error);
+		});
 	}
 	
 	onAddSubmit(event) {
@@ -193,6 +254,22 @@ class DataShow_ extends React.Component {
 				}
 				if(that.state.is_index_top) {
 					post_data.is_index_top = 1;
+				}
+				
+				if(that.state.type !== 2) {
+					post_data.data_class_id = that.state.data_class_selected_id;
+					
+					if(that.state.upload_file_list.length > 0) {
+						post_data.picture = [];						
+						for(var item of that.state.upload_file_list) {
+							if(item.response && item.response.code === 0) {
+								post_data.picture.push(item.response.data.filepath);
+							}
+							else if(item.status == "done") {
+								post_data.picture.push(item.name);
+							}
+						}
+					}
 				}
 				
 				if(that.state.edit_data.id !== 0) {
@@ -241,7 +318,20 @@ class DataShow_ extends React.Component {
 	}
 	
 	onDropdown(event) {
-		
+		if(this.state.is_search_visible) {
+			//搜索
+			this.setState({
+				k_data_class_selected_text: event.item.props.children,
+				k_data_class_selected_id: event.key,
+			});
+		}
+		else {
+			//添加或修改
+			this.setState({
+				data_class_selected_text: event.item.props.children,
+				data_class_selected_id: event.key,
+			});
+		}
 	}
 	
 	onAddChkChange(name, event) {
@@ -267,11 +357,13 @@ class DataShow_ extends React.Component {
 			//这里不需要验证所以忽略了err
 			that.setState({
 				k_name: values.k_name,
+				k_data_class_id: that.state.k_data_class_selected_id,
 				page: 1,
 			});
 			that.loadData({
 				page: 1,
 				k_name: values.k_name,
+				k_data_class_id: that.state.k_data_class_selected_id,
 			});
 		});
 	}
@@ -295,6 +387,9 @@ class DataShow_ extends React.Component {
 			is_index_show: false,
 			recommend: false,
 			is_index_top: false,
+			data_class_selected_text: "请选择分类",
+			data_class_selected_id: 0,
+			upload_file_list: [],
 		});
 		
 		for(var item of document.getElementsByTagName("input")) {
@@ -349,7 +444,12 @@ class DataShow_ extends React.Component {
 			recommend: false,
 			is_index_top: false,
 			edit_data: { id: 0 },
+			data_class_selected_text: "请选择分类",
+			data_class_selected_id: 0,
 			k_name: "",
+			k_data_class_selected_text: "请选择分类",
+			k_data_class_selected_id: 0,		
+			upload_file_list: [],
     	};
     	
     	document.title = cfg.web_title;
@@ -366,20 +466,6 @@ class DataShow_ extends React.Component {
 	}
 	
     render() {
-    	const menu = (
-			<Menu>
-				<Menu.Item>1st menu item</Menu.Item>
-				<Menu.Item>2nd menu item</Menu.Item>
-				<SubMenu title="sub menu">
-					<Menu.Item>3rd menu item</Menu.Item>
-					<Menu.Item>4th menu item</Menu.Item>
-				</SubMenu>
-				<SubMenu title="disabled sub menu" disabled>
-					<Menu.Item>5d menu item</Menu.Item>
-					<Menu.Item>6th menu item</Menu.Item>
-				</SubMenu>
-			</Menu>
-		);
     
     	const main_data_columns = [
     		{
@@ -427,6 +513,35 @@ class DataShow_ extends React.Component {
 		
 		var editor_icons = that.getIcons();
     	const { getFieldDecorator } = that.props.form;
+		
+		//=================================================================
+		const upload_props = {
+			action: cfg.web_server_root + "data/upload",
+			fileList: that.state.upload_file_list,
+			onChange({ file, fileList }) {
+				for(var item of fileList) {
+					if (item.status !== 'uploading') {
+						if(item.response && item.response.code !== 0) {
+							item.status = "error";
+						}
+					}
+				}
+				that.setState({
+					upload_file_list: fileList,
+				});
+				
+				//console.log(fileList);
+			},
+			onRemove(file) {
+				//console.log(that.state.upload_file_list);
+				//console.log("=======================");
+				//console.log(file);
+				
+				return true;
+			}
+		};
+		//=================================================================
+		
         return (
             <div>
                 <BreadcrumbCustom first={this.state.first_type_name} second={this.state.second_type_name} />
@@ -445,8 +560,8 @@ class DataShow_ extends React.Component {
 												)}
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px', display: this.state.type !== 2 ? 'block' : 'none' } }>
-												<Dropdown.Button onClick={this.onDropdown.bind(this)} overlay={menu}>
-												请选择分类
+												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_class_data }</Menu>) }>
+													<span>{ this.state.data_class_selected_text }</span>
 												</Dropdown.Button>
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px' } } label="排序">
@@ -455,6 +570,13 @@ class DataShow_ extends React.Component {
 												})(
 													<InputNumber placeholder="请输入排序" min={0} value="0" />
 												)}
+											</Form.Item>
+											<Form.Item style={ { margin: '0', marginTop: '10px' } } label={ this.state.type_name + '图片' }>
+												<Upload {...upload_props}>
+													<Button>
+														<Icon type="upload" /> 上传
+													</Button>
+												</Upload>
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px' } } className="add-chk-div">
 												<Checkbox name="is_index_show" onChange={this.onAddChkChange.bind(this, "is_index_show")}>首页显示</Checkbox>
@@ -475,8 +597,8 @@ class DataShow_ extends React.Component {
 												)}
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px', display: this.state.type !== 2 ? 'block' : 'none' } }>
-												<Dropdown.Button onClick={this.onDropdown.bind(this)} overlay={menu}>
-												请选择分类
+												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_class_data }</Menu>) }>
+													<span>{ this.state.k_data_class_selected_text }</span>
 												</Dropdown.Button>
 											</Form.Item>
 										</Form>
