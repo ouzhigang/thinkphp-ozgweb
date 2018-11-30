@@ -1,6 +1,8 @@
 <?php
 namespace app\mgr\controller;
 
+use \think\App;
+
 class Other extends Base {
 	
 	public function serverInfo() {
@@ -14,7 +16,7 @@ class Other extends Base {
 			'max_execution_time' => get_cfg_var("max_execution_time") . "秒",
 			'document_root' => input("server.DOCUMENT_ROOT"),
 			'now' => date("Y-m-d H:i:s"),
-			'thinkphp_ver' => THINK_VERSION,
+			'thinkphp_ver' => App::VERSION,
 		];
 		
 		return json(res_result($data, 0, "请求成功"));

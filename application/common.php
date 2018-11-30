@@ -1,14 +1,22 @@
 <?php
-	
-//获取总页数
-//$count(int),总记录数
-//$pageSize(int),每页显示记录数
-function page_count($count, $pageSize) {
-	if ($count % $pageSize == 0) {
-		return $count / $pageSize;
+// +----------------------------------------------------------------------
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: 流年 <liu21st@gmail.com>
+// +----------------------------------------------------------------------
+
+// 应用公共文件
+
+function page_count($count, $page_size) {
+	if ($count % $page_size == 0) {
+		return $count / $page_size;
 	}
 	else {
-		return floor($count / $pageSize) + 1;
+		return floor($count / $page_size) + 1;
 	}
 }
 
@@ -755,42 +763,4 @@ function http_post_json($url, $postdata) {
 	curl_close($ch);
 
 	return $data;
-}
-
-function wx_access_token($appid, $secret, $code) {
-	//获取token
-	/*
-	access_token
-	expires_in
-	refresh_token
-	openid
-	scope
-	
-	错误返回 {"errcode":40029,"errmsg":"invalid code"}
-	*/	
-	
-	$res = file_get_contents("https://api.weixin.qq.com/sns/oauth2/access_token?appid=" . $appid . "&secret=" . $secret . "&code=" . $code . "&grant_type=authorization_code");
-	$res = json_decode($res, true);
-	return $res;
-}
-
-function wx_snsapi_userinfo($access_token, $openid) {
-	//获取微信用户信息
-	/*
-	openid
-	nickname
-	sex
-	language
-	city
-	province
-	country
-	headimgurl
-	privilege
-	
-	错误返回 {"errcode":40003,"errmsg":" invalid openid "}
-	*/
-	
-	$res = file_get_contents("https://api.weixin.qq.com/sns/userinfo?access_token=" . $access_token . "&openid=" . $openid . "&lang=zh_CN");
-	$res = json_decode($res, true);
-	return $res;
 }

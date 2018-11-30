@@ -1,4 +1,2 @@
-
-org/
-com/
-think/
+*
+!.gitignore
