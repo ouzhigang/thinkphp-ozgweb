@@ -30,8 +30,8 @@ class User extends Base {
 	}
 	
 	//管理员登录
-	public static function adminLogin($name, $pwd, $vcode) {
-		$user = parent::where("name = '" . $name . "' and is_admin = 1")->find();
+	public static function login($name, $pwd, $vcode = NULL, $is_admin = 1) {
+		$user = parent::where("name = '" . $name . "' and is_admin = " . $is_admin)->find();
 		if($user) {
 			$user = $user->toArray();
 			
