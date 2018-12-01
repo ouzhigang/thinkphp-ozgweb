@@ -24,6 +24,7 @@ class DataClassShow_ extends React.Component {
 			}
 			else {
 				message.error(response.data.msg);
+				that.props.history.push('/login');
 			}
 		}).catch(function (error) {
 			message.error(error);

@@ -57,6 +57,7 @@ export default class UserUpdatePwd extends React.Component {
 			}                    
 			else {
 				message.error(response.data.msg);
+				that.props.history.push('/login');
 			}
 		}).catch(function (error) {
 			console.log(error);
