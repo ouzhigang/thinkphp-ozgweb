@@ -20,7 +20,7 @@ class Index extends \app\common\controller\Base {
 		//提交登录
 		$vcode = input("param.vcode", NULL, "str_filter");			
 			
-		$res = \app\common\model\User::adminLogin($name, $pwd, $vcode);
+		$res = \app\common\model\User::login($name, $pwd, $vcode);
 		return json($res);
     }	
 	
