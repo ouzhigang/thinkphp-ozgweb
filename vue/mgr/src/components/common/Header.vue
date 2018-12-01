@@ -61,7 +61,7 @@
         methods:{
             // 用户名下拉菜单选择事件
             handleCommand(command) {
-                var that = this
+                var that = this;
 
                 if(command == 'loginout'){
 
@@ -73,9 +73,9 @@
 
                         that.$axios.get(cfg.web_server_root + "other/logout").then(function (response) {
                             if(response.data.code == 0) {
-                                localStorage.removeItem('user_name')
-                                localStorage.removeItem('user_id')
-                                that.$router.push('/login')
+                                localStorage.removeItem('user_name');
+                                localStorage.removeItem('user_id');
+                                that.$router.push('/login');
                             }
                             else {
                                 that.$alert(response.data.msg, '提示', {

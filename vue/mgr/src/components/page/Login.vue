@@ -52,7 +52,7 @@
             }
         },
         created() {
-            document.title = cfg.web_title
+            document.title = cfg.web_title;
         },
         methods: {
             submitForm(formName) {
