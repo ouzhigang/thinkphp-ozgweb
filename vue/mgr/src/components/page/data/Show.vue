@@ -222,11 +222,16 @@
                 }
 
                 that.$axios.get(url).then(function (response) {
-                    that.maindata = response.data.data.list;
-                    that.page = response.data.data.page;
-                    that.page_count = response.data.data.page_count;
-                    that.page_size = response.data.data.page_size;
-                    that.total = response.data.data.total;
+                    if(response.data.code == 0) {
+                        that.maindata = response.data.data.list;
+                        that.page = response.data.data.page;
+                        that.page_count = response.data.data.page_count;
+                        that.page_size = response.data.data.page_size;
+                        that.total = response.data.data.total;
+                    }
+                    else {
+                        that.$router.push('/login');
+                    }
                 }).catch(function (error) {
                     that.$alert(error, '提示', {
                         confirmButtonText: '确定',
@@ -547,5 +552,5 @@
         color: #606266;
         margin-top: 7px;
     }
-	
+
 </style>

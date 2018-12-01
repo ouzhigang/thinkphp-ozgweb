@@ -82,7 +82,12 @@ export default {
 
             that.$axios.get(cfg.web_server_root + "art_single/get?id=" + id).then(function (response) {
                 if(response.data.code == 0) {
-                    that.content = response.data.data.content;
+                    if(response.data.code == 0) {
+                        that.content = response.data.data.content;
+                    }
+                    else {
+                        that.$router.push('/login');
+                    }
                 }
                 else {
                     that.$alert(response.data.msg, '提示', {

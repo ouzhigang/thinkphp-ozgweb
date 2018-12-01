@@ -88,7 +88,12 @@ export default {
             that.mainform.type = func.get_rest_param("type");
             that.$axios.get(cfg.web_server_root + "data_class/show?type=" + that.mainform.type).then(function (response) {
                 if(response.data.code == 0) {
-                    that.maindata = response.data.data;
+                    if(response.data.code == 0) {
+                        that.maindata = response.data.data;
+                    }
+                    else {
+                        that.$router.push('/login');
+                    }
                 }
                 else {
                     that.$alert(response.data.msg, '提示', {

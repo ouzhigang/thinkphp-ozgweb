@@ -75,7 +75,7 @@
                             if(response.data.code == 0) {
                                 localStorage.removeItem('user_name')
                                 localStorage.removeItem('user_id')
-                                that.$router.push('/login');
+                                that.$router.push('/login')
                             }
                             else {
                                 that.$alert(response.data.msg, '提示', {
