@@ -577,7 +577,7 @@ class DataShow_ extends React.Component {
 													<InputNumber placeholder="请输入排序" min={0} value="0" />
 												)}
 											</Form.Item>
-											<Form.Item style={ { margin: '0', marginTop: '10px' } } label={ this.state.type_name + '图片' }>
+											<Form.Item style={ { margin: '0', marginTop: '10px', display: this.state.type !== 2 ? 'block' : 'none' } } label={ this.state.type_name + '图片' }>
 												<Upload {...upload_props}>
 													<Button>
 														<Icon type="upload" /> 上传
