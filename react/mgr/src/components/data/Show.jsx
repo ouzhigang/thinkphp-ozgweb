@@ -212,14 +212,17 @@ class DataShow_ extends React.Component {
 		//console.log(edit_data);
 		//console.log(edit_data.is_index_show);
 		//console.log(that.state.is_index_show);
-		for(var item of document.getElementsByTagName("input")) {
-			if(item.getAttribute("name") == "is_index_show" || item.getAttribute("name") == "recommend" || item.getAttribute("name") == "is_index_top") {
-				//console.log(edit_data[item.getAttribute("name")]);
-				if(edit_data[item.getAttribute("name")] == 1) {
-					item.click();
+		//setTimeout是为了解决第1次加载时找不到对象的问题
+		setTimeout(function() {
+			for(var item of document.getElementsByTagName("input")) {
+				if(item.getAttribute("name") == "is_index_show" || item.getAttribute("name") == "recommend" || item.getAttribute("name") == "is_index_top") {
+					//console.log(edit_data[item.getAttribute("name")]);
+					if(edit_data[item.getAttribute("name")] == 1) {
+						item.click();
+					}
 				}
 			}
-		}
+		}, 50);
 		
 		if(edit_data.type == 1) {
 			axios.get(cfg.web_server_root + "data_class/get?id=" + edit_data.data_class_id).then(function (response) {
