@@ -221,19 +221,21 @@ class DataShow_ extends React.Component {
 			}
 		}
 		
-		axios.get(cfg.web_server_root + "data_class/get?id=" + edit_data.data_class_id).then(function (response) {
-			if(response.data.code === 0) {
-				that.setState({					
-					data_class_selected_text: response.data.data.name,
-					data_class_selected_id: response.data.data.id,
-				});
-			}
-			else {
-				message.error(response.data.msg);
-			}
-		}).catch(function (error) {
-			message.error(error);
-		});
+		if(edit_data.type == 1) {
+			axios.get(cfg.web_server_root + "data_class/get?id=" + edit_data.data_class_id).then(function (response) {
+				if(response.data.code === 0) {
+					that.setState({					
+						data_class_selected_text: response.data.data.name,
+						data_class_selected_id: response.data.data.id,
+					});
+				}
+				else {
+					message.error(response.data.msg);
+				}
+			}).catch(function (error) {
+				message.error(error);
+			});
+		}
 	}
 	
 	onAddSubmit(event) {
