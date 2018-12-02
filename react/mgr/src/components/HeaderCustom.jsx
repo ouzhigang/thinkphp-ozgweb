@@ -1,11 +1,12 @@
 
 import React, { Component } from 'react';
-import { Menu, Icon, Layout, Badge, Popover, Modal } from 'antd';
+import { Menu, Icon, Layout, Badge, Popover, Modal, message } from 'antd';
 import screenfull from 'screenfull';
 import avater from '../style/imgs/b1.jpg';
 import SiderCustom from './SiderCustom';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import axios from 'axios';
 
 import { cfg, func } from '../common';
 
@@ -58,9 +59,20 @@ class HeaderCustom extends Component {
     };
     
     modalHandleOk = () => {
-    	localStorage.removeItem('user_id');
-        localStorage.removeItem('user_name');
-        this.props.history.push('/login');
+    	var that = this;
+		axios.get(cfg.web_server_root + "other/logout/").then(function (response) {
+            if(response.data.code === 0) {
+                localStorage.removeItem('user_id');
+        		localStorage.removeItem('user_name');
+        		that.props.history.push('/login');                
+            }
+            else {
+                message.error(response.data.msg);
+                that.props.history.push('/login');
+            }
+        }).catch(function (error) {
+            message.error(error);
+        });
     };
     modalHandleCancel = () => {
     	this.setState({
