@@ -13,11 +13,11 @@ class Index extends \app\common\controller\Base {
 	
     public function login() {
 		
-		$name = input("param.name", NULL, "str_filter");
-		$pwd = input("param.pwd", NULL, "str_filter");
+		$name = input("param.name/s", "");
+		$pwd = input("param.pwd/s", "");
 			
 		//提交登录
-		$vcode = input("param.vcode", NULL, "str_filter");			
+		$vcode = input("param.vcode/s", "");			
 			
 		$res = \app\common\model\User::login($name, $pwd, $vcode);
 		return json($res);

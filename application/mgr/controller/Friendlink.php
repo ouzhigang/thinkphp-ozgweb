@@ -5,8 +5,8 @@ class Friendlink extends Base {
 	
 	public function show() {
 		
-		$page = input("param.page", 1, "intval");
-		$page_size = input("param.page_size", config("web_page_size"), "intval");
+		$page = input("param.page/d", 1);
+		$page_size = input("param.page_size/d", config("web_page_size"));
 			
 		$data = \app\common\model\Friendlink::getList($page, $page_size);
 		
@@ -28,21 +28,22 @@ class Friendlink extends Base {
 	}
 	
 	public function get() {
-		$id = input("param.id", 0, "intval");
+		$id = input("param.id/d", 0);
 		$data = \app\common\model\Friendlink::findById($id);
 		return json(res_result($data, 0, "请求成功"));
 	}
 	
 	public function add() {
-		$id = input("param.id", 0, "intval");
+		$id = input("param.id/d", 0);
 		
 		if(request()->isPOST()) {
-			$row = [];
-			$row["name"] = input("post.name", "", "str_filter");
-			$row["url"] = input("post.url", "", "str_filter");	
-			$row["picture"] = input("post.picture", "", "str_filter");
-			$row["sort"] = input("post.sort", 0, "intval");
-			$row["is_picture"] = input("post.is_picture", 0, "intval");
+			$row = [
+				"name" => input("post.name/s", ""),
+				"url" => input("post.url/s", ""),
+				"picture" => input("post.picture/s", ""),
+				"sort" => input("post.sort/d", 0),
+				"is_picture" => input("post.is_picture/d", 0),
+			];
 			
 			if($id != 0) {
 				$res = \app\common\model\Friendlink::saveData($row, $id);
@@ -57,7 +58,7 @@ class Friendlink extends Base {
 	}
 	
 	public function del() {
-		$id = input("param.id", 0, "intval");
+		$id = input("param.id/d", 0);
 		\app\common\model\Friendlink::delById($id);
 		return json(res_result(NULL, 0, "删除成功"));
 	}

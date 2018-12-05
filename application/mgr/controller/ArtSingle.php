@@ -4,7 +4,7 @@ namespace app\mgr\controller;
 class ArtSingle extends Base {
 	
 	public function get() {
-		$id = input("param.id", 0, "intval");
+		$id = input("param.id/d", 0);
 		
 		$data = \app\common\model\ArtSingle::findById($id);
 		
@@ -14,8 +14,8 @@ class ArtSingle extends Base {
 	}
 	
 	public function update() {
-		$id = input("param.id", 0, "intval");
-		$content = input("param.content", "", "str_filter");			
+		$id = input("param.id/d", 0);
+		$content = input("param.content/s", "");			
 		$data = [
 			"content" => $content
 		];			

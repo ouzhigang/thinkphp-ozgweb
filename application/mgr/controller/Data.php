@@ -5,12 +5,12 @@ class Data extends Base {
 	
 	public function show() {
 		
-		$page = input("param.page", 1, "intval");
-		$page_size = input("param.page_size", config("web_page_size"), "intval");
+		$page = input("param.page/d", 1);
+		$page_size = input("param.page_size/d", config("web_page_size"));
 		//$page_size = 2;
-		$type = input("param.type", 1, "intval");
-		$k_name = input("param.k_name", NULL, "str_filter");
-		$k_data_class_id = input("param.k_data_class_id", 0, "intval");
+		$type = input("param.type/d", 1);
+		$k_name = input("param.k_name/s", NULL);
+		$k_data_class_id = input("param.k_data_class_id/d", 0);
 		
 		$wq = "1 = 1";
 		if(!is_null($k_name)) {
@@ -25,22 +25,23 @@ class Data extends Base {
 	}
 	
 	public function get() {
-		$id = input("param.id", 0, "intval");
+		$id = input("param.id/d", 0);
 		$data = \app\common\model\Data::findById($id);
 		$data["content"] = html_entity_decode($data["content"]);
 		return json(res_result($data, 0, "请求成功"));
 	}
 	
 	public function add() {
-		$id = input("param.id", 0, "intval");
+		$id = input("param.id/d", 0);
 			
-		$row = [];
-		$row["name"] = input("post.name", "", "str_filter");
-		$row["content"] = input("post.content", "", "str_filter");	
-		$row["data_class_id"] = input("post.data_class_id", 0, "intval");
-		$row["sort"] = input("post.sort", 0, "intval");
-		$row["type"] = input("post.type", 0, "intval");		
-		$row["picture"] = input("post.picture/a");
+		$row = [
+			"name" => input("post.name/s", ""),
+			"content" => input("post.content/s", ""),
+			"data_class_id" => input("post.data_class_id/d", 0),
+			"sort" => input("post.sort/d", 0),
+			"type" => input("post.type/d", 0),		
+			"picture" => input("post.picture/a", []),
+		];
 		
 		//var_dump($row["picture"]);exit();
 		if(count($row["picture"]) > 0) {
@@ -51,9 +52,9 @@ class Data extends Base {
 		}
 		//var_dump($row["picture"]);exit();
 		
-		$row["is_index_show"] = input("post.is_index_show", 0, "intval");		
-		$row["is_index_top"] = input("post.is_index_top", 0, "intval");		
-		$row["recommend"] = input("post.recommend", 0, "intval");
+		$row["is_index_show"] = input("post.is_index_show/d", 0);		
+		$row["is_index_top"] = input("post.is_index_top/d", 0);		
+		$row["recommend"] = input("post.recommend/d", 0);
 				
 		if($id != 0) {				
 			return json(\app\common\model\Data::saveData($row, $id));
@@ -64,7 +65,7 @@ class Data extends Base {
 	}
 	
 	public function del() {
-		$ids = input("param.ids", "", "str_filter");
+		$ids = input("param.ids", "");
 		$ids = explode(",", $ids);
 		$res = \app\common\model\Data::delById($ids);
 		return json($res);

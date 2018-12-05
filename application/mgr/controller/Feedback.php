@@ -5,8 +5,8 @@ class Feedback extends Base {
 	
 	public function show() {
 		
-		$page = input("param.page", 1, "intval");
-		$page_size = input("param.page_size", config("web_page_size"), "intval");
+		$page = input("param.page/d", 1);
+		$page_size = input("param.page_size/d", config("web_page_size"));
 		$data = \app\common\model\Feedback::getList($page, $page_size);
 		$this->assign("data", $data);
 		
@@ -26,7 +26,7 @@ class Feedback extends Base {
 	}
 	
 	public function del() {
-		$id = input("param.id", 0, "intval");
+		$id = input("param.id/d", 0);
 		\app\common\model\Feedback::delById($id);
 		
 		return json(res_result(NULL, 0, "删除成功"));

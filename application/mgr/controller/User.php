@@ -5,16 +5,16 @@ class User extends Base {
 	
 	public function show() {
 		
-		$page = input("param.page", 1, "intval");
-		$page_size = input("param.page_size", config("web_page_size"), "intval");
+		$page = input("param.page/d", 1);
+		$page_size = input("param.page_size/d", config("web_page_size"));
 		
 		$data = \app\common\model\User::getList($page, $page_size);
 		return json(res_result($data, 0, "请求成功"));
 	}
 	
 	public function add() {
-		$name = input("post.name", "", "str_filter");
-		$pwd = input("post.pwd", "", "str_filter");
+		$name = input("post.name/s", "");
+		$pwd = input("post.pwd/s", "");
 				
 		$user = [
 			"name" => $name,
@@ -25,7 +25,7 @@ class User extends Base {
 	}
 	
 	public function del() {
-		$ids = input("param.ids", "", "str_filter");
+		$ids = input("param.ids", "");
 		$ids = explode(",", $ids);
 		$res = \app\common\model\User::delById($ids);
 		
@@ -34,9 +34,9 @@ class User extends Base {
 	
 	public function updatepwd() {
 		
-		$old_pwd = input("post.old_pwd", "", "str_filter");
-		$pwd = input("post.pwd", "", "str_filter");
-		$pwd2 = input("post.pwd2", "", "str_filter");
+		$old_pwd = input("post.old_pwd/s", "");
+		$pwd = input("post.pwd/s", "");
+		$pwd2 = input("post.pwd2/s", "");
 			
 		return json(\app\common\model\User::updatePwd($old_pwd, $pwd, $pwd2));
 	}
