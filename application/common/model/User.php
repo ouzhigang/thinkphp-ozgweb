@@ -1,7 +1,6 @@
 <?php
 namespace app\common\model;
 
-use \think\Config;
 use \think\captcha\Captcha;
 
 class User extends Base {
@@ -43,7 +42,7 @@ class User extends Base {
 					return res_result(NULL, 2, "验证码不能为空");
 				}
 				else {
-					$captcha = new Captcha((array)Config::get('captcha'));
+					$captcha = new Captcha((array)\think\facade\Config::pull('captcha'));
 					if(!$captcha->check($vcode)) {
 						//验证失败
 						return res_result(NULL, 3, "验证码错误");
