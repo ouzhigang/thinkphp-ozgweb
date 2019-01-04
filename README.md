@@ -15,13 +15,13 @@
 	5.nginx运行需要在server节加入如下配置	
 	location /thinkphp-ozgweb/server/mgr/ {
 		if (!-e $request_filename) {
-			rewrite ^/thinkphp-ozgweb/server/(.*)$ /thinkphp-ozgweb/public/index.php?s=$1 last;
+			rewrite ^/thinkphp-ozgweb/server/(.*)$ /thinkphp-ozgweb/index.php?s=$1 last;
 			break;
 		}
 	}
 	location /thinkphp-ozgweb/ {
 		if (!-e $request_filename) {
-			rewrite ^/thinkphp-ozgweb/(.*)$ /thinkphp-ozgweb/public/$1 last;
+			rewrite ^/thinkphp-ozgweb/(.*)$ /thinkphp-ozgweb/$1 last;
 			break;
 		}
 	}
