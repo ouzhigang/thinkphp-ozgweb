@@ -2,9 +2,9 @@ export default {
     menus: [ // 菜单相关路由
         { key: '/app/dashboard/index', title: '系统首页', icon: 'home', component: 'Dashboard' },
         {
-            key: '/app/data_class/show', title: '产品分类', icon: 'project',
+            key: '/app/data_cat/show', title: '产品分类', icon: 'project',
             subs: [
-                { key: '/app/data_class/show/type/1', title: '分类列表', component: 'DataClassShow'},
+                { key: '/app/data_cat/show/type/1', title: '分类列表', component: 'DataCatShow'},
             ],
         },
         {

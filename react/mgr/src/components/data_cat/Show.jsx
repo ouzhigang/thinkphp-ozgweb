@@ -6,17 +6,17 @@ import axios from 'axios';
 import { cfg, func } from '../../common';
 
 import '../../style/css/common.css';
-import '../../style/css/data_class/Show.css';
+import '../../style/css/data_cat/Show.css';
 
 const SubMenu = Menu.SubMenu;
 
-class DataClassShow_ extends React.Component {
+class DataCatShow_ extends React.Component {
 	
 	loadData() {
 
 		var that = this;
 		var type = parseInt(func.get_rest_param("type"));
-		axios.get(cfg.web_server_root + "data_class/show?type=" + type).then(function (response) {
+		axios.get(cfg.web_server_root + "data_cat/show?type=" + type).then(function (response) {
 			if(response.data.code === 0) {
 				that.setState({
 					maindata: response.data.data
@@ -31,17 +31,17 @@ class DataClassShow_ extends React.Component {
 		});
 	}
 	
-	loadDataClassData() {
+	loadDataCatData() {
 		var that = this;
 		
 		if(parseInt(that.state.type) === 2) {
 			return;
 		}
 			
-		axios.get(cfg.web_server_root + "data_class/show?type=" + that.state.type).then(function (response) {
+		axios.get(cfg.web_server_root + "data_cat/show?type=" + that.state.type).then(function (response) {
 			if(response.data.code === 0) {
 				that.setState({
-					data_class_data: that.renderDropdownNodes(response.data.data),
+					data_cat_data: that.renderDropdownNodes(response.data.data),
 				});
 			}
 			else {
@@ -54,8 +54,8 @@ class DataClassShow_ extends React.Component {
 	
 	onDropdownSubMenuClick(id, title, event) {
 		this.setState({
-			data_class_selected_text: title,
-			data_class_selected_parent_id: id,
+			data_cat_selected_text: title,
+			data_cat_selected_parent_id: id,
 		});
 		document.querySelector(".ant-dropdown").setAttribute("class", "ant-dropdown ant-dropdown-placement-bottomRight ant-dropdown-hidden");
 	}
@@ -78,19 +78,19 @@ class DataClassShow_ extends React.Component {
 			add_btn_text: "添加",
 			edit_data: { id: 0 },
 		});
-		this.loadDataClassData();
+		this.loadDataCatData();
 	}
 	onEditBtnClick(edit_data, event) {
 		var that = this;
 		if(edit_data.parent_id != 0) {
-			axios.get(cfg.web_server_root + "data_class/get?id=" + edit_data.parent_id).then(function (response) {
+			axios.get(cfg.web_server_root + "data_cat/get?id=" + edit_data.parent_id).then(function (response) {
 				if(response.data.code === 0) {
 					that.setState({
 						is_add_visible: true,
 						add_btn_text: "修改",
 						edit_data: edit_data,
-						data_class_selected_text: response.data.data.name,
-						data_class_selected_parent_id: response.data.data.id,
+						data_cat_selected_text: response.data.data.name,
+						data_cat_selected_parent_id: response.data.data.id,
 					});
 					
 					that.props.form.setFieldsValue({
@@ -98,7 +98,7 @@ class DataClassShow_ extends React.Component {
 						sort: edit_data.sort,
 					});
 					
-					that.loadDataClassData();
+					that.loadDataCatData();
 				}
 				else {
 					message.error(response.data.msg);
@@ -121,12 +121,12 @@ class DataClassShow_ extends React.Component {
 				sort: edit_data.sort,
 			});
 			
-			that.loadDataClassData();
+			that.loadDataCatData();
 		}
 	}
 	onDeleteBtnClick(id, event) {
 		var that = this;
-        var url = cfg.web_server_root + "data_class/del?id=" + id;
+        var url = cfg.web_server_root + "data_cat/del?id=" + id;
 		
         axios.get(url).then(function (response) {
             if(response.data.code === 0) {
@@ -148,7 +148,7 @@ class DataClassShow_ extends React.Component {
 				var post_data = {
                     name: values.name,
                     sort: values.sort,
-					parent_id: that.state.data_class_selected_parent_id,
+					parent_id: that.state.data_cat_selected_parent_id,
 					type: that.state.type,
                 };
 				
@@ -156,7 +156,7 @@ class DataClassShow_ extends React.Component {
 					post_data.id = that.state.edit_data.id;
 				}
 				
-                axios.post(cfg.web_server_root + "data_class/add", post_data).then(function (response) {					
+                axios.post(cfg.web_server_root + "data_cat/add", post_data).then(function (response) {					
 					if(response.data.code === 0) {    
                     
 						that.resetAddForm();
@@ -200,15 +200,15 @@ class DataClassShow_ extends React.Component {
 			sort: 0,
 		});
 		that.setState({
-			data_class_selected_text: "请选择分类",
-			data_class_selected_parent_id: 0,
+			data_cat_selected_text: "请选择分类",
+			data_cat_selected_parent_id: 0,
 		});
 	}
 	
 	onDropdown(event) {
 		this.setState({
-			data_class_selected_text: event.item.props.children,
-			data_class_selected_parent_id: event.key,
+			data_cat_selected_text: event.item.props.children,
+			data_cat_selected_parent_id: event.key,
 		});
 	}
 	
@@ -223,12 +223,12 @@ class DataClassShow_ extends React.Component {
 			type: type,
 			
 			maindata: [],
-			data_class_data: null,
+			data_cat_data: null,
 			is_add_visible: false,
 			add_btn_text: "",
 			edit_data: { id: 0 },
-			data_class_selected_text: "请选择分类",
-			data_class_selected_parent_id: 0,
+			data_cat_selected_text: "请选择分类",
+			data_cat_selected_parent_id: 0,
     	};
 		
     	document.title = cfg.web_title;
@@ -294,8 +294,8 @@ class DataClassShow_ extends React.Component {
 												)}
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '20px', display: this.state.type !== 2 ? 'block' : 'none' } } label="分类">
-												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_class_data }</Menu>) }>
-													<span>{ this.state.data_class_selected_text }</span>
+												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_cat_data }</Menu>) }>
+													<span>{ this.state.data_cat_selected_text }</span>
 												</Dropdown.Button>
 											</Form.Item>
 										</Form>
@@ -315,5 +315,5 @@ class DataClassShow_ extends React.Component {
         )
     }
 }
-const DataClassShow = Form.create()(DataClassShow_);
-export default DataClassShow;
+const DataCatShow = Form.create()(DataCatShow_);
+export default DataCatShow;

@@ -26,8 +26,8 @@ class DataShow_ extends React.Component {
 		if(that.state.k_name != "" && !req_obj.k_name) { req_obj.k_name = that.state.k_name; }
 		if(req_obj.k_name && req_obj.k_name != "") { url += "&k_name=" + encodeURI(req_obj.k_name); }
 		
-		if(that.state.k_data_class_id != 0 && !req_obj.k_data_class_id) { req_obj.k_data_class_id = that.state.k_data_class_id; }
-		if(req_obj.k_data_class_id && req_obj.k_data_class_id != 0) { url += "&k_data_class_id=" + req_obj.k_data_class_id; }
+		if(that.state.k_data_cat_id != 0 && !req_obj.k_data_cat_id) { req_obj.k_data_cat_id = that.state.k_data_cat_id; }
+		if(req_obj.k_data_cat_id && req_obj.k_data_cat_id != 0) { url += "&k_data_cat_id=" + req_obj.k_data_cat_id; }
 		
 		axios.get(url).then(function (response) {
             if(response.data.code == 0) {
@@ -48,17 +48,17 @@ class DataShow_ extends React.Component {
         });
 	}
 	
-	loadDataClassData() {
+	loadDataCatData() {
 		var that = this;
 		
 		if(parseInt(that.state.type) === 2) {
 			return;
 		}
 			
-		axios.get(cfg.web_server_root + "data_class/show?type=" + that.state.type).then(function (response) {
+		axios.get(cfg.web_server_root + "data_cat/show?type=" + that.state.type).then(function (response) {
 			if(response.data.code === 0) {
 				that.setState({
-					data_class_data: that.renderDropdownNodes(response.data.data),
+					data_cat_data: that.renderDropdownNodes(response.data.data),
 				});
 			}
 			else {
@@ -73,15 +73,15 @@ class DataShow_ extends React.Component {
 		if(this.state.is_search_visible) {
 			//搜索
 			this.setState({
-				k_data_class_selected_text: title,
-				k_data_class_selected_id: id,
+				k_data_cat_selected_text: title,
+				k_data_cat_selected_id: id,
 			});
 		}
 		else {
 			//添加或修改
 			this.setState({
-				data_class_selected_text: title,
-				data_class_selected_id: id,
+				data_cat_selected_text: title,
+				data_cat_selected_id: id,
 			});
 		}
 		document.querySelector(".ant-dropdown").setAttribute("class", "ant-dropdown ant-dropdown-placement-bottomRight ant-dropdown-hidden");
@@ -225,11 +225,11 @@ class DataShow_ extends React.Component {
 		}, 50);
 		
 		if(edit_data.type == 1) {
-			axios.get(cfg.web_server_root + "data_class/get?id=" + edit_data.data_class_id).then(function (response) {
+			axios.get(cfg.web_server_root + "data_cat/get?id=" + edit_data.data_cat_id).then(function (response) {
 				if(response.data.code === 0) {
 					that.setState({					
-						data_class_selected_text: response.data.data.name,
-						data_class_selected_id: response.data.data.id,
+						data_cat_selected_text: response.data.data.name,
+						data_cat_selected_id: response.data.data.id,
 					});
 				}
 				else {
@@ -263,7 +263,7 @@ class DataShow_ extends React.Component {
 				}
 				
 				if(that.state.type !== 2) {
-					post_data.data_class_id = that.state.data_class_selected_id;
+					post_data.data_cat_id = that.state.data_cat_selected_id;
 					
 					if(that.state.upload_file_list.length > 0) {
 						post_data.picture = [];						
@@ -327,15 +327,15 @@ class DataShow_ extends React.Component {
 		if(this.state.is_search_visible) {
 			//搜索
 			this.setState({
-				k_data_class_selected_text: event.item.props.children,
-				k_data_class_selected_id: event.key,
+				k_data_cat_selected_text: event.item.props.children,
+				k_data_cat_selected_id: event.key,
 			});
 		}
 		else {
 			//添加或修改
 			this.setState({
-				data_class_selected_text: event.item.props.children,
-				data_class_selected_id: event.key,
+				data_cat_selected_text: event.item.props.children,
+				data_cat_selected_id: event.key,
 			});
 		}
 	}
@@ -363,13 +363,13 @@ class DataShow_ extends React.Component {
 			//这里不需要验证所以忽略了err
 			that.setState({
 				k_name: values.k_name,
-				k_data_class_id: that.state.k_data_class_selected_id,
+				k_data_cat_id: that.state.k_data_cat_selected_id,
 				page: 1,
 			});
 			that.loadData({
 				page: 1,
 				k_name: values.k_name,
-				k_data_class_id: that.state.k_data_class_selected_id,
+				k_data_cat_id: that.state.k_data_cat_selected_id,
 			});
 		});
 	}
@@ -393,8 +393,8 @@ class DataShow_ extends React.Component {
 			is_index_show: false,
 			recommend: false,
 			is_index_top: false,
-			data_class_selected_text: "请选择分类",
-			data_class_selected_id: 0,
+			data_cat_selected_text: "请选择分类",
+			data_cat_selected_id: 0,
 			upload_file_list: [],
 		});
 		
@@ -444,17 +444,17 @@ class DataShow_ extends React.Component {
             is_add_visible: false,
 			selected_rows: [],
 			is_search_visible: false,
-			data_class_data: [],
+			data_cat_data: [],
 			content: "",
 			is_index_show: false,
 			recommend: false,
 			is_index_top: false,
 			edit_data: { id: 0 },
-			data_class_selected_text: "请选择分类",
-			data_class_selected_id: 0,
+			data_cat_selected_text: "请选择分类",
+			data_cat_selected_id: 0,
 			k_name: "",
-			k_data_class_selected_text: "请选择分类",
-			k_data_class_selected_id: 0,		
+			k_data_cat_selected_text: "请选择分类",
+			k_data_cat_selected_id: 0,		
 			upload_file_list: [],
     	};
     	
@@ -463,7 +463,7 @@ class DataShow_ extends React.Component {
 
 	componentDidMount() {
 		this.loadData();
-		this.loadDataClassData();
+		this.loadDataCatData();
 		
 		this.props.form.setFieldsValue({
 			sort: "0",
@@ -566,8 +566,8 @@ class DataShow_ extends React.Component {
 												)}
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px', display: this.state.type !== 2 ? 'block' : 'none' } }>
-												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_class_data }</Menu>) }>
-													<span>{ this.state.data_class_selected_text }</span>
+												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_cat_data }</Menu>) }>
+													<span>{ this.state.data_cat_selected_text }</span>
 												</Dropdown.Button>
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px' } } label="排序">
@@ -603,8 +603,8 @@ class DataShow_ extends React.Component {
 												)}
 											</Form.Item>
 											<Form.Item style={ { margin: '0', marginTop: '10px', display: this.state.type !== 2 ? 'block' : 'none' } }>
-												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_class_data }</Menu>) }>
-													<span>{ this.state.k_data_class_selected_text }</span>
+												<Dropdown.Button overlay={ (<Menu onClick={ this.onDropdown.bind(this) }><Menu.Item key={ 0 }>请选择分类</Menu.Item>{ this.state.data_cat_data }</Menu>) }>
+													<span>{ this.state.k_data_cat_selected_text }</span>
 												</Dropdown.Button>
 											</Form.Item>
 										</Form>

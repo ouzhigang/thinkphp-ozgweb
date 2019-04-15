@@ -10,14 +10,14 @@ class Data extends Base {
 		//$page_size = 2;
 		$type = input("param.type/d", 1);
 		$k_name = input("param.k_name/s", NULL);
-		$k_data_class_id = input("param.k_data_class_id/d", 0);
+		$k_data_cat_id = input("param.k_data_cat_id/d", 0);
 		
 		$wq = "1 = 1";
 		if(!is_null($k_name)) {
 			$wq .= " and d.name like '%" . $k_name . "%'";
 		}
-		if($k_data_class_id != 0) {
-			$wq .= " and d.data_class_id = " . $k_data_class_id;
+		if($k_data_cat_id != 0) {
+			$wq .= " and d.data_cat_id = " . $k_data_cat_id;
 		}
 		$data = \app\common\model\Data::getList($page, $page_size, $type, $wq);
 		
@@ -37,7 +37,7 @@ class Data extends Base {
 		$row = [
 			"name" => input("post.name/s", ""),
 			"content" => input("post.content/s", ""),
-			"data_class_id" => input("post.data_class_id/d", 0),
+			"data_cat_id" => input("post.data_cat_id/d", 0),
 			"sort" => input("post.sort/d", 0),
 			"type" => input("post.type/d", 0),		
 			"picture" => input("post.picture/a", []),

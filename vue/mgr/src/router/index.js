@@ -20,8 +20,8 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
-                    path: '/data_class/show',
-                    component: resolve => require(['../components/page/data_class/Show.vue'], resolve),
+                    path: '/data_cat/show',
+                    component: resolve => require(['../components/page/data_cat/Show.vue'], resolve),
                     children: [
                         { path: "type/1", meta: { title: '分类列表' } },
                     ]

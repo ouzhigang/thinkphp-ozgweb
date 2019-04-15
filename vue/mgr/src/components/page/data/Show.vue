@@ -41,7 +41,7 @@
                 </el-form-item>
                 <el-form-item label="分类" v-if="mainform.type == 1">
                     <el-button type="primary" @click="dataClassSelect('add')" plain>选择</el-button>
-                    <span v-if="mainform.data_class_id != 0" v-text="data_class_name"></span>
+                    <span v-if="mainform.data_cat_id != 0" v-text="data_cat_name"></span>
                 </el-form-item>
                 <el-form-item label="排序">
                     <el-input-number v-model="mainform.sort"></el-input-number>
@@ -80,7 +80,7 @@
         </el-dialog>
 
         <el-dialog title="选择分类" :visible.sync="dataClassVisible" width="60%">
-            <el-tree :data="data_class_data" :props="defaultProps" node-key="id" :expand-on-click-node="false" default-expand-all @node-click="handleNodeClick">
+            <el-tree :data="data_cat_data" :props="defaultProps" node-key="id" :expand-on-click-node="false" default-expand-all @node-click="handleNodeClick">
             </el-tree>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dataClassVisible = false">取 消</el-button>
@@ -104,7 +104,7 @@
                 </el-form-item>
                 <el-form-item label="分类" v-if="mainform.type == 1">
                     <el-button type="primary" @click="dataClassSelect('search')" plain>选择</el-button>
-                    <span v-if="k_data_class_id != 0" v-text="k_data_class_name"></span>
+                    <span v-if="k_data_cat_id != 0" v-text="k_data_cat_name"></span>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -141,14 +141,14 @@
                 doMany: false,
                 dataClassVisible: false,
                 searchVisible: false,
-                data_class_select_type: "",
+                data_cat_select_type: "",
                 k_name: "",
-                k_data_class_id: 0,
-                k_data_class_name: "",
+                k_data_cat_id: 0,
+                k_data_cat_name: "",
                 mainform: {
                     id: 0,
                     name: '',
-                    data_class_id: 0,
+                    data_cat_id: 0,
                     sort: 0,
                     is_index_show: false,
                     is_index_top: false,
@@ -162,12 +162,12 @@
                         { required: true, message: '请输入名称', trigger: 'blur' }
                     ]
                 },
-                data_class_data: [],
+                data_cat_data: [],
                 defaultProps: {
                     children: 'children',
                     label: 'name'
                 },
-                data_class_name: "",
+                data_cat_name: "",
                 upload_url: cfg.web_server_root + "data/upload",
                 upload_limit: 300,
                 editorOption: {
@@ -217,8 +217,8 @@
                 if(that.k_name != "") {
                     url += "&k_name=" + encodeURI(that.k_name);
                 }
-                if(that.k_data_class_id != 0) {
-                    url += "&k_data_class_id=" + that.k_data_class_id;
+                if(that.k_data_cat_id != 0) {
+                    url += "&k_data_cat_id=" + that.k_data_cat_id;
                 }
 
                 that.$axios.get(url).then(function (response) {
@@ -250,8 +250,8 @@
             },
             searchClear() {
                 this.k_name = "";
-                this.k_data_class_id = 0;
-                this.k_data_class_name = "";
+                this.k_data_cat_id = 0;
+                this.k_data_cat_name = "";
             },
             searchCancel() {
                 this.searchVisible = false;
@@ -260,7 +260,7 @@
                 this.editTitle = "添加产品";
                 this.mainform.id = 0;
                 this.mainform.name = "";
-                this.mainform.data_class_id = 0;
+                this.mainform.data_cat_id = 0;
                 this.mainform.sort = 0;
                 this.mainform.is_index_show = false;
                 this.mainform.is_index_top = false;
@@ -278,12 +278,14 @@
                 that.editTitle = "编辑" + that.$route.meta.title.replace('列表', '');
                 that.mainform.id = data.id;
                 that.mainform.name = data.name;
-                that.mainform.data_class_id = data.data_class_id;
+                that.mainform.data_cat_id = data.data_cat_id;
                 that.mainform.sort = data.sort;
                 that.mainform.is_index_show = data.is_index_show == "1" ? true : false;
                 that.mainform.is_index_top = data.is_index_top == "1" ? true : false;
                 that.mainform.recommend = data.recommend == "1" ? true : false;
                 that.mainform.content = data.content;
+
+                that.data_cat_name = data.dc_name;
 
                 for(var i in data.picture) {
                     this.mainform.picture.push({
@@ -313,7 +315,7 @@
                     if (valid) {
                         var formdata = {
                             name: that.mainform.name,
-                            data_class_id: that.mainform.data_class_id,
+                            data_cat_id: that.mainform.data_cat_id,
                             sort: that.mainform.sort,
                             is_index_show: that.mainform.is_index_show,
                             is_index_top: that.mainform.is_index_top,
@@ -336,7 +338,7 @@
                             if(response.data.code == 0) {
                                 that.mainform.id = 0;
                                 that.mainform.name = "";
-                                that.mainform.data_class_id = 0;
+                                that.mainform.data_cat_id = 0;
                                 that.mainform.sort = 0;
                                 that.mainform.is_index_show = false;
                                 that.mainform.is_index_top = false;
@@ -442,13 +444,13 @@
                 this.doMany = true;
                 this.delVisible = true;
             },
-            loadDataClassData() {
-                this.data_class_data.length = 0;
+            loadDataCatData() {
+                this.data_cat_data.length = 0;
 
                 var that = this;
-                that.$axios.get(cfg.web_server_root + "data_class/show?type=" + that.mainform.type).then(function (response) {
+                that.$axios.get(cfg.web_server_root + "data_cat/show?type=" + that.mainform.type).then(function (response) {
                     if(response.data.code == 0) {
-                        that.data_class_data = response.data.data;
+                        that.data_cat_data = response.data.data;
                     }
                     else {
                         that.$alert(response.data.msg, '提示', {
@@ -468,18 +470,18 @@
                 var that = this;
                 that.dataClassVisible = true;
 
-                that.data_class_select_type = type;
-                this.loadDataClassData();
+                that.data_cat_select_type = type;
+                this.loadDataCatData();
             },
             handleNodeClick(data) {
                 var that = this;
-                if(that.data_class_select_type == "search") {
-                    that.k_data_class_name = data.name;
-                    that.k_data_class_id = data.id;
+                if(that.data_cat_select_type == "search") {
+                    that.k_data_cat_name = data.name;
+                    that.k_data_cat_id = data.id;
                 }
                 else {
-                    that.data_class_name = data.name;
-                    that.mainform.data_class_id = data.id;
+                    that.data_cat_name = data.name;
+                    that.mainform.data_cat_id = data.id;
                 }
 
                 that.dataClassVisible = false;

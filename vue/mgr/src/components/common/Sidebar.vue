@@ -49,7 +49,7 @@
                         title: '产品分类',
                         subs: [
                             {
-                                index: '/data_class/show/type/1',
+                                index: '/data_cat/show/type/1',
                                 title: '分类列表'
                             }
                         ]

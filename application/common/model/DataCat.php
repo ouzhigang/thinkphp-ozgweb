@@ -1,7 +1,7 @@
 <?php
 namespace app\common\model;
 
-class DataClass extends Base {
+class DataCat extends Base {
     
 	public static function deleteById($id) {
 		$dc_list = parent::where("parent_id = " . $id)->select();
@@ -11,7 +11,7 @@ class DataClass extends Base {
 				self::deleteById($v["id"]);
 			}
 			//删除该分类下面的对应数据
-			Data::where("data_class_id = " . $v["id"])->delete();
+			Data::where("data_cat_id = " . $v["id"])->delete();
 			parent::where("id = " . $v["id"])->delete();
 		}
 		
@@ -73,7 +73,7 @@ class DataClass extends Base {
 			self::deleteById($dataclass["id"]);
 		
 		//删除该分类下面的对应数据
-		Data::where("data_class_id = " . $dataclass["id"])->delete();
+		Data::where("data_cat_id = " . $dataclass["id"])->delete();
 		parent::where("id = " . $dataclass["id"])->delete();
 		
 		return true;

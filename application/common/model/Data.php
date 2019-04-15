@@ -7,7 +7,7 @@ class Data extends Base {
 		if($wq != "")
 			$wq = " and " . $wq;
 		
-		$total = \think\Db::query('select count(d.id) as total from ' . config("database.prefix") . 'data as d left join ' . config("database.prefix") . 'data_class as dc on d.data_class_id = dc.id where d.type = ' . $type . ' ' . $wq);
+		$total = \think\Db::query('select count(d.id) as total from ' . config("database.prefix") . 'data as d left join ' . config("database.prefix") . 'data_cat as dc on d.data_cat_id = dc.id where d.type = ' . $type . ' ' . $wq);
 		$total = intval($total[0]["total"]);
 		$page_count = page_count($total, $page_size);
 		
@@ -15,7 +15,7 @@ class Data extends Base {
 			$query->where("d.type = " . $type . " " . $wq)
 				->alias("d")
 				->field("d.*, dc.name as dc_name")
-				->join("data_class dc", "d.data_class_id = dc.id", "left")
+				->join("data_cat dc", "d.data_cat_id = dc.id", "left")
 				->order("d.sort desc, d.id desc")
 				->page($page, $page_size);
 		});
