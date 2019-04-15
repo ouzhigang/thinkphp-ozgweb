@@ -7,22 +7,18 @@ class Data extends Base {
 		if($wq != "")
 			$wq = " and " . $wq;
 		
-		$total = \think\Db::query('select count(d.id) as total from ' . config("database.prefix") . 'data as d left join ' . config("database.prefix") . 'data_cat as dc on d.data_cat_id = dc.id where d.type = ' . $type . ' ' . $wq);
-		$total = intval($total[0]["total"]);
+		$total = self::where("type = " . $type . $wq)->count();
 		$page_count = page_count($total, $page_size);
 		
 		$list = self::select(function($query) use($type, $wq, $page, $page_size) {
-			$query->where("d.type = " . $type . " " . $wq)
-				->alias("d")
-				->field("d.*, dc.name as dc_name")
-				->join("data_cat dc", "d.data_cat_id = dc.id", "left")
-				->order("d.sort desc, d.id desc")
+			$query->where("type = " . $type . $wq)
+				->order("sort desc, id desc")
 				->page($page, $page_size);
 		});
 		
 		foreach($list as &$v) {
 			$v["add_time_s"] = date("Y-m-d H:i:s", $v["add_time"]);
-			$v["dc_name"] = $v["dc_name"] ? $v["dc_name"] : "[暂无]";
+			$v["dc_name"] = $v->dataCat ? $v->dataCat["name"] : "[暂无]";
 			$v["picture"] = json_decode($v["picture"], true);
 			$v["picture_0"] = count($v["picture"]) > 0 ? $v["picture"][0] : "";
 			$v["content"] = html_entity_decode($v["content"]);
@@ -106,4 +102,11 @@ class Data extends Base {
 		return true;
 	}
 	
+	public function dataCat() {
+    
+    	//mysql
+    	//belongsTo('关联模型名','本表的外键名','关联表主键名',['模型别名定义'],'join类型');
+        return $this->belongsTo('DataCat', 'data_cat_id', 'id');
+    }
+    
 }
