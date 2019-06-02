@@ -1,24 +1,24 @@
 {
   "name": "vue-manage-system",
-  "version": "3.2.0",
+  "version": "4.0.1",
   "description": "基于Vue.js 2.x系列 + element-ui 内容管理系统解决方案",
-  "author": "lin-xin <2981207131@qq.com>",
+  "author": "",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "build": "node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.15.3",
-    "babel-polyfill": "^6.23.0",
-    "element-ui": "^2.4.5",
-    "mavon-editor": "^2.5.4",
-    "vue": "^2.5.16",
-    "vue-cropperjs": "^2.2.0",
+    "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
+    "element-ui": "^2.8.2",
+    "mavon-editor": "^2.6.17",
+    "vue": "^2.6.10",
+    "vue-cropperjs": "^3.0.0",
     "vue-quill-editor": "3.0.6",
     "vue-router": "^3.0.1",
     "vue-schart": "^1.0.0",
-    "vuedraggable": "^2.16.0"
+    "vuedraggable": "^2.17.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -50,7 +50,7 @@
     "url-loader": "^0.5.8",
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.1",
-    "vue-template-compiler": "^2.5.2",
+    "vue-template-compiler": "^2.5.21",
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.1",
