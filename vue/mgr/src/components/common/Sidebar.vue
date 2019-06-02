@@ -32,6 +32,10 @@
 </template>
 
 <script>
+//权限demo，没有权限就不显示（左边菜单），纯前端的话只做是否显示的判断就已经适应大部分场景了
+//<el-submenu :index="item.index" :key="item.index" v-if="item.title != '用户管理'">
+//<el-menu-item :index="item.index" :key="item.index" v-if="item.title != '用户管理'">
+
     import bus from '../common/bus';
     export default {
         data() {
