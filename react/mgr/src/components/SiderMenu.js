@@ -36,7 +36,7 @@ export default ({ menus, ...props }) => (
 );
 
 /*
-权限demo，没有权限就不显示（左边菜单）
+权限demo，没有权限就不显示（左边菜单），纯前端的话只做是否显示的判断就已经适应大部分场景了
 export default ({ menus, ...props }) => (
     <Menu {...props}>
         {menus && menus.map(item => {
