@@ -34,3 +34,21 @@ export default ({ menus, ...props }) => (
         )}
     </Menu>
 );
+
+/*
+权限demo，没有权限就不显示（左边菜单）
+export default ({ menus, ...props }) => (
+    <Menu {...props}>
+        {menus && menus.map(item => {
+        	if(item.key == '/app/user' && localStorage["role_id"] == 1) {
+        		return false;
+        	}
+        	else {
+        		return item.subs ? renderSubMenu(item) : renderMenuItem(item);
+        	}
+        }
+            
+        )}
+    </Menu>
+);
+*/
