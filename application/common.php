@@ -383,10 +383,7 @@ function save_binary($path) {
 
 //检测客户端是否使用手机浏览
 function is_wap_client() {
-	if(is_web_client())	
-		return false;	
-	else	
-		return true;	
+	return !is_web_client();
 }
 //检测客户端是否使用电脑的浏览器浏览
 function is_web_client() {
@@ -647,23 +644,13 @@ function deldir($dir) {
 
 	closedir($dh);
 	//删除当前文件夹：
-	if(rmdir($dir)) {
-		return true;
-	} 
-	else {
-		return false;
-	}
+	return rmdir($dir);
 }
 
 function is_wechat_browser() {
 	//判断是否使用微信浏览器访问
 	$user_agent = $_SERVER['HTTP_USER_AGENT'];
-	if (strpos($user_agent, 'MicroMessenger') === false) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	return !(strpos($user_agent, 'MicroMessenger') === false);
 }
 
 function is_mobile_browser() {
@@ -684,12 +671,7 @@ function is_mobile_browser() {
 function is_email($user_email) {
     $chars = "/^([a-z0-9+_]|\\-|\\.)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}\$/i";
     if (strpos($user_email, '@') !== false && strpos($user_email, '.') !== false) {
-        if (preg_match($chars, $user_email)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    	return preg_match($chars, $user_email);
     }
 	else {
         return false;
@@ -706,12 +688,7 @@ function is_email($user_email) {
  */
 function is_mobile($mobile) {
     $chars = "/^0?1[3|4|5|6|7|8][0-9]\d{8}$/";
-    if (preg_match($chars, $mobile)) {
-        return true;
-    } 
-	else {
-        return false;
-    }
+    return preg_match($chars, $mobile);
 }
 
 //公用格式的返回json函数
