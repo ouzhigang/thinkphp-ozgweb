@@ -286,7 +286,8 @@
                 that.mainform.content = data.content;
 
                 that.data_cat_name = data.dc_name;
-
+                
+                this.mainform.picture = [];
                 for(var i in data.picture) {
                     this.mainform.picture.push({
                         name: data.picture[i],
