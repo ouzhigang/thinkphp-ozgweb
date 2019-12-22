@@ -79,6 +79,8 @@ export default {
 
             var id = func.get_rest_param("get");
             that.id = id;
+            
+            if(id == null) { return; }
 
             that.$axios.get(cfg.web_server_root + "art_single/get?id=" + id).then(function (response) {
                 if(response.data.code == 0) {
