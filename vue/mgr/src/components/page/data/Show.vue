@@ -129,7 +129,6 @@
         data() {
             return {
                 maindata: [],
-                maindata: [],
                 page: 1,
                 page_count: 1,
                 page_size: 1,
