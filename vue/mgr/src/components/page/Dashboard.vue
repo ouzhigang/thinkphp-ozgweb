@@ -80,14 +80,14 @@
             document.title = cfg.web_title;
 
             var that = this;
-            that.$axios.get(cfg.web_server_root + "other/serverInfo").then(function (response) {
+            that.$axios.get(cfg.web_server_root + "other/serverInfo").then((response) => {
                 if(response.data.code == 0) {
                     that.server_info = response.data.data;
                 }
                 else {
                     that.$router.push('/login');
                 }
-            }).catch(function (error) {
+            }).catch((error) => {
                 that.$alert(error, '提示', {
                     confirmButtonText: '确定',
                     type: 'error',

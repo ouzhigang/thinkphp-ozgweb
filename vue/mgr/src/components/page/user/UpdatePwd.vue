@@ -74,7 +74,7 @@ export default {
                         old_pwd: that.mainform.old_pwd,
                         pwd: that.mainform.pwd,
                         pwd2: that.mainform.pwd2
-                    }).then(function (response) {
+                    }).then((response) => {
                         if(response.data.code == 0) {
                             that.$alert(response.data.msg, '提示', {
                                 confirmButtonText: '确定',
@@ -92,7 +92,7 @@ export default {
                                 type: 'error'
                             });
                         }
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         that.$alert(error, '提示', {
                             confirmButtonText: '确定',
                             type: 'error'

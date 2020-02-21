@@ -32,7 +32,7 @@
     import { cfg } from '../common/common.js';
 
     export default {
-        data: function(){
+        data() {
             return {
                 ruleForm: {
                     name: '',
@@ -64,7 +64,7 @@
                             name: that.ruleForm.name,
                             pwd: that.ruleForm.pwd,
                             vcode: that.ruleForm.vcode
-                        }).then(function (response) {
+                        }).then((response) => {
                             if(response.data.code == 0) {
                                 localStorage.setItem('user_name', response.data.data.name);
                                 localStorage.setItem('user_id', response.data.data.id);
@@ -92,7 +92,7 @@
                                     type: 'error'
                                 });
                             }
-                        }).catch(function (error) {
+                        }).catch((error) => {
                             that.$alert(error, '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error'

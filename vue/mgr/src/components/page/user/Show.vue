@@ -108,7 +108,7 @@
                 this.maindata.length = 0;
 
                 var that = this;
-                that.$axios.get(cfg.web_server_root + "user/show?page=" + that.page).then(function (response) {
+                that.$axios.get(cfg.web_server_root + "user/show?page=" + that.page).then((response) => {
                     if(response.data.code == 0) {
                         that.maindata = response.data.data.list;
                         that.page = response.data.data.page;
@@ -119,7 +119,7 @@
                     else {
                         that.$router.push('/login');
                     }
-                }).catch(function (error) {
+                }).catch((error) => {
                     that.$alert(error, '提示', {
                         confirmButtonText: '确定',
                         type: 'error',
@@ -159,7 +159,7 @@
                         that.$axios.post(cfg.web_server_root + "user/add", {
                             name: that.mainform.name,
                             pwd: that.mainform.pwd
-                        }).then(function (response) {
+                        }).then((response) => {
                             if(response.data.code == 0) {
                                 that.mainform.name = "";
                                 that.mainform.pwd = "";
@@ -176,7 +176,7 @@
                                     type: 'error'
                                 });
                             }
-                        }).catch(function (error) {
+                        }).catch((error) => {
                             that.$alert(error, '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error'
@@ -222,7 +222,7 @@
                     //删除单条数据
                     url = cfg.web_server_root + "user/del?ids=" + that.maindata[that.idx].id;
                 }
-                that.$axios.get(url).then(function (response) {
+                that.$axios.get(url).then((response) => {
                     that.delVisible = false;
                     if(response.data.code == 0) {
                         if(that.doMany) {
@@ -249,7 +249,7 @@
                             type: 'error'
                         });
                     }
-                }).catch(function (error) {
+                }).catch((error) => {
                     that.$alert(error, '提示', {
                         confirmButtonText: '确定',
                         type: 'error',

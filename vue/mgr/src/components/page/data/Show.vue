@@ -220,7 +220,7 @@
                     url += "&k_data_cat_id=" + that.k_data_cat_id;
                 }
 
-                that.$axios.get(url).then(function (response) {
+                that.$axios.get(url).then((response) => {
                     if(response.data.code == 0) {
                         that.maindata = response.data.data.list;
                         that.page = response.data.data.page;
@@ -231,7 +231,7 @@
                     else {
                         that.$router.push('/login');
                     }
-                }).catch(function (error) {
+                }).catch((error) => {
                     that.$alert(error, '提示', {
                         confirmButtonText: '确定',
                         type: 'error',
@@ -334,7 +334,7 @@
                         if(that.mainform.id != 0) {
                             formdata.id = that.mainform.id;
                         }
-                        that.$axios.post(cfg.web_server_root + "data/add", formdata).then(function (response) {
+                        that.$axios.post(cfg.web_server_root + "data/add", formdata).then((response) => {
                             if(response.data.code == 0) {
                                 that.mainform.id = 0;
                                 that.mainform.name = "";
@@ -359,7 +359,7 @@
                                     type: 'error'
                                 });
                             }
-                        }).catch(function (error) {
+                        }).catch((error) => {
                             that.$alert(error, '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error'
@@ -406,7 +406,7 @@
                     //删除单条数据
                     url = cfg.web_server_root + "data/del?ids=" + that.maindata[that.idx].id;
                 }
-                that.$axios.get(url).then(function (response) {
+                that.$axios.get(url).then((response) => {
                     that.delVisible = false;
                     if(response.data.code == 0) {
                         if(that.doMany) {
@@ -433,7 +433,7 @@
                             type: 'error'
                         });
                     }
-                }).catch(function (error) {
+                }).catch((error) => {
                     that.$alert(error, '提示', {
                         confirmButtonText: '确定',
                         type: 'error',
@@ -448,7 +448,7 @@
                 this.data_cat_data.length = 0;
 
                 var that = this;
-                that.$axios.get(cfg.web_server_root + "data_cat/show?type=" + that.mainform.type).then(function (response) {
+                that.$axios.get(cfg.web_server_root + "data_cat/show?type=" + that.mainform.type).then((response) => {
                     if(response.data.code == 0) {
                         that.data_cat_data = response.data.data;
                     }
@@ -458,7 +458,7 @@
                             type: 'error',
                         });
                     }
-                }).catch(function (error) {
+                }).catch((error) => {
                     that.$alert(error, '提示', {
                         confirmButtonText: '确定',
                         type: 'error',

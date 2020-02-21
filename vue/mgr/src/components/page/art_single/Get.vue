@@ -52,7 +52,7 @@ export default {
             that.$axios.post(cfg.web_server_root + "art_single/update", {
                 id: that.id,
                 content: that.content
-            }).then(function (response) {
+            }).then((response) => {
                 if(response.data.code == 0) {
                     that.$message({
                         message: response.data.msg,
@@ -66,7 +66,7 @@ export default {
                         type: 'error'
                     });
                 }
-            }).catch(function (error) {
+            }).catch((error) => {
                 that.$alert(error, '提示', {
                     confirmButtonText: '确定',
                     type: 'error'
@@ -82,7 +82,7 @@ export default {
             
             if(id == null) { return; }
 
-            that.$axios.get(cfg.web_server_root + "art_single/get?id=" + id).then(function (response) {
+            that.$axios.get(cfg.web_server_root + "art_single/get?id=" + id).then((response) => {
                 if(response.data.code == 0) {
                     if(response.data.code == 0) {
                         that.content = response.data.data.content;
@@ -97,7 +97,7 @@ export default {
                         type: 'error',
                     });
                 }
-            }).catch(function (error) {
+            }).catch((error) => {
                 that.$alert(error, '提示', {
                     confirmButtonText: '确定',
                     type: 'error',

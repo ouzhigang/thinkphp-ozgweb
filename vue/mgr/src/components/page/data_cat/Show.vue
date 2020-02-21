@@ -86,7 +86,7 @@ export default {
 
             var that = this;
             that.mainform.type = func.get_rest_param("type");
-            that.$axios.get(cfg.web_server_root + "data_cat/show?type=" + that.mainform.type).then(function (response) {
+            that.$axios.get(cfg.web_server_root + "data_cat/show?type=" + that.mainform.type).then((response) => {
                 if(response.data.code == 0) {
                     if(response.data.code == 0) {
                         that.maindata = response.data.data;
@@ -101,7 +101,7 @@ export default {
                         type: 'error',
                     });
                 }
-            }).catch(function (error) {
+            }).catch((error) => {
                 that.$alert(error, '提示', {
                     confirmButtonText: '确定',
                     type: 'error',
@@ -158,7 +158,7 @@ export default {
                     if(that.mainform.id != 0) {
                         formdata.id = that.mainform.id;
                     }
-                    that.$axios.post(cfg.web_server_root + "data_cat/add", formdata).then(function (response) {
+                    that.$axios.post(cfg.web_server_root + "data_cat/add", formdata).then((response) => {
                         if(response.data.code == 0) {
                             that.mainform.id = 0;
                             that.mainform.name = "";
@@ -176,7 +176,7 @@ export default {
                                 type: 'error'
                             });
                         }
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         that.$alert(error, '提示', {
                             confirmButtonText: '确定',
                             type: 'error'
@@ -196,7 +196,7 @@ export default {
             var that = this;
 
             var url = cfg.web_server_root + "data_cat/del?id=" + that.to_delete_id;
-            that.$axios.get(url).then(function (response) {
+            that.$axios.get(url).then((response) => {
                 that.delVisible = false;
                 if(response.data.code == 0) {
                     that.loadData();
@@ -211,7 +211,7 @@ export default {
                         type: 'error'
                     });
                 }
-            }).catch(function (error) {
+            }).catch((error) => {
                 that.$alert(error, '提示', {
                     confirmButtonText: '确定',
                     type: 'error',

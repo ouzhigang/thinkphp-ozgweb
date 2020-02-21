@@ -71,7 +71,7 @@
                         type: 'warning'
                     }).then(() => {
 
-                        that.$axios.get(cfg.web_server_root + "other/logout").then(function (response) {
+                        that.$axios.get(cfg.web_server_root + "other/logout").then((response) => {
                             if(response.data.code == 0) {
                                 localStorage.removeItem('user_name');
                                 localStorage.removeItem('user_id');
@@ -82,7 +82,7 @@
                                     confirmButtonText: '确定'
                                 });
                             }
-                        }).catch(function (error) {
+                        }).catch((error) => {
                             that.$alert(error, '提示', {
                                 confirmButtonText: '确定'
                             });
