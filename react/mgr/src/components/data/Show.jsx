@@ -37,7 +37,9 @@ class DataShow_ extends React.Component {
             		page_count: response.data.data.page_count,
             		page_size: response.data.data.page_size,
             		total: response.data.data.total,
-                });                
+				});
+
+				that.loadDataCatData();
             }
             else {
                 message.error(response.data.msg);
@@ -463,8 +465,7 @@ class DataShow_ extends React.Component {
 
 	componentDidMount() {
 		this.loadData();
-		this.loadDataCatData();
-		
+				
 		this.props.form.setFieldsValue({
 			sort: "0",
 		});

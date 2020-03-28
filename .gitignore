@@ -2,7 +2,6 @@
 /.vscode
 /vendor
 *.log
-thinkphp
 .env
 .DS_Store
 public/static/upload/*.jpg
@@ -10,7 +9,5 @@ public/static/upload/*.jpeg
 public/static/upload/*.png
 public/static/upload/*.gif
 node_modules/
-startbootstrap-sb-admin-2/
-ckeditor/
 runtime/
 composer.lock

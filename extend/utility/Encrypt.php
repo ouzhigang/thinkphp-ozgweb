@@ -5,7 +5,7 @@ namespace utility;
 //可逆加密函数  UTF-8编码
 class Encrypt {
     //密锁串，不能出现重复字符，内有A-Z,a-z,0-9,/,=,+,_,-
-    static $lockstream = 'st=lDEFABCNOPyzghi_jQRST-UwxkVWXYZabcdef+IJK6/7nopqr89LMmGH012345uv';
+    private static $lockstream = 'st=lDEFABCNOPyzghi_jQRST-UwxkVWXYZabcdef+IJK6/7nopqr89LMmGH012345uv';
 	
 	private static $key = "esk3_!@##@!!@#$%^&*";
 	

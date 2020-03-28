@@ -1,7 +1,7 @@
 
 var cfg = {
-    web_server_root: '/thinkphp-ozgweb/server/mgr/',
-    web_root: '/thinkphp-ozgweb/mgr/',
+    web_server_root: '/server/mgr/',
+    web_root: '/mgr/',
     web_title: 'thinkphp-ozgweb后台管理系统'
 }
 
