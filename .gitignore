@@ -4,10 +4,8 @@
 *.log
 .env
 .DS_Store
-public/static/upload/*.jpg
-public/static/upload/*.jpeg
-public/static/upload/*.png
-public/static/upload/*.gif
+public/storage/
+public/mgr/
 node_modules/
 runtime/
 composer.lock

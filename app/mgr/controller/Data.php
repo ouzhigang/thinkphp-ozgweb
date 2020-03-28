@@ -91,12 +91,13 @@ class Data extends \app\BaseController {
 			];			
 			
 			if($file->getSize() <= $max_size) {
-				$ext_name = substr(strrchr($file->getInfo()["name"], '.'), 1);
+				$ext_name = strtolower($file->extension());
 				
-				if(in_array($ext_name, $allow_ext_name)) {					
-					$info = $file->move(ROOT_PATH . "public/static/upload");
-					if($info) {
-						return json(res_result([ "filepath" => str_replace("\\", "/", $info->getSaveName()) ], 0, "上传完成"));
+				if(in_array($ext_name, $allow_ext_name)) {			
+					//upload是上传文件夹名称
+					$savename = \think\facade\Filesystem::disk('public')->putFile('upload', $file, 'md5');
+					if($savename) {
+						return json(res_result([ "filepath" => $savename ], 0, "上传完成"));
 					}
 					return json(res_result(NULL, 1, $file->getError()));
 				}
